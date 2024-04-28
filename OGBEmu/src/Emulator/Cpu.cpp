@@ -4,6 +4,7 @@
 
 #include "Core/Logger.h"
 
+#include "Bus.h"
 #include "CpuConstants.h"
 
 namespace
@@ -21,6 +22,8 @@ Cpu::Cpu(Bus& bus, const unsigned int framesPerSecond) : _bus(bus), _framesPerSe
 
     _frameTimeSeconds = 1./_framesPerSecond;
     _maxCyclesPerFrame = CpuConstants::CpuClock * _frameTimeSeconds;
+
+    _bus.EnableBootRom();
 }
 
 void Cpu::Run()
@@ -87,4 +90,5 @@ void Cpu::WaitForNextFrame(const double frameTimeSeconds) const
 
 void Cpu::DoCycle()
 {
+    byte value = _bus.Read(0x13);
 }
