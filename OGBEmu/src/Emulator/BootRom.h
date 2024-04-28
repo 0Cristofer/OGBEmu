@@ -9,8 +9,8 @@ class BootRom
 public:
     explicit BootRom(std::vector<unsigned char> romBytes);
 
-    [[nodiscard]] bool IsValid() const { return !_rom.empty() && _rom.size() != GbConstants::MinCartridgeRomSize; }
+    [[nodiscard]] bool IsValid() const { return !_rom.empty() && _rom.size() == GbConstants::BootRomSize; }
 
 private:
-    std::vector<unsigned char> _rom;   
+    std::vector<unsigned char> _rom;
 };
