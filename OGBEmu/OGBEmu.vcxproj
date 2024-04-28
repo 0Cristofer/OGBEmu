@@ -134,24 +134,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Bus.h" />
-    <ClInclude Include="src\Cartridge.h" />
-    <ClInclude Include="src\Cpu.h" />
-    <ClInclude Include="src\CpuConstants.h" />
-    <ClInclude Include="src\Device.h" />
-    <ClInclude Include="src\GbConstants.h" />
-    <ClInclude Include="src\Logger.h" />
-    <ClInclude Include="src\Ram.h" />
-    <ClInclude Include="src\Utils.h" />
+    <ClInclude Include="src\Core\Logger.h" />
+    <ClInclude Include="src\Core\Utils.h" />
+    <ClInclude Include="src\Emulator\Bus.h" />
+    <ClInclude Include="src\Emulator\Cartridge.h" />
+    <ClInclude Include="src\Emulator\Cpu.h" />
+    <ClInclude Include="src\Emulator\CpuConstants.h" />
+    <ClInclude Include="src\Emulator\Device.h" />
+    <ClInclude Include="src\Emulator\GbConstants.h" />
+    <ClInclude Include="src\Emulator\Ram.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Bus.cpp" />
-    <ClCompile Include="src\Cartridge.cpp" />
-    <ClCompile Include="src\Cpu.cpp" />
-    <ClCompile Include="src\Device.cpp" />
-    <ClCompile Include="src\Logger.cpp" />
-    <ClCompile Include="src\Ram.cpp" />
-    <ClCompile Include="src\Utils.cpp" />
+    <ClCompile Include="src\Core\Logger.cpp" />
+    <ClCompile Include="src\Core\Utils.cpp" />
+    <ClCompile Include="src\Emulator\Bus.cpp" />
+    <ClCompile Include="src\Emulator\Cartridge.cpp" />
+    <ClCompile Include="src\Emulator\Cpu.cpp" />
+    <ClCompile Include="src\Emulator\Device.cpp" />
+    <ClCompile Include="src\Emulator\Ram.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -2,8 +2,9 @@
 
 #include <chrono>
 
+#include "Core/Logger.h"
+
 #include "CpuConstants.h"
-#include "Logger.h"
 
 namespace
 {

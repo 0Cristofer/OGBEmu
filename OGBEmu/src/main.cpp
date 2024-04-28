@@ -1,7 +1,8 @@
-#include "Cartridge.h"
-#include "Device.h"
-#include "Logger.h"
-#include "Utils.h"
+#include "Core/Logger.h"
+#include "Core/Utils.h"
+
+#include "Emulator/Cartridge.h"
+#include "Emulator/Device.h"
 
 namespace
 {
