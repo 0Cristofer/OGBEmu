@@ -1,28 +1,13 @@
 #include "Cartridge.h"
 
-#include <fstream>
+#include <utility>
 
-#include "Logger.h"
-
-Cartridge::Cartridge(const std::string& romPath)
+Cartridge::Cartridge(std::vector<unsigned char> romBytes) : _rom(std::move(romBytes))
 {
-    _bytes = ReadRom(romPath);
-}
-
-std::vector<unsigned char> Cartridge::ReadRom(const std::string& romPath)
-{
-    std::ifstream romFile;
-    
-    romFile.open(romPath, std::ifstream::binary);
-
-    if (!romFile.good())
+    if (!IsValid())
     {
-        LOG("Error reading file " << romPath);
-
-        romFile.close();
-
-        return {};
+        return;
     }
 
-    return {std::istreambuf_iterator(romFile), {}};
+    _cartridgeType = static_cast<CartridgeType>(_rom[GbConstants::CartridgeTypeAddress]);
 }

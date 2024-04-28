@@ -9,4 +9,4 @@ public:
     static void Log(const std::string& log);
 };
 
-#define LOG(A) Logger::Log((std::stringstream() << A << '\n').str())  // NOLINT(bugprone-macro-parentheses)
+#define LOG(A) Logger::Log((std::stringstream() << A).str())  // NOLINT(bugprone-macro-parentheses)

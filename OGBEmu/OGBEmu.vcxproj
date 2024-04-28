@@ -134,13 +134,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Cartridge.cpp" />
-    <ClCompile Include="src\Logger.cpp" />
-    <ClCompile Include="src\main.cpp" />
+    <ClInclude Include="src\Bus.h" />
+    <ClInclude Include="src\Cartridge.h" />
+    <ClInclude Include="src\Cpu.h" />
+    <ClInclude Include="src\CpuConstants.h" />
+    <ClInclude Include="src\Device.h" />
+    <ClInclude Include="src\GbConstants.h" />
+    <ClInclude Include="src\Logger.h" />
+    <ClInclude Include="src\Ram.h" />
+    <ClInclude Include="src\Utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Cartridge.h" />
-    <ClInclude Include="src\Logger.h" />
+    <ClCompile Include="src\Bus.cpp" />
+    <ClCompile Include="src\Cartridge.cpp" />
+    <ClCompile Include="src\Cpu.cpp" />
+    <ClCompile Include="src\Device.cpp" />
+    <ClCompile Include="src\Logger.cpp" />
+    <ClCompile Include="src\Ram.cpp" />
+    <ClCompile Include="src\Utils.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

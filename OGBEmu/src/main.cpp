@@ -1,10 +1,14 @@
-#include <fstream>
-#include <vector>
-
 #include "Cartridge.h"
+#include "Device.h"
 #include "Logger.h"
+#include "Utils.h"
 
-int main(const int argc, char** argv)
+namespace
+{
+    constexpr int FramesPerSecond = 128;
+}
+
+int main(const int argc, char* argv[])
 {
     if (argc != 2)
     {
@@ -13,15 +17,19 @@ int main(const int argc, char** argv)
     }
 
     const std::string romPath(argv[1]);
-
     Logger::Log("Rom path: " + romPath);
 
-    const Cartridge cartridge(romPath);
+    std::vector<unsigned char> romBytes = Utils::ReadBinaryFile(romPath);
 
+    Cartridge cartridge(std::move(romBytes));
     if (!cartridge.IsValid())
     {
         return 0;
     }
+
+    Device device(std::move(cartridge), FramesPerSecond);
+
+    device.Run();
 
     return 0;
 }
