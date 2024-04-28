@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Bus.h"
+class Bus;
 
 class Cpu
 {

@@ -15,6 +15,9 @@
     <ClInclude Include="src\Core\Utils.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Emulator\BootRom.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
     <ClInclude Include="src\Emulator\Bus.h">
       <Filter>Emulator</Filter>
     </ClInclude>
@@ -43,6 +46,9 @@
     </ClCompile>
     <ClCompile Include="src\Core\Utils.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\BootRom.cpp">
+      <Filter>Emulator</Filter>
     </ClCompile>
     <ClCompile Include="src\Emulator\Bus.cpp">
       <Filter>Emulator</Filter>

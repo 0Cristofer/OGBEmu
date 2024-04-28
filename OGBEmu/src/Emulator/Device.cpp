@@ -1,10 +1,9 @@
 #include "Device.h"
 
-#include <chrono>
-
-Device::Device(Cartridge cartridge, const int framesPerSecond) : _cartridge(std::move(cartridge)), _ram(Ram()),
-                                                                 _bus(Bus(_cartridge, _ram)),
-                                                                 _cpu(_bus, framesPerSecond)
+Device::Device(BootRom bootRom, Cartridge cartridge, const int framesPerSecond) : _bootRom(std::move(bootRom)),
+    _cartridge(std::move(cartridge)), _ram(Ram()),
+    _bus(Bus(_bootRom, _cartridge, _ram)),
+    _cpu(_bus, framesPerSecond)
 {
 }
 

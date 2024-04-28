@@ -1,17 +1,20 @@
 #pragma once
 
+#include "BootRom.h"
 #include "Cartridge.h"
 #include "Ram.h"
+#include "Bus.h"
 #include "Cpu.h"
 
 class Device
 {
 public:
-    explicit Device(Cartridge cartridge, const int framesPerSecond);
+    explicit Device(BootRom bootRom, Cartridge cartridge, const int framesPerSecond);
 
     void Run();
 
 private:
+    BootRom _bootRom;
     Cartridge _cartridge;
     Ram _ram;
     Bus _bus;

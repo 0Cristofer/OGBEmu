@@ -1,13 +1,17 @@
 #pragma once
-#include "Cartridge.h"
-#include "Ram.h"
+
+
+class BootRom;
+class Cartridge;
+class Ram;
 
 class Bus
 {
 public:
-    Bus(Cartridge& cartridge, Ram& ram);
+    Bus(BootRom& bootRom, Cartridge& cartridge, Ram& ram);
 
 private:
+    BootRom& _bootRom;
     Cartridge& _cartridge;
     Ram& _ram;
 };
