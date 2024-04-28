@@ -4,7 +4,7 @@
 
 #include "Logger.h"
 
-std::vector<unsigned char> Utils::ReadBinaryFile(const std::string& filePath)
+std::vector<byte> Utils::ReadBinaryFile(const std::string& filePath)
 {
     std::ifstream file;
     

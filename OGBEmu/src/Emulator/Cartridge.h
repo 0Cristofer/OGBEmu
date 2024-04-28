@@ -3,8 +3,9 @@
 #include <vector>
 
 #include "GbConstants.h"
+#include "Core/Definitions.h"
 
-enum class CartridgeType : short
+enum class CartridgeType : byte
 {
     RomOnly = 0x00,
     MBC1 = 0x01,
@@ -39,11 +40,11 @@ enum class CartridgeType : short
 class Cartridge
 {
 public:
-    explicit Cartridge(std::vector<unsigned char> romBytes);
+    explicit Cartridge(std::vector<byte> romBytes);
 
     [[nodiscard]] bool IsValid() const { return !_rom.empty() && _rom.size() >= GbConstants::MinCartridgeRomSize; }
 
 private:
-    std::vector<unsigned char> _rom;
+    std::vector<byte> _rom;
     CartridgeType _cartridgeType;
 };

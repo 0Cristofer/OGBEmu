@@ -3,14 +3,15 @@
 #include <vector>
 
 #include "GbConstants.h"
+#include "Core/Definitions.h"
 
 class BootRom
 {
 public:
-    explicit BootRom(std::vector<unsigned char> romBytes);
+    explicit BootRom(std::vector<byte> romBytes);
 
     [[nodiscard]] bool IsValid() const { return !_rom.empty() && _rom.size() == GbConstants::BootRomSize; }
 
 private:
-    std::vector<unsigned char> _rom;
+    std::vector<byte> _rom;
 };

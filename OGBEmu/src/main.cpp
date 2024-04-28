@@ -14,7 +14,7 @@ Cartridge ReadCartridge(const std::string& romPath)
 {
     Logger::Log("Cartridge rom path: " + romPath);
 
-    std::vector<unsigned char> romBytes = Utils::ReadBinaryFile(romPath);
+    std::vector<byte> romBytes = Utils::ReadBinaryFile(romPath);
 
     return Cartridge(std::move(romBytes));
 }
@@ -23,7 +23,7 @@ BootRom ReadBootRom(const std::string& bootRomPath)
 {
     Logger::Log("Boot rom path: " + bootRomPath);
 
-    std::vector<unsigned char> bootRomBytes = Utils::ReadBinaryFile(bootRomPath);
+    std::vector<byte> bootRomBytes = Utils::ReadBinaryFile(bootRomPath);
 
     return BootRom(std::move(bootRomBytes));
 }

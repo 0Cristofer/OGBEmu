@@ -3,7 +3,9 @@
 #include <string>
 #include <vector>
 
+#include "Definitions.h"
+
 namespace Utils
 {
-    std::vector<unsigned char> ReadBinaryFile(const std::string& filePath);
+    std::vector<byte> ReadBinaryFile(const std::string& filePath);
 };

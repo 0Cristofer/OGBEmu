@@ -2,7 +2,7 @@
 
 #include <utility>
 
-Cartridge::Cartridge(std::vector<unsigned char> romBytes) : _rom(std::move(romBytes))
+Cartridge::Cartridge(std::vector<byte> romBytes) : _rom(std::move(romBytes))
 {
     if (!IsValid())
     {
