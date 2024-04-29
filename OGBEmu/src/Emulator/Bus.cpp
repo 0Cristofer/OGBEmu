@@ -1,71 +1,73 @@
 #include "Bus.h"
 
+#include "AddressConstants.h"
 #include "BootRom.h"
 #include "GbConstants.h"
+#include "IoRegisters.h"
 #include "Core/Logger.h"
 
-Bus::Bus(BootRom* bootRom, Cartridge* cartridge, Ram* ram) : _bootRom(bootRom), _cartridge(cartridge), _ram(ram), _bootRomEnabled(false)
+Bus::Bus(BootRom* bootRom, Cartridge* cartridge, Ram* ram, IoRegisters* ioRegisters) : _bootRom(bootRom), _cartridge(cartridge), _ram(ram), _ioRegisters(ioRegisters)
 {
 }
 
 byte Bus::Read(const word address) const
 {
-    if (address <= GbConstants::EndRomBank0Address)
+    if (address <= AddressConstants::EndRomBank0Address)
     {
         return ReadCartridgeBank0(address);
     }
 
-    if (address >= GbConstants::StartRomBankNAddress && address <= GbConstants::EndRomBankNAddress)
+    if (address >= AddressConstants::StartRomBankNAddress && address <= AddressConstants::EndRomBankNAddress)
     {
         return ReadCartridgeBankN(address);
     }
 
-    if (address >= GbConstants::StartVRamAddress && address <= GbConstants::EndVRamAddress)
+    if (address >= AddressConstants::StartVRamAddress && address <= AddressConstants::EndVRamAddress)
     {
         return ReadVRam(address);
     }
 
-    if (address >= GbConstants::StartExternalRamAddress && address <= GbConstants::EndExternalRamAddress)
+    if (address >= AddressConstants::StartExternalRamAddress && address <= AddressConstants::EndExternalRamAddress)
     {
         return ReadExternalRam(address);
     }
 
-    if (address >= GbConstants::StartWRamAddress && address <= GbConstants::EndWRamAddress)
+    if (address >= AddressConstants::StartWRamAddress && address <= AddressConstants::EndWRamAddress)
     {
         return ReadWRam(address);
     }
 
-    if (address >= GbConstants::StartCgbWRamAddress && address <= GbConstants::EndCgbWRamAddress)
+    if (address >= AddressConstants::StartCgbWRamAddress && address <= AddressConstants::EndCgbWRamAddress)
     {
         return ReadCgbWRam(address);
     }
 
-    if (address >= GbConstants::StartEchoRamAddress && address <= GbConstants::EndEchoRamAddress)
+    if (address >= AddressConstants::StartEchoRamAddress && address <= AddressConstants::EndEchoRamAddress)
     {
         return ReadEchoRam(address);
     }
 
-    if (address >= GbConstants::StartOamAddress && address <= GbConstants::EndOamAddress)
+    if (address >= AddressConstants::StartOamAddress && address <= AddressConstants::EndOamAddress)
     {
         return ReadOam(address);
     }
 
-    if (address >= GbConstants::StartNotUsedAddress && address <= GbConstants::EndNotUsedAddress)
+    if (address >= AddressConstants::StartNotUsedAddress && address <= AddressConstants::EndNotUsedAddress)
     {
         return ReadNotUsed(address);
     }
 
-    if (address >= GbConstants::StartIoRegistersAddress && address <= GbConstants::EndIoRegistersAddress)
+    if (address >= AddressConstants::StartIoRegistersAddress && address <= AddressConstants::EndIoRegistersAddress)
     {
         return ReadIoRegisters(address);
     }
 
-    if (address >= GbConstants::StartHRamAddress && address <= GbConstants::EndHRamAddress)
+    if (address >= AddressConstants::StartHRamAddress && address <= AddressConstants::EndHRamAddress)
     {
         return ReadHRam(address);
     }
 
-    if (address >= GbConstants::StartIeAddress)
+    if (address >= AddressConstants::StartIeAddress)
     {
         return ReadIe(address);
     }
@@ -76,73 +78,73 @@ byte Bus::Read(const word address) const
 
 void Bus::Write(const word address, const byte data)
 {
-    if (address <= GbConstants::EndRomBank0Address)
+    if (address <= AddressConstants::EndRomBank0Address)
     {
         WriteCartridgeBank0(address, data);
         return;
     }
 
-    if (address >= GbConstants::StartRomBankNAddress && address <= GbConstants::EndRomBankNAddress)
+    if (address >= AddressConstants::StartRomBankNAddress && address <= AddressConstants::EndRomBankNAddress)
     {
         WriteCartridgeBankN(address, data);
         return;
     }
 
-    if (address >= GbConstants::StartVRamAddress && address <= GbConstants::EndVRamAddress)
+    if (address >= AddressConstants::StartVRamAddress && address <= AddressConstants::EndVRamAddress)
     {
         WriteVRam(address, data);
         return;
     }
 
-    if (address >= GbConstants::StartExternalRamAddress && address <= GbConstants::EndExternalRamAddress)
+    if (address >= AddressConstants::StartExternalRamAddress && address <= AddressConstants::EndExternalRamAddress)
     {
         WriteExternalRam(address, data);
         return;
     }
 
-    if (address >= GbConstants::StartWRamAddress && address <= GbConstants::EndWRamAddress)
+    if (address >= AddressConstants::StartWRamAddress && address <= AddressConstants::EndWRamAddress)
     {
         WriteWRam(address, data);
         return;
     }
 
-    if (address >= GbConstants::StartCgbWRamAddress && address <= GbConstants::EndCgbWRamAddress)
+    if (address >= AddressConstants::StartCgbWRamAddress && address <= AddressConstants::EndCgbWRamAddress)
     {
         WriteCgbWRam(address, data);
         return;
     }
 
-    if (address >= GbConstants::StartEchoRamAddress && address <= GbConstants::EndEchoRamAddress)
+    if (address >= AddressConstants::StartEchoRamAddress && address <= AddressConstants::EndEchoRamAddress)
     {
         WriteEchoRam(address, data);
         return;
     }
 
-    if (address >= GbConstants::StartOamAddress && address <= GbConstants::EndOamAddress)
+    if (address >= AddressConstants::StartOamAddress && address <= AddressConstants::EndOamAddress)
     {
         WriteOam(address, data);
         return;
     }
 
-    if (address >= GbConstants::StartNotUsedAddress && address <= GbConstants::EndNotUsedAddress)
+    if (address >= AddressConstants::StartNotUsedAddress && address <= AddressConstants::EndNotUsedAddress)
     {
         WriteNotUsed(address, data);
         return;
     }
 
-    if (address >= GbConstants::StartIoRegistersAddress && address <= GbConstants::EndIoRegistersAddress)
+    if (address >= AddressConstants::StartIoRegistersAddress && address <= AddressConstants::EndIoRegistersAddress)
     {
         WriteIoRegisters(address, data);
         return;
     }
 
-    if (address >= GbConstants::StartHRamAddress && address <= GbConstants::EndHRamAddress)
+    if (address >= AddressConstants::StartHRamAddress && address <= AddressConstants::EndHRamAddress)
     {
         WriteHRam(address, data);
         return;
     }
 
-    if (address >= GbConstants::StartIeAddress)
+    if (address >= AddressConstants::StartIeAddress)
     {
         WriteIe(address, data);
         return;
@@ -151,11 +153,16 @@ void Bus::Write(const word address, const byte data)
     LOG("Trying to write unmapped area, address " << address);
 }
 
+bool Bus::IsBootRomEnabled() const
+{
+    return Read(AddressConstants::BootRomBank) == 0;
+}
+
 byte Bus::ReadCartridgeBank0(const word address) const
 {
-    if (address <= GbConstants::EndBootRomAddress)
+    if (address <= AddressConstants::EndBootRomAddress)
     {
-        if (_bootRomEnabled)
+        if (IsBootRomEnabled())
         {
             return ReadBootRom(address);
         }
@@ -220,8 +227,7 @@ byte Bus::ReadNotUsed(const word address) const
 
 byte Bus::ReadIoRegisters(const word address) const
 {
-    LOG("ReadIoRegisters not implemented, address " << address);
-    return 0;
+    return _ioRegisters->Read(address);
 }
 
 byte Bus::ReadHRam(const word address) const
@@ -288,7 +294,7 @@ void Bus::WriteNotUsed(const word address, const byte data)
 
 void Bus::WriteIoRegisters(const word address, const byte data)
 {
-    LOG("Invalid write WriteIoRegisters" << address);
+    _ioRegisters->Write(address, data);
 }
 
 void Bus::WriteHRam(const word address, const byte data)

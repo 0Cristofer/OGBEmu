@@ -12,7 +12,7 @@ BootRom::BootRom(std::vector<byte> romBytes): _rom(std::move(romBytes))
 
 byte BootRom::Read(const word address) const
 {
-    if (address > _rom.size())
+    if (address >= _rom.size())
     {
         LOG("Invalid Boot ROM read, address: " << address);
         return 0;

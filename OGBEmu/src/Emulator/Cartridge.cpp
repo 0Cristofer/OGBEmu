@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "Core/Logger.h"
+#include "AddressConstants.h"
 
 Cartridge::Cartridge(std::vector<byte> romBytes) : _rom(std::move(romBytes))
 {
@@ -11,7 +12,7 @@ Cartridge::Cartridge(std::vector<byte> romBytes) : _rom(std::move(romBytes))
         return;
     }
 
-    _cartridgeType = static_cast<CartridgeType>(_rom[GbConstants::CartridgeTypeAddress]);
+    _cartridgeType = static_cast<CartridgeType>(_rom[AddressConstants::CartridgeTypeAddress]);
 }
 
 byte Cartridge::Read(const word address) const

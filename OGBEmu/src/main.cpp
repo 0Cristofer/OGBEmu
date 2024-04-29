@@ -52,9 +52,13 @@ int main(const int argc, char* argv[])
         return 0;
     }
 
+    LOG("");
+    LOG("Starting up device");
     Device device(std::move(bootRom), std::move(cartridge), FramesPerSecond);
 
+    LOG("Running");
     device.Run();
 
+    LOG("Finished");
     return 0;
 }

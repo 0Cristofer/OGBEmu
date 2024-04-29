@@ -137,6 +137,7 @@
     <ClInclude Include="src\Core\Definitions.h" />
     <ClInclude Include="src\Core\Logger.h" />
     <ClInclude Include="src\Core\Utils.h" />
+    <ClInclude Include="src\Emulator\AddressConstants.h" />
     <ClInclude Include="src\Emulator\BootRom.h" />
     <ClInclude Include="src\Emulator\Bus.h" />
     <ClInclude Include="src\Emulator\Cartridge.h" />
@@ -144,6 +145,8 @@
     <ClInclude Include="src\Emulator\CpuConstants.h" />
     <ClInclude Include="src\Emulator\Device.h" />
     <ClInclude Include="src\Emulator\GbConstants.h" />
+    <ClInclude Include="src\Emulator\IoRegisters.h" />
+    <ClInclude Include="src\Emulator\Opcode.h" />
     <ClInclude Include="src\Emulator\Ram.h" />
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +157,7 @@
     <ClCompile Include="src\Emulator\Cartridge.cpp" />
     <ClCompile Include="src\Emulator\Cpu.cpp" />
     <ClCompile Include="src\Emulator\Device.cpp" />
+    <ClCompile Include="src\Emulator\IoRegisters.cpp" />
     <ClCompile Include="src\Emulator\Ram.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>

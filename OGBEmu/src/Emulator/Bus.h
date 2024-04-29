@@ -2,6 +2,7 @@
 
 #include "Core/Definitions.h"
 
+class IoRegisters;
 class BootRom;
 class Cartridge;
 class Ram;
@@ -9,15 +10,14 @@ class Ram;
 class Bus
 {
 public:
-    Bus(BootRom* bootRom, Cartridge* cartridge, Ram* ram);
-
-    void EnableBootRom() { _bootRomEnabled = true; }
-    void DisableBootRom() { _bootRomEnabled = false; }
+    Bus(BootRom* bootRom, Cartridge* cartridge, Ram* ram, IoRegisters* ioRegisters);
     
     [[nodiscard]] byte Read(word address) const;
     void Write(word address, byte data);
 
 private:
+    [[nodiscard]] bool IsBootRomEnabled() const;
+    
     [[nodiscard]] byte ReadCartridgeBank0(word address) const;
     [[nodiscard]] byte ReadBootRom(word address) const;
     [[nodiscard]] byte ReadCartridgeBankN(word address) const;
@@ -49,6 +49,5 @@ private:
     BootRom* _bootRom;
     Cartridge* _cartridge;
     Ram* _ram;
-
-    bool _bootRomEnabled;
+    IoRegisters* _ioRegisters;
 };

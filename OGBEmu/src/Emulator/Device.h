@@ -5,6 +5,7 @@
 #include "Ram.h"
 #include "Bus.h"
 #include "Cpu.h"
+#include "IoRegisters.h"
 
 class Device
 {
@@ -17,6 +18,7 @@ private:
     BootRom _bootRom;
     Cartridge _cartridge;
     Ram _ram;
+    IoRegisters _ioRegisters;
     Bus _bus;
     Cpu _cpu;
 };
