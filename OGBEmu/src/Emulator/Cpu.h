@@ -5,19 +5,19 @@ class Bus;
 class Cpu
 {
 public:
-    explicit Cpu(Bus& bus, const unsigned int framesPerSecond);
+    explicit Cpu(Bus* bus, unsigned int framesPerSecond);
 
     void Run();
 
 private:
     unsigned int DoFrame();
-    void WaitForNextFrame(const double frameTimeSeconds) const;
+    void WaitForNextFrame(double frameTimeSeconds) const;
 
-    void DoCycle();
+    bool DoCycle();
     
     static bool IsPowerOfTwo(const unsigned int value) { return value != 0 && (value & value - 1) == 0; }
 
-    Bus& _bus;
+    Bus* _bus;
 
     unsigned int _framesPerSecond;
     double _frameTimeSeconds;

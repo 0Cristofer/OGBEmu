@@ -9,7 +9,7 @@
 class Device
 {
 public:
-    explicit Device(BootRom bootRom, Cartridge cartridge, const int framesPerSecond);
+    explicit Device(BootRom bootRom, Cartridge cartridge, int framesPerSecond);
 
     void Run();
 

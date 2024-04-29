@@ -43,7 +43,7 @@ public:
     explicit Cartridge(std::vector<byte> romBytes);
 
     [[nodiscard]] bool IsValid() const { return !_rom.empty() && _rom.size() >= GbConstants::MinCartridgeRomSize; }
-    [[nodiscard]] byte Read(const word address) const;
+    [[nodiscard]] byte Read(word address) const;
 
 private:
     std::vector<byte> _rom;

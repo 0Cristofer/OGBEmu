@@ -4,7 +4,7 @@
 #include "GbConstants.h"
 #include "Core/Logger.h"
 
-Bus::Bus(BootRom& bootRom, Cartridge& cartridge, Ram& ram) : _bootRom(bootRom), _cartridge(cartridge), _ram(ram), _bootRomEnabled(false)
+Bus::Bus(BootRom* bootRom, Cartridge* cartridge, Ram* ram) : _bootRom(bootRom), _cartridge(cartridge), _ram(ram), _bootRomEnabled(false)
 {
 }
 
@@ -167,7 +167,7 @@ byte Bus::ReadCartridgeBank0(const word address) const
 
 byte Bus::ReadBootRom(const word address) const
 {
-    return _bootRom.Read(address);
+    return _bootRom->Read(address);
 }
 
 byte Bus::ReadCartridgeBankN(const word address) const

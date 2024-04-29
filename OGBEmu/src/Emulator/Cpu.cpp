@@ -12,7 +12,7 @@ namespace
     constexpr unsigned char DefaultSimulationFramesPerSecond = 64;
 }
 
-Cpu::Cpu(Bus& bus, const unsigned int framesPerSecond) : _bus(bus), _framesPerSecond(framesPerSecond)
+Cpu::Cpu(Bus* bus, const unsigned int framesPerSecond) : _bus(bus), _framesPerSecond(framesPerSecond)
 {
     if (!IsPowerOfTwo(_framesPerSecond))
     {
@@ -23,7 +23,7 @@ Cpu::Cpu(Bus& bus, const unsigned int framesPerSecond) : _bus(bus), _framesPerSe
     _frameTimeSeconds = 1./_framesPerSecond;
     _maxCyclesPerFrame = CpuConstants::CpuClock * _frameTimeSeconds;
 
-    _bus.EnableBootRom();
+    _bus->EnableBootRom();
 }
 
 void Cpu::Run()
@@ -39,6 +39,11 @@ void Cpu::Run()
     while(runSeconds < maxRunSeconds)
     {
         const unsigned int cyclesDone = DoFrame();
+
+        if (cyclesDone == 0)
+        {
+            return;
+        }
 
         const auto runCurrentTime = std::chrono::steady_clock::now();
         runSeconds = std::chrono::duration<double>(runCurrentTime - runStartTime).count();
@@ -57,7 +62,11 @@ unsigned int Cpu::DoFrame()
     const auto frameStartTime = std::chrono::steady_clock::now();
     while (cycleCount < _maxCyclesPerFrame)
     {
-        DoCycle();
+        if (!DoCycle())
+        {
+            return cycleCount;
+        }
+        
         cycleCount++;
     }
     const auto frameEndTime = std::chrono::steady_clock::now();
@@ -88,7 +97,9 @@ void Cpu::WaitForNextFrame(const double frameTimeSeconds) const
     }
 }
 
-void Cpu::DoCycle()
+bool Cpu::DoCycle()
 {
-    byte value = _bus.Read(0x13);
+    byte value = _bus->Read(0x13);
+
+    return true;
 }
