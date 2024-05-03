@@ -15,13 +15,18 @@ Cartridge::Cartridge(std::vector<byte> romBytes) : _rom(std::move(romBytes))
     _cartridgeType = static_cast<CartridgeType>(_rom[AddressConstants::CartridgeTypeAddress]);
 }
 
-byte Cartridge::Read(const word address) const
+byte& Cartridge::ReadRef(const word address)
 {
     if (address >= _rom.size())
     {
         LOG("Invalid Cartridge ROM read, address: " << address);
-        return 0;
+        return ReadRef(0);
     }
 
     return _rom[address];
+}
+
+byte Cartridge::Read(const word address)
+{
+    return ReadRef(address);
 }

@@ -13,8 +13,7 @@ namespace
     constexpr unsigned char DefaultSimulationFramesPerSecond = 64;
 }
 
-Cpu::Cpu(Bus* bus, const unsigned int framesPerSecond) : _bus(bus), _registerAF(), _registerBC(), _registerDE(),
-                                                         _registerHL(), _registerSp(),
+Cpu::Cpu(Bus* bus, const unsigned int framesPerSecond) : _bus(bus), _registers(), _registerSp(),
                                                          _framesPerSecond(framesPerSecond)
 {
     if (!IsPowerOfTwo(_framesPerSecond))
@@ -28,7 +27,7 @@ Cpu::Cpu(Bus* bus, const unsigned int framesPerSecond) : _bus(bus), _registerAF(
     _maxCyclesPerFrame = CpuConstants::CpuClock * _frameTimeSeconds;
 
     // This is the only hardware initialization needed, everything else is done by the boot rom
-    _registerPc.reg = 0;
+    _registerPc = 0;
     _bus->Write(AddressConstants::BootRomBank, 0);
 }
 
@@ -112,40 +111,58 @@ byte Cpu::ExecuteNextInstruction()
 
 Opcode Cpu::FetchNextOpcode()
 {
-    const byte byteOpcode = _bus->Read(_registerPc.reg);
-    _registerPc.reg++;
-
     Opcode opcode;
-    opcode.code = byteOpcode;
+    opcode.code = ReadAtPcInc();
 
     return opcode;
 }
 
-byte Cpu::ExecuteOpcode(const Opcode opcode)
+byte Cpu::ReadAtPcInc()
 {
-    if (opcode.row > 0x3 && opcode.row < 0xC)
-    {
-        return ExecuteRowFunction(opcode);
-    }
+    const byte byte = _bus->Read(_registerPc);
+    _registerPc++;
 
-    return ExecuteColumnFunction(opcode);
+    return byte;
 }
 
-byte Cpu::ExecuteRowFunction(const Opcode opcode)
+byte Cpu::ExecuteOpcode(const Opcode opcode)
 {
-    if (opcode.row > 0x3 && opcode.row < 0x8)
+    if (opcode.high > 0x3 && opcode.high < 0xC)
     {
-        if (opcode.row == 0x7 && opcode.column == 0x6)
+        return ExecuteHighFunction(opcode);
+    }
+
+    return ExecuteLowFunction(opcode);
+}
+
+byte Cpu::ExecuteHighFunction(const Opcode opcode)
+{
+    if (opcode.high > 0x3 && opcode.high < 0x8)
+    {
+        if (opcode.high == 0x7 && opcode.low == 0x6)
         {
             return Halt();
         }
 
-        return Ld();
+        const byte targetIndex = opcode.row6 - 010;
+        const byte sourceIndex = opcode.column2;
+        
+        if (targetIndex == 6)
+        {
+            return 4 + Ld8(_bus->ReadRef(_registers.hl), _registers.registers8[sourceIndex]);
+        }
+
+        if (sourceIndex == 6)
+        {
+            return 4 + Ld8(_registers.registers8[targetIndex], _bus->ReadRef(_registers.hl));
+        }
+        
+        return Ld8(_registers.registers8[targetIndex], _registers.registers8[sourceIndex]);
     }
 
-    if (opcode.row == 0x8)
+    if (opcode.high == 0x8)
     {
-        if (opcode.column < 0x8)
+        if (opcode.low < 0x8)
         {
             return Add();
         }
@@ -153,9 +170,9 @@ byte Cpu::ExecuteRowFunction(const Opcode opcode)
         return Adc();
     }
 
-    if (opcode.row == 0x9)
+    if (opcode.high == 0x9)
     {
-        if (opcode.column < 0x8)
+        if (opcode.low < 0x8)
         {
             return Sub();
         }
@@ -163,19 +180,25 @@ byte Cpu::ExecuteRowFunction(const Opcode opcode)
         return Sbc();
     }
 
-    if (opcode.row == 0xA)
+    if (opcode.high == 0xA)
     {
-        if (opcode.column < 0x8)
+        if (opcode.low < 0x8)
         {
             return And();
         }
 
-        return Xor();
+        if (opcode.low == 0xE)
+        {
+            return 4 + Xor(_bus->Read(_registers.hl));
+        }
+        
+        const byte sourceIndex = opcode.column2;
+        return Xor(_registers.registers8[sourceIndex]);
     }
 
-    if (opcode.row == 0xB)
+    if (opcode.high == 0xB)
     {
-        if (opcode.column < 0x8)
+        if (opcode.low < 0x8)
         {
             return Or();
         }
@@ -183,343 +206,439 @@ byte Cpu::ExecuteRowFunction(const Opcode opcode)
         return Cp();
     }
 
-    LOG("Row function Op Code not found. Row " << static_cast<int>(opcode.row) << ", column " << static_cast<int>(opcode.column));
+    LOG("Row function Op Code not found. Row " << static_cast<int>(opcode.high) << ", column " << static_cast<int>(opcode.low));
     return 4;
 }
 
-byte Cpu::ExecuteColumnFunction(const Opcode opcode)
+byte Cpu::ExecuteLowFunction(const Opcode opcode)
 {
-    if (opcode.column == 0x0)
+    if (opcode.low == 0x0)
     {
-        if (opcode.row == 0x0)
+        if (opcode.high == 0x0)
         {
             return Nop();
         }
 
-        if (opcode.row == 0x1)
+        if (opcode.high == 0x1)
         {
             return Stop();
         }
 
-        if (opcode.row == 0x2 || opcode.row == 0x3)
+        if (opcode.high == 0x2 || opcode.high == 0x3)
         {
             return Jr();
         }
 
-        if (opcode.row == 0xC || opcode.row == 0xD)
+        if (opcode.high == 0xC || opcode.high == 0xD)
         {
             return Ret();
         }
 
-        if (opcode.row == 0xE || opcode.row == 0xF)
+        if (opcode.high == 0xE || opcode.high == 0xF)
         {
-            return Ld();
+            const word imm = 0xff00 + static_cast<word>(ReadAtPcInc());
+            byte& valAtImm = _bus->ReadRef(imm);
+
+            if (opcode.high == 0xE)
+            {
+                return 8 + Ld8(valAtImm, _registers.a);
+            }
+
+            return 8 + Ld8(_registers.a, valAtImm);
         }
     }
 
-    if (opcode.column == 0x1)
+    if (opcode.low == 0x1)
     {
-        if (opcode.row < 0x4)
+        if (opcode.high < 0x4)
         {
-            return Ld();
+            word& target = opcode.high == 0x3 ? _registerSp.reg : _registers.registers16[opcode.row];
+
+            return 8 + Ld16(target, ReadImm16AtPc());
         }
 
-        if (opcode.row > 0xB)
+        if (opcode.high > 0xB)
         {
             return Pop();
         }
     }
 
-    if (opcode.column == 0x2)
+    if (opcode.low == 0x2)
     {
-        if (opcode.row < 0x4 || opcode.row > 0xD)
+        if (opcode.high < 0x2)
         {
-            return Ld();
+            return 4 + Ld8(_bus->ReadRef(_registers.registers16[opcode.row]), _registers.a);
+        }
+        
+        if (opcode.high == 0x2)
+        {
+            byte& target = _bus->ReadRef(_registers.hl);
+            _registers.hl++;
+
+            return 4 + Ld8(target, _registers.a);
         }
 
-        if (opcode.row == 0xC || opcode.row == 0xD)
+        if (opcode.high == 0x3)
+        {
+            byte& target = _bus->ReadRef(_registers.hl);
+            _registers.hl--;
+            
+            return 4 + Ld8(target, _registers.a);
+        }
+
+        if (opcode.high == 0xC || opcode.high == 0xD)
         {
             return Jp();
         }
+
+        const word address = 0xff00 + static_cast<word>(_registers.c);
+
+        if (opcode.high == 0xE)
+        {
+            return 4 + Ld8(_bus->ReadRef(address), _registers.a);
+        }
+
+        if (opcode.high == 0xF)
+        {
+            return 4 + Ld8(_registers.a, _bus->Read(address));
+        }
     }
 
-    if (opcode.column == 0x3)
+    if (opcode.low == 0x3)
     {
-        if (opcode.row < 0x4)
+        if (opcode.high < 0x4)
         {
             return Inc();
         }
 
-        if (opcode.row == 0xC)
+        if (opcode.high == 0xC)
         {
             return Jp();
         }
 
-        if (opcode.row == 0xF)
+        if (opcode.high == 0xF)
         {
             return Di();
         }
     }
 
-    if (opcode.column == 0x4)
+    if (opcode.low == 0x4)
     {
-        if (opcode.row < 0x4 || opcode.row > 0xD)
+        if (opcode.high < 0x4 || opcode.high > 0xD)
         {
             return Inc();
         }
 
-        if (opcode.row == 0xC || opcode.row == 0xD)
+        if (opcode.high == 0xC || opcode.high == 0xD)
         {
             return Call();
         }
     }
 
-    if (opcode.column == 0x5)
+    if (opcode.low == 0x5)
     {
-        if (opcode.row < 0x4)
+        if (opcode.high < 0x4)
         {
             return Dec();
         }
 
-        if (opcode.row > 0xB)
+        if (opcode.high > 0xB)
         {
             return Push();
         }
     }
 
-    if (opcode.column == 0x6)
+    if (opcode.low == 0x6 || opcode.low == 0xE)
     {
-        if (opcode.row < 0x4)
+        if (opcode.high < 0x4)
         {
-            return Ld();
-        }
+            const byte source = ReadAtPcInc();
+            const byte targetRegister = opcode.row6;
 
-        if (opcode.row == 0xC)
+            if (targetRegister == 0x6)
+            {
+                return 8 + Ld8(_bus->ReadRef(_registers.hl), source);
+            }
+            
+            return 4 + Ld8(_registers.registers8[targetRegister], source);
+        }
+    }
+
+    if (opcode.low == 0x6)
+    {
+        if (opcode.high == 0xC)
         {
             return Add();
         }
 
-        if (opcode.row == 0xD)
+        if (opcode.high == 0xD)
         {
             return Sub();
         }
 
-        if (opcode.row == 0xE)
+        if (opcode.high == 0xE)
         {
             return And();
         }
         
-        if (opcode.row == 0xF)
+        if (opcode.high == 0xF)
         {
             return Or();
         }
     }
 
-    if (opcode.column == 0x7)
+    if (opcode.low == 0x7)
     {
-        if (opcode.row == 0x0)
+        if (opcode.high == 0x0)
         {
             return Rlca();
         }
         
-        if (opcode.row == 0x1)
+        if (opcode.high == 0x1)
         {
             return Rla();
         }
 
-        if (opcode.row == 0x2)
+        if (opcode.high == 0x2)
         {
             return Daa();
         }
 
-        if (opcode.row == 0x3)
+        if (opcode.high == 0x3)
         {
             return Scf();
         }
 
-        if (opcode.row > 0xB)
+        if (opcode.high > 0xB)
         {
             return Rst();
         }
     }
 
-    if (opcode.column == 0x8)
+    if (opcode.low == 0x8)
     {
-        if (opcode.row == 0x0)
+        if (opcode.high == 0x0)
         {
-            return Ld();
+            const word imm = ReadImm16AtPc();
+            
+            return 12 + Ld8(_bus->ReadRef(imm), _registerSp.hi) + Ld8(_bus->ReadRef(imm+1), _registerSp.lo);
         }
 
-        if (opcode.row > 0x0 && opcode.row < 0x4)
+        if (opcode.high > 0x0 && opcode.high < 0x4)
         {
             return Jr();
         }
 
-        if (opcode.row == 0xC || opcode.row == 0xD)
+        if (opcode.high == 0xC || opcode.high == 0xD)
         {
             return Ret();
         }
 
-        if (opcode.row == 0xE)
+        if (opcode.high == 0xE)
         {
             return Add();
         }
 
-        if (opcode.row == 0xF)
+        if (opcode.high == 0xF)
         {
-            return Ld();
+            return LdHlSpE8();
         }
     }
 
-    if (opcode.column == 0x9)
+    if (opcode.low == 0x9)
     {
-        if (opcode.row < 0x4)
+        if (opcode.high < 0x4)
         {
             return Add();
         }
 
-        if (opcode.row == 0xC)
+        if (opcode.high == 0xC)
         {
             return Ret();
         }
 
-        if (opcode.row == 0xD)
+        if (opcode.high == 0xD)
         {
             return Reti();
         }
 
-        if (opcode.row == 0xE)
+        if (opcode.high == 0xE)
         {
             return Jp();
         }
         
-        if (opcode.row == 0xF)
+        if (opcode.high == 0xF)
         {
-            return Ld();
+            return 4 + Ld16(_registerSp.reg, _registers.hl);
         }
     }
 
-    if (opcode.column == 0xA)
+    if (opcode.low == 0xA)
     {
-        if (opcode.row < 0x4)
+        if (opcode.high < 0x2)
         {
-            return Ld();
+            return 4 + Ld8(_registers.a, _bus->ReadRef(_registers.registers16[opcode.row]));
+        }
+        
+        if (opcode.high == 0x2)
+        {
+            const byte source = _bus->Read(_registers.hl);
+            _registers.hl++;
+
+            return 4 + Ld8(_registers.a, source);
         }
 
-        if (opcode.row == 0xC || opcode.row == 0xD)
+        if (opcode.high == 0x3)
+        {
+            const byte source = _bus->Read(_registers.hl);
+            _registers.hl--;
+            
+            return 4 + Ld8(_registers.a, source);
+        }
+
+        if (opcode.high == 0xC || opcode.high == 0xD)
         {
             return Jp();
         }
 
-        if (opcode.row == 0xE || opcode.row == 0xF)
+        if (opcode.high == 0xE)
         {
-            return Ld();
+            return 12 + Ld8(_bus->ReadRef(ReadImm16AtPc()), _registers.a);
+        }
+
+        if (opcode.high == 0xF)
+        {
+            return 12 + Ld8(_registers.a, _bus->ReadRef(ReadImm16AtPc()));
         }
     }
 
-    if (opcode.column == 0xB)
+    if (opcode.low == 0xB)
     {
-        if (opcode.row < 0x4)
+        if (opcode.high < 0x4)
         {
             return Dec();
         }
 
-        if (opcode.row == 0xC)
+        if (opcode.high == 0xC)
         {
-            return Prefix();
+            return 4 + Prefix();
         }
     }
 
-    if (opcode.column == 0xC)
+    if (opcode.low == 0xC)
     {
-        if (opcode.row < 0x4)
+        if (opcode.high < 0x4)
         {
             return Inc();
         }
 
-        if (opcode.row == 0xC || opcode.row == 0xD)
+        if (opcode.high == 0xC || opcode.high == 0xD)
         {
             return Call();
         }
     }
 
-    if (opcode.column == 0xD)
+    if (opcode.low == 0xD)
     {
-        if (opcode.row < 0x4)
+        if (opcode.high < 0x4)
         {
             return Dec();
         }
 
-        if (opcode.row == 0xC)
+        if (opcode.high == 0xC)
         {
             return Call();
         }
     }
 
-    if (opcode.column == 0xE)
+    if (opcode.low == 0xE)
     {
-        if (opcode.row < 0x4)
-        {
-            return Ld();
-        }
-
-        if (opcode.row == 0xC)
+        if (opcode.high == 0xC)
         {
             return Adc();
         }
 
-        if (opcode.row == 0xD)
+        if (opcode.high == 0xD)
         {
             return Sbc();
         }
 
-        if (opcode.row == 0xE)
+        if (opcode.high == 0xE)
         {
-            return Xor();
+            return 4 + Xor(ReadAtPcInc());
         }
         
-        if (opcode.row == 0xF)
+        if (opcode.high == 0xF)
         {
             return Cp();
         }
     }
 
-    if (opcode.column == 0xF)
+    if (opcode.low == 0xF)
     {
-        if (opcode.row == 0x0)
+        if (opcode.high == 0x0)
         {
             return Rrca();
         }
 
-        if (opcode.row == 0x1)
+        if (opcode.high == 0x1)
         {
             return Rra();
         }
 
-        if (opcode.row == 0x2)
+        if (opcode.high == 0x2)
         {
             return Cpl();
         }
 
-        if (opcode.row == 0x3)
+        if (opcode.high == 0x3)
         {
             return Ccf();
         }
 
-        if (opcode.row > 0xB)
+        if (opcode.high > 0xB)
         {
             return Rst();
         }
     }
     
-    LOG("Column function Op Code not found. Row " << static_cast<int>(opcode.row) << ", column " << static_cast<int>(opcode.column));
+    LOG("Column function Op Code not found. Row " << static_cast<int>(opcode.high) << ", column " << static_cast<int>(opcode.low));
     return 4;
 }
 
-byte Cpu::Ld()
+word Cpu::ReadImm16AtPc()
 {
-    LOG("Function LD not implemented");
+    const byte firstByte = ReadAtPcInc();
+    const word imm = static_cast<word>(firstByte) + static_cast<word>(ReadAtPcInc() << 8);
+
+    return imm;
+}
+
+byte Cpu::Ld8(byte& target, const byte source)
+{
+    target = source;
     return 4;
+}
+
+byte Cpu::Ld16(word& target, word source)
+{
+    target = source;
+    return 4;
+}
+
+byte Cpu::LdHlSpE8()
+{
+    _registers.f.z = 0;
+    _registers.f.n = 0;
+    
+    const signed_byte e8 = static_cast<signed_byte>(ReadAtPcInc());
+    const word newSp = _registerSp.reg + static_cast<word>(e8);
+    _registers.hl = newSp;
+    
+    _registers.f.h = (newSp & 0xf) + (e8 & 0xf);
+    _registers.f.c = (newSp & 0xff) + (e8 & 0xff);
+    
+    return 12;
 }
 
 byte Cpu::Halt()
@@ -558,9 +677,13 @@ byte Cpu::And()
     return 4;
 }
 
-byte Cpu::Xor()
+byte Cpu::Xor(const byte val)
 {
-    LOG("Function XOR not implemented");
+    _registers.a ^= val;
+
+    _registers.f.reg = 0;
+    _registers.f.z = _registers.a == 0;
+    
     return 4;
 }
 
@@ -706,14 +829,4 @@ byte Cpu::Ccf()
 {
     LOG("Function Ccf not implemented");
     return 4;
-}
-
-void Cpu::SetFlag(const FlagBit flagBit, const byte val)
-{
-    _registerAF.lo |= val << flagBit;
-}
-
-byte Cpu::GetFlag(const FlagBit flagBit) const
-{
-    return _registerAF.lo & 1 << flagBit;
 }

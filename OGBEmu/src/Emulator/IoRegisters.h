@@ -9,7 +9,8 @@ class IoRegisters
 public:
     IoRegisters();
     
-    [[nodiscard]] byte Read(word busAddress) const;
+    [[nodiscard]] byte& ReadRef(word busAddress);
+    [[nodiscard]] byte Read(word busAddress);
     void Write(word busAddress, byte data);
 
 private:
