@@ -3,7 +3,8 @@
 #include <utility>
 
 #include "Core/Logger.h"
-#include "AddressConstants.h"
+
+#include "Emulator/Memory/AddressConstants.h"
 
 Cartridge::Cartridge(std::vector<byte> romBytes) : _rom(std::move(romBytes))
 {

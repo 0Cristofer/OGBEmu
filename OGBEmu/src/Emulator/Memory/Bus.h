@@ -2,15 +2,20 @@
 
 #include "Core/Definitions.h"
 
+class HRam;
+class Oam;
+class EchoRam;
+class VRam;
 class IoRegisters;
 class BootRom;
 class Cartridge;
-class Ram;
+class WRam;
 
 class Bus
 {
 public:
-    Bus(BootRom* bootRom, Cartridge* cartridge, Ram* ram, IoRegisters* ioRegisters);
+    Bus(BootRom* bootRom, Cartridge* cartridge, VRam* vRam, WRam* wRam, EchoRam* echoRam, Oam* oam,
+        IoRegisters* ioRegisters, HRam* hRam);
 
     [[nodiscard]] byte& ReadRef(word address) const;
     [[nodiscard]] byte Read(word address) const;
@@ -33,22 +38,27 @@ private:
     [[nodiscard]] byte& ReadHRam(word address) const;
     [[nodiscard]] byte& ReadIe(word address) const;
 
-    void WriteCartridgeBank0(word address, byte data);
-    void WriteBootRom(word address, byte data);
-    void WriteCartridgeBankN(word address, byte data);
-    void WriteVRam(word address, byte data);
+    static void WriteCartridgeBank0(word address, byte data);
+    static void WriteBootRom(word address, byte data);
+    static void WriteCartridgeBankN(word address, byte data);
+    void WriteVRam(word address, byte data) const;
     void WriteExternalRam(word address, byte data);
-    void WriteWRam(word address, byte data);
+    void WriteWRam(word address, byte data) const;
     void WriteCgbWRam(word address, byte data);
     void WriteEchoRam(word address, byte data);
-    void WriteOam(word address, byte data);
+    void WriteOam(word address, byte data) const;
     void WriteNotUsed(word address, byte data);
-    void WriteIoRegisters(word address, byte data);
-    void WriteHRam(word address, byte data);
+    void WriteIoRegisters(word address, byte data) const;
+    void WriteHRam(word address, byte data) const;
     void WriteIe(word address, byte data);
 
     BootRom* _bootRom;
     Cartridge* _cartridge;
-    Ram* _ram;
+    VRam* _vRam;
+    WRam* _wRam;
+    EchoRam* _echoRam;
+    Oam* _oam;
     IoRegisters* _ioRegisters;
+    HRam* _hRam;
+    byte _ie;
 };

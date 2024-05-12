@@ -2,8 +2,9 @@
 
 #include <vector>
 
-#include "GbConstants.h"
 #include "Core/Definitions.h"
+
+#include "Emulator/GbConstants.h"
 
 class BootRom
 {

@@ -20,7 +20,7 @@ union Opcode
 
     struct
     {
-        byte column2:2;
-        byte row6:6;
+        byte column3:3;
+        byte row5:5;
     };
 };

@@ -1,84 +1,100 @@
 #pragma once
 
-#include "Opcode.h"
 #include "Core/Definitions.h"
 
-class Bus;
+#include "Emulator/Opcode.h"
 
-enum FlagBit : byte
-{
-    Zero = 7,
-    Subtraction = 6,
-    HalfCarry = 5,
-    Carry = 4,
-};
+class Bus;
 
 class Cpu
 {
 public:
-    explicit Cpu(Bus* bus, unsigned int framesPerSecond);
-
-    void Run();
-
-private:
-    unsigned int DoFrame();
-    void WaitForNextFrame(double frameTimeSeconds) const;
+    explicit Cpu(Bus* bus);
 
     byte ExecuteNextInstruction();
+
+    static constexpr unsigned int CpuClock = 4194304;
+
+private:
     Opcode FetchNextOpcode();
-    byte ReadAtPcInc();
-    byte ExecuteOpcode(Opcode opcode);
-    byte ExecuteHighFunction(Opcode opcode);
-    byte ExecuteLowFunction(Opcode opcode);
+
+    [[nodiscard]] byte ReadAtPcInc();
+    [[nodiscard]] byte& ReadBusRef(word address);
+    [[nodiscard]] byte ReadBus(word address);
     inline word ReadImm16AtPc();
 
-    byte Ld8(byte& target, byte source);
-    byte Ld16(word& target, word source);
-    byte LdHlSpE8();
-    byte Halt();
-    byte Add();
-    byte Adc();
-    byte Sub();
-    byte Sbc();
-    byte And();
-    byte Xor(byte val);
-    byte Or();
-    byte Cp();
-
-    byte Nop();
-    byte Stop();
-    byte Jr();
-    byte Ret();
-    byte Pop();
-    byte Jp();
-    byte Inc();
-    byte Di();
-    byte Call();
-    byte Dec();
-    byte Push();
-    byte Rlca();
-    byte Rla();
-    byte Daa();
-    byte Scf();
-    byte Rst();
-    byte Reti();
-    byte Prefix();
-    byte Rrca();
-    byte Rra();
-    byte Cpl();
-    byte Ccf();
+    void ExecuteOpcode(Opcode opcode);
+    void ExecuteHighFunction(Opcode opcode);
+    void ExecuteLowFunction(Opcode opcode);
+    void ExecutePrefix();
     
-    static bool IsPowerOfTwo(const unsigned int value) { return value != 0 && (value & value - 1) == 0; }
+    static void Ld8(byte& target, byte source);
+    static void Ld16(word& target, word source);
+    void LdHlSpE8();
+    void Halt();
+    void Add(byte val);
+    void Adc(byte val);
+    void Sub(byte val);
+    void Sbc(byte val);
+    void And(byte val);
+    void Xor(byte val);
+    void Or(byte val);
+    void Cp(byte val);
 
-    Bus* _bus;
+    void Nop();
+    void Stop();
+    void Jr(byte test);
+    void Ret(byte test);
+    void Pop();
+    void AddSp();
+    void Jp();
+    void Inc8(byte& target);
+    static void Inc16(word& target);
+    void Di();
+    void Ei();
+    void Call(byte test, word address);
+    void Dec(byte& target);
+    void Dec16(word& target);
+    void Add16(word& target);
+    void Push();
+    void Rlca();
+    void Rla();
+    void Daa();
+    void Scf();
+    void Rst();
+    void Reti();
+    void Rrca();
+    void Rra();
+    void Cpl();
+    void Ccf();
+    void Rlc();
+    void Rrc();
+    void Rl();
+    void Rr();
+    void Sla();
+    void Sra();
+    void Swap();
+    void Srl();
+    void Bit(byte testBit, byte testR8);
+    void Res(byte testBit, byte testR8);
+    void Set(byte testBit, byte testR8);
+    
+    enum FlagBit : byte
+    {
+        Zero = 7,
+        Subtraction = 6,
+        HalfCarry = 5,
+        Carry = 4,
+    };
 
-    union RegisterSp
+    union Register16
     {
         word reg;
+
         struct
         {
             byte lo;
-            byte hi;  
+            byte hi;
         };
     };
 
@@ -88,26 +104,27 @@ private:
 
         struct
         {
-            byte nu:4;
-            byte c:1;
-            byte h:1;
-            byte n:1;
-            byte z:1;
+            byte z : 1;
+            byte n : 1;
+            byte h : 1;
+            byte c : 1;
+            byte nu : 4;
         };
     };
-    
+
     union Registers
     {
         struct
         {
-            word bc;
-            word de;
-            word hl;
-            word fa;
+            Register16 bc;
+            Register16 de;
+            Register16 hl;
+            Register16 fa;
         };
-        word registers16[4];
 
-        struct 
+        Register16 registers16[4];
+
+        struct
         {
             byte b;
             byte c;
@@ -118,14 +135,15 @@ private:
             RegisterF f;
             byte a;
         };
+
         byte registers8[8];
     };
 
     Registers _registers;
     word _registerPc;
-    RegisterSp _registerSp;
+    Register16 _registerSp;
 
-    unsigned int _framesPerSecond;
-    double _frameTimeSeconds;
-    double _maxCyclesPerFrame;
+    Bus* _bus;
+
+    byte _cyclesThisInstruction = 0;
 };
