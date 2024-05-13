@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Core">
+      <UniqueIdentifier>{2EB4837C-1AEB-840D-C3D7-6A10AFED000F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Emulator">
+      <UniqueIdentifier>{CE9DC208-BA6A-1D14-E383-0BBCCFAF52A2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Core\Logger.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Utils.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\BootRom.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Bus.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Cartridge.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Cpu.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\CpuConstants.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Device.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\GbConstants.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Ram.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Core\Logger.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Utils.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\BootRom.cpp">
+      <Filter>Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Bus.cpp">
+      <Filter>Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Cartridge.cpp">
+      <Filter>Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Cpu.cpp">
+      <Filter>Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Device.cpp">
+      <Filter>Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Ram.cpp">
+      <Filter>Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp" />
+  </ItemGroup>
+</Project>
