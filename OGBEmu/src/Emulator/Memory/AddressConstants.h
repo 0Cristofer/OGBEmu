@@ -9,7 +9,7 @@ namespace AddressConstants
 
     // Bus addresses
     constexpr word StartBootRomAddress = 0x0000;
-    constexpr word EndBootRomAddress = 0x1000;
+    constexpr word EndBootRomAddress = 0x00FF;
     constexpr word StartRomBank0Address = 0x0000;
     constexpr word EndRomBank0Address = 0x3FFF;
     constexpr word StartRomBankNAddress = 0x4000;

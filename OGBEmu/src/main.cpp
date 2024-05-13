@@ -1,9 +1,9 @@
 #include "Core/Logger.h"
 #include "Core/Utils.h"
 
-#include "Emulator/Cartridge.h"
 #include "Emulator/Device.h"
 #include "Emulator/Memory/BootRom.h"
+#include "Emulator/Memory/Cartridge.h"
 
 namespace
 {

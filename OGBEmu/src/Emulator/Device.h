@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Emulator/Cartridge.h"
 #include "Emulator/Cpu.h"
 #include "Emulator/Memory/BootRom.h"
 #include "Emulator/Memory/Bus.h"
+#include "Emulator/Memory/Cartridge.h"
 #include "Emulator/Memory/EchoRam.h"
 #include "Emulator/Memory/HRam.h"
 #include "Emulator/Memory/IoRegisters.h"

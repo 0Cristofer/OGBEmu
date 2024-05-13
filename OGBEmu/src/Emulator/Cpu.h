@@ -16,11 +16,15 @@ public:
     static constexpr unsigned int CpuClock = 4194304;
 
 private:
+    union Register16;
+    
     Opcode FetchNextOpcode();
 
     [[nodiscard]] byte ReadAtPcInc();
     [[nodiscard]] byte& ReadBusRef(word address);
     [[nodiscard]] byte ReadBus(word address);
+    [[nodiscard]] byte ReadAtSp() const;
+    void WriteAtSp(byte data) const;
     inline word ReadImm16AtPc();
 
     void ExecuteOpcode(Opcode opcode);
@@ -41,51 +45,49 @@ private:
     void Or(byte val);
     void Cp(byte val);
 
-    void Nop();
+    static void Nop();
     void Stop();
     void Jr(byte test);
     void Ret(byte test);
-    void Pop();
     void AddSp();
-    void Jp();
+    void Jp(byte test, word address);
+    void JpHl();
     void Inc8(byte& target);
-    static void Inc16(word& target);
+    void Inc16(word& target);
     void Di();
     void Ei();
     void Call(byte test, word address);
     void Dec(byte& target);
     void Dec16(word& target);
     void Add16(word& target);
-    void Push();
+    void Push(Register16 register16Data);
+    void Pop(Register16& register16Target);
     void Rlca();
     void Rla();
     void Daa();
     void Scf();
-    void Rst();
+    void Rst(word address);
     void Reti();
     void Rrca();
     void Rra();
     void Cpl();
     void Ccf();
-    void Rlc();
-    void Rrc();
-    void Rl();
-    void Rr();
-    void Sla();
-    void Sra();
-    void Swap();
-    void Srl();
+    void Rlc(byte& reg);
+    void Rrc(byte& reg);
+    void Rl(byte& reg);
+    void Rr(byte& reg);
+    void Sla(byte& reg);
+    void Sra(byte& reg);
+    void Swap(byte& reg);
+    void Srl(byte& reg);
     void Bit(byte testBit, byte testR8);
-    void Res(byte testBit, byte testR8);
-    void Set(byte testBit, byte testR8);
+    static void Res(byte testBit, byte& testR8);
+    static void Set(byte testBit, byte& testR8);
     
-    enum FlagBit : byte
+    static byte ConvertReg8Index(const byte opcodeRegIndex)
     {
-        Zero = 7,
-        Subtraction = 6,
-        HalfCarry = 5,
-        Carry = 4,
-    };
+        return opcodeRegIndex == 0x7 ? opcodeRegIndex : opcodeRegIndex / 2 * 2 + !(opcodeRegIndex % 2);
+    }
 
     union Register16
     {
@@ -104,11 +106,11 @@ private:
 
         struct
         {
-            byte z : 1;
-            byte n : 1;
-            byte h : 1;
-            byte c : 1;
             byte nu : 4;
+            byte c : 1;
+            byte h : 1;
+            byte n : 1;
+            byte z : 1;
         };
     };
 
@@ -119,19 +121,19 @@ private:
             Register16 bc;
             Register16 de;
             Register16 hl;
-            Register16 fa;
+            Register16 af;
         };
 
         Register16 registers16[4];
 
         struct
         {
-            byte b;
             byte c;
-            byte d;
+            byte b;
             byte e;
-            byte h;
+            byte d;
             byte l;
+            byte h;
             RegisterF f;
             byte a;
         };
@@ -140,8 +142,8 @@ private:
     };
 
     Registers _registers;
-    word _registerPc;
     Register16 _registerSp;
+    Register16 _registerPc;
 
     Bus* _bus;
 

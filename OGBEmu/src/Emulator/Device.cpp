@@ -29,7 +29,7 @@ Device::Device(BootRom bootRom, Cartridge cartridge, const int framesPerSecond) 
 
 void Device::Run()
 {
-    constexpr double maxRunSeconds = 5.;
+    constexpr double maxRunSeconds = 5000.;
 
     unsigned int totalCycles = 0;
     unsigned int totalFrames = 0;

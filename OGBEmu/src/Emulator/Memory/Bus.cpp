@@ -1,14 +1,15 @@
 #include "Bus.h"
 
-#include "HRam.h"
-#include "Oam.h"
-#include "VRam.h"
-#include "WRam.h"
 #include "Core/Logger.h"
 
 #include "Emulator/Memory/AddressConstants.h"
 #include "Emulator/Memory/BootRom.h"
+#include "Emulator/Memory/Cartridge.h"
+#include "Emulator/Memory/HRam.h"
 #include "Emulator/Memory/IoRegisters.h"
+#include "Emulator/Memory/Oam.h"
+#include "Emulator/Memory/VRam.h"
+#include "Emulator/Memory/WRam.h"
 
 Bus::Bus(BootRom* bootRom, Cartridge* cartridge, VRam* vRam, WRam* wRam, EchoRam* echoRam, Oam* oam,
          IoRegisters* ioRegisters, HRam* hRam) : _bootRom(bootRom),
@@ -183,7 +184,7 @@ byte& Bus::ReadCartridgeBank0(const word address) const
     }
     
     LOG("ReadCartridgeBank0 not fully implemented, address " << address);
-    return ReadRef(0);
+    return _cartridge->ReadRef(address);
 }
 
 byte& Bus::ReadBootRom(const word address) const
@@ -254,17 +255,17 @@ byte& Bus::ReadIe(const word address) const
 
 void Bus::WriteCartridgeBank0(const word address, const byte data)
 {
-    LOG("Invalid write WriteCartridgeBank0" << address);
+    LOG("Invalid write WriteCartridgeBank0 " << address);
 }
 
 void Bus::WriteBootRom(const word address, const byte data)
 {
-    LOG("Invalid write WriteBootRom" << address);
+    LOG("Invalid write WriteBootRom " << address);
 }
 
 void Bus::WriteCartridgeBankN(const word address, const byte data)
 {
-    LOG("Invalid write WriteCartridgeBankN" << address);
+    LOG("Invalid write WriteCartridgeBankN " << address);
 }
 
 void Bus::WriteVRam(const word address, const byte data) const
@@ -274,7 +275,7 @@ void Bus::WriteVRam(const word address, const byte data) const
 
 void Bus::WriteExternalRam(const word address, const byte data)
 {
-    LOG("Invalid write WriteExternalRam" << address);
+    LOG("Invalid write WriteExternalRam " << address);
 }
 
 void Bus::WriteWRam(const word address, const byte data) const
@@ -284,12 +285,12 @@ void Bus::WriteWRam(const word address, const byte data) const
 
 void Bus::WriteCgbWRam(const word address, const byte data)
 {
-    LOG("Invalid write WriteCgbWRam" << address);
+    LOG("Invalid write WriteCgbWRam " << address);
 }
 
 void Bus::WriteEchoRam(const word address, const byte data)
 {
-    LOG("Invalid write WriteEchoRam" << address);
+    LOG("Invalid write WriteEchoRam " << address);
 }
 
 void Bus::WriteOam(const word address, const byte data) const
@@ -299,7 +300,7 @@ void Bus::WriteOam(const word address, const byte data) const
 
 void Bus::WriteNotUsed(const word address, const byte data)
 {
-    LOG("Invalid write WriteNotUsed" << address);
+    LOG("Invalid write WriteNotUsed " << address);
 }
 
 void Bus::WriteIoRegisters(const word address, const byte data) const
