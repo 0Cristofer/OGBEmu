@@ -33,7 +33,8 @@ private:
     void ExecuteHighFunction(Opcode opcode);
     void ExecuteLowFunction(Opcode opcode);
     void ExecutePrefix();
-    
+
+    // Most ALU instructions were based on https://github.com/mgba-emu/mgba/blob/master/src/sm83/isa-sm83.c
     static void Ld8(byte& target, byte source);
     static void Ld16(word& target, word source);
     void LdHlSpE8();
@@ -46,7 +47,6 @@ private:
     void Xor(byte val);
     void Or(byte val);
     void Cp(byte val);
-
     static void Nop();
     void Stop();
     void Jr(byte test);

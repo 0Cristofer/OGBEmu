@@ -840,7 +840,38 @@ void Cpu::Rla()
 
 void Cpu::Daa()
 {
-    LOG("Function DAA not implemented");
+    if (_registers.f.n)
+    {
+        if (_registers.f.h)
+        {
+            _registers.a += 0xFA;
+        }
+        if (_registers.f.c)
+        {
+            _registers.a += 0xA0;
+        }
+    }
+    else
+    {
+        int a = _registers.a;
+        if ((_registers.a & 0xF) > 0x9 || _registers.f.h)
+        {
+            a += 0x6;
+        }
+        if ((a & 0x1F0) > 0x90 || _registers.f.c)
+        {
+            a += 0x60;
+            _registers.f.c = 1;
+        }
+        else
+        {
+            _registers.f.c = 0;
+        }
+        _registers.a = static_cast<byte>(a);
+    }
+
+    _registers.f.h = 0;
+    _registers.f.z = !_registers.a;
 }
 
 void Cpu::Scf()
