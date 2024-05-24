@@ -17,26 +17,26 @@ public:
     Bus(BootRom* bootRom, Cartridge* cartridge, VRam* vRam, WRam* wRam, EchoRam* echoRam, Oam* oam,
         IoRegisters* ioRegisters, HRam* hRam);
 
-    [[nodiscard]] byte& ReadRef(word address) const;
-    [[nodiscard]] byte Read(word address) const;
+    [[nodiscard]] byte& ReadRef(word address);
+    [[nodiscard]] byte Read(word address);
     void Write(word address, byte data);
 
 private:
-    [[nodiscard]] bool IsBootRomEnabled() const;
+    [[nodiscard]] bool IsBootRomEnabled();
     
-    [[nodiscard]] byte& ReadCartridgeBank0(word address) const;
+    [[nodiscard]] byte& ReadCartridgeBank0(word address);
     [[nodiscard]] byte& ReadBootRom(word address) const;
-    [[nodiscard]] byte& ReadCartridgeBankN(word address) const;
+    [[nodiscard]] byte& ReadCartridgeBankN(word address);
     [[nodiscard]] byte& ReadVRam(word address) const;
-    [[nodiscard]] byte& ReadExternalRam(word address) const;
+    [[nodiscard]] byte& ReadExternalRam(word address);
     [[nodiscard]] byte& ReadWRam(word address) const;
-    [[nodiscard]] byte& ReadCgbWRam(word address) const;
-    [[nodiscard]] byte& ReadEchoRam(word address) const;
+    [[nodiscard]] byte& ReadCgbWRam(word address);
+    [[nodiscard]] byte& ReadEchoRam(word address);
     [[nodiscard]] byte& ReadOam(word address) const;
-    [[nodiscard]] byte& ReadNotUsed(word address) const;
+    [[nodiscard]] byte& ReadNotUsed(word address);
     [[nodiscard]] byte& ReadIoRegisters(word address) const;
     [[nodiscard]] byte& ReadHRam(word address) const;
-    [[nodiscard]] byte& ReadIe(word address) const;
+    [[nodiscard]] byte& ReadIe(word address);
 
     static void WriteCartridgeBank0(word address, byte data);
     static void WriteBootRom(word address, byte data);

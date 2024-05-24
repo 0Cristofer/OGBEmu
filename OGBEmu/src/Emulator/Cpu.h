@@ -11,7 +11,7 @@ class Cpu
 public:
     explicit Cpu(Bus* bus);
 
-    byte ExecuteNextInstruction();
+    byte Update();
 
     static constexpr unsigned int CpuClock = 4194304;
 
@@ -19,6 +19,8 @@ private:
     union Register16;
     
     Opcode FetchNextOpcode();
+    void UpdateIme();
+    void HandleInterrupts();
 
     [[nodiscard]] byte ReadAtPcInc();
     [[nodiscard]] byte& ReadBusRef(word address);
@@ -148,4 +150,7 @@ private:
     Bus* _bus;
 
     byte _cyclesThisInstruction = 0;
+    byte _ime;
+    byte _halted;
+    bool _eiRequested;
 };

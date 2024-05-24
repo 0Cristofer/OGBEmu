@@ -5,21 +5,31 @@
 #include "Emulator/Memory/AddressConstants.h"
 #include "Emulator/Memory/Bus.h"
 
-Cpu::Cpu(Bus* bus) : _registers(), _registerSp(), _bus(bus)
+Cpu::Cpu(Bus* bus) : _registers(), _registerSp(), _bus(bus), _eiRequested(false)
 {
     // This is the only hardware initialization needed, everything else is done by the boot rom
+    _ime = 0;
+    _halted = 0;
     _registerPc.reg = 0;
     _bus->Write(AddressConstants::BootRomBank, 0);
     
     _bus->Write(0xff44, 0x90); // Hack to force boot with no screen
 }
 
-byte Cpu::ExecuteNextInstruction()
+byte Cpu::Update()
 {
     _cyclesThisInstruction = 0;
-    
-    const Opcode opcode = FetchNextOpcode();
-    ExecuteOpcode(opcode);
+
+    if (!_halted)
+    {
+        const Opcode opcode = FetchNextOpcode();
+        ExecuteOpcode(opcode);   
+    }
+    else
+        _cyclesThisInstruction += 4;
+
+    UpdateIme();
+    HandleInterrupts();
 
     return _cyclesThisInstruction;
 }
@@ -30,6 +40,79 @@ Opcode Cpu::FetchNextOpcode()
     opcode.code = ReadAtPcInc();
 
     return opcode;
+}
+
+void Cpu::UpdateIme()
+{
+    // Since EI needs to wait one instruction to be effective, we check if the previous instruction WASN't an EI (which means we're in the next instruction) to finalize it.
+    if (_eiRequested && _bus->Read(_registerPc.reg - 1) != 0xFB)
+    {
+        _eiRequested = false;
+        _ime = 1;
+    }
+}
+
+void Cpu::HandleInterrupts()
+{
+    const byte interruptEnable = _bus->Read(AddressConstants::StartIeAddress);
+    byte& interruptFlag = _bus->ReadRef(AddressConstants::InterruptFlag);
+    const byte interruptsOccurred = interruptEnable & interruptFlag;
+
+    if (!interruptsOccurred)
+        return;
+
+    _halted = 0;
+    
+    if (!_ime)
+        return;
+
+    _ime = 0;
+
+    const byte vBlank = interruptsOccurred & 0b00000001;
+    const byte lcd = interruptsOccurred & 0b00000010;
+    const byte timer = interruptsOccurred & 0b00000100;
+    const byte serial = interruptsOccurred & 0b00001000;
+    const byte joypad = interruptsOccurred & 0b00010000;
+    byte handledInterrupt;
+
+    _cyclesThisInstruction += 8;
+    Push(_registerPc);
+
+    if (vBlank)
+    {
+        _registerPc.reg = AddressConstants::VBlankHandlerAddress;
+        handledInterrupt = vBlank;
+    }
+    else if (lcd)
+    {
+        _registerPc.reg = AddressConstants::LcdHandlerAddress;
+        handledInterrupt = lcd;
+    }
+    else if (timer)
+    {
+        _registerPc.reg = AddressConstants::TimerHandlerAddress;
+        handledInterrupt = timer;
+    }
+    else if (serial)
+    {
+        _registerPc.reg = AddressConstants::SerialHandlerAddress;
+        handledInterrupt = serial;
+    }
+    else if (joypad)
+    {
+        _registerPc.reg = AddressConstants::JoypadHandlerAddress;
+        handledInterrupt = joypad;
+    }
+    else
+    {
+        LOG("Unknown interrupt: IE: " << interruptEnable << ", IF: " << interruptFlag);
+        _registerPc.reg = AddressConstants::JoypadHandlerAddress;
+        handledInterrupt = 0b00010000;
+    }
+
+    interruptFlag ^= handledInterrupt; // "Acknowledge" the interrupt by zeroing its bit
+    
+    _cyclesThisInstruction += 4;
 }
 
 byte Cpu::ReadAtPcInc()
@@ -516,7 +599,7 @@ void Cpu::LdHlSpE8()
 
 void Cpu::Halt()
 {
-    LOG("Function HALT not implemented");
+    _halted = 1;
 }
 
 void Cpu::Add(const byte val)
@@ -615,7 +698,8 @@ void Cpu::Nop()
 
 void Cpu::Stop()
 {
-    LOG("Function STOP not implemented");
+    LOG("Executing STOP");
+    _registerPc.reg++;
 }
 
 void Cpu::Jr(const byte test)
@@ -687,12 +771,12 @@ void Cpu::Inc16(word& target)
 
 void Cpu::Di()
 {
-    LOG("Function DI not implemented");
+    _ime = 0;
 }
 
 void Cpu::Ei()
 {
-    LOG("Function EI not implemented");
+    _eiRequested = true;
 }
 
 void Cpu::Call(const byte test, const word address)
@@ -773,7 +857,8 @@ void Cpu::Rst(const word address)
 
 void Cpu::Reti()
 {
-    LOG("Function Reti not implemented");
+    _ime = 1;
+    Ret(1);
 }
 
 void Cpu::Rrca()

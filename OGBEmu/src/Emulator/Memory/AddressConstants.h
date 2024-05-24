@@ -36,5 +36,13 @@ namespace AddressConstants
     constexpr word EndIeAddress = 0xFFFF;
 
     // IO addresses
-    constexpr word BootRomBank = 0xff50;
+    constexpr word InterruptFlag = 0xFF0F;
+    constexpr word BootRomBank = 0xFF50;
+
+    // Interrupt handler addresses (ISR)
+    constexpr word VBlankHandlerAddress = 0x40; 
+    constexpr word LcdHandlerAddress = 0x48; 
+    constexpr word TimerHandlerAddress = 0x50; 
+    constexpr word SerialHandlerAddress = 0x58; 
+    constexpr word JoypadHandlerAddress = 0x60; 
 };

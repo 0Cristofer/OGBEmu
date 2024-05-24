@@ -65,7 +65,7 @@ unsigned Device::DoFrame()
     
     while (cycleCount < _maxCyclesPerFrame)
     {
-        const byte cyclesExecuted = _cpu.ExecuteNextInstruction();
+        const byte cyclesExecuted = _cpu.Update();
         
         if (cyclesExecuted == 0)
         {
