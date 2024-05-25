@@ -1,5 +1,6 @@
 #include "Bus.h"
 
+#include "EchoRam.h"
 #include "Core/Logger.h"
 
 #include "Emulator/Memory/AddressConstants.h"
@@ -280,6 +281,7 @@ void Bus::WriteExternalRam(const word address, const byte data)
 void Bus::WriteWRam(const word address, const byte data) const
 {
     _wRam->Write(address, data);
+    _echoRam->Write(address + (AddressConstants::StartEchoRamAddress - AddressConstants::StartWRamAddress), data);
 }
 
 void Bus::WriteCgbWRam(const word address, const byte data)
@@ -287,9 +289,12 @@ void Bus::WriteCgbWRam(const word address, const byte data)
     LOG("Invalid write WriteCgbWRam " << address);
 }
 
-void Bus::WriteEchoRam(const word address, const byte data)
+void Bus::WriteEchoRam(const word address, const byte data) const
 {
     LOG("Invalid write WriteEchoRam " << address);
+    
+    _echoRam->Write(address, data);
+    _wRam->Write(address - (AddressConstants::StartEchoRamAddress - AddressConstants::StartWRamAddress), data);
 }
 
 void Bus::WriteOam(const word address, const byte data) const

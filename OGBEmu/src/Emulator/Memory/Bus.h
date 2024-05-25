@@ -45,7 +45,7 @@ private:
     void WriteExternalRam(word address, byte data);
     void WriteWRam(word address, byte data) const;
     void WriteCgbWRam(word address, byte data);
-    void WriteEchoRam(word address, byte data);
+    void WriteEchoRam(word address, byte data) const;
     void WriteOam(word address, byte data) const;
     void WriteNotUsed(word address, byte data);
     void WriteIoRegisters(word address, byte data) const;
