@@ -23,7 +23,7 @@ byte Cpu::Update()
     if (!_halted)
     {
         const Opcode opcode = FetchNextOpcode();
-        ExecuteOpcode(opcode);   
+        ExecuteOpcode(opcode);
     }
     else
         _cyclesThisInstruction += 4;
@@ -55,7 +55,7 @@ void Cpu::UpdateIme()
 void Cpu::HandleInterrupts()
 {
     const byte interruptEnable = _bus->Read(AddressConstants::StartIeAddress);
-    byte& interruptFlag = _bus->ReadRef(AddressConstants::InterruptFlag);
+    const byte interruptFlag = _bus->Read(AddressConstants::InterruptFlag);
     const byte interruptsOccurred = interruptEnable & interruptFlag;
 
     if (!interruptsOccurred)
@@ -74,56 +74,48 @@ void Cpu::HandleInterrupts()
     const byte serial = interruptsOccurred & 0b00001000;
     const byte joypad = interruptsOccurred & 0b00010000;
     byte handledInterrupt;
-
-    _cyclesThisInstruction += 8;
-    Push(_registerPc);
+    word jumpAddress;
 
     if (vBlank)
     {
-        _registerPc.reg = AddressConstants::VBlankHandlerAddress;
+        jumpAddress = AddressConstants::VBlankHandlerAddress;
         handledInterrupt = vBlank;
     }
     else if (lcd)
     {
-        _registerPc.reg = AddressConstants::LcdHandlerAddress;
+        jumpAddress = AddressConstants::LcdHandlerAddress;
         handledInterrupt = lcd;
     }
     else if (timer)
     {
-        _registerPc.reg = AddressConstants::TimerHandlerAddress;
+        jumpAddress = AddressConstants::TimerHandlerAddress;
         handledInterrupt = timer;
     }
     else if (serial)
     {
-        _registerPc.reg = AddressConstants::SerialHandlerAddress;
+        jumpAddress = AddressConstants::SerialHandlerAddress;
         handledInterrupt = serial;
     }
     else if (joypad)
     {
-        _registerPc.reg = AddressConstants::JoypadHandlerAddress;
+        jumpAddress = AddressConstants::JoypadHandlerAddress;
         handledInterrupt = joypad;
     }
     else
     {
         LOG("Unknown interrupt: IE: " << interruptEnable << ", IF: " << interruptFlag);
-        _registerPc.reg = AddressConstants::JoypadHandlerAddress;
+        jumpAddress = AddressConstants::JoypadHandlerAddress;
         handledInterrupt = 0b00010000;
     }
 
-    interruptFlag ^= handledInterrupt; // "Acknowledge" the interrupt by zeroing its bit
-    
     _cyclesThisInstruction += 4;
+    WriteBus(AddressConstants::InterruptFlag, interruptFlag ^ handledInterrupt); // "Acknowledge" the interrupt by zeroing its bit
+    Call(jumpAddress);
 }
 
 byte Cpu::ReadAtPcInc()
 {
     return ReadBus(_registerPc.reg++);
-}
-
-byte& Cpu::ReadBusRef(const word address)
-{
-    _cyclesThisInstruction += 4;
-    return _bus->ReadRef(address);
 }
 
 byte Cpu::ReadBus(const word address)
@@ -135,6 +127,12 @@ byte Cpu::ReadBus(const word address)
 byte Cpu::ReadAtSp() const
 {
     return _bus->Read(_registerSp.reg);
+}
+
+void Cpu::WriteBus(const word address, const byte data)
+{
+    _cyclesThisInstruction += 4;
+    _bus->Write(address, data);
 }
 
 void Cpu::WriteAtSp(const byte data) const
@@ -168,10 +166,10 @@ void Cpu::ExecuteHighFunction(const Opcode opcode)
         const byte sourceIndex = opcode.column3;
 
         if (targetIndex == 6)
-            return Ld8(ReadBusRef(_registers.hl.reg), _registers.registers8[ConvertReg8Index(sourceIndex)]);
+            return Ld8Ta(_registers.hl.reg, sourceIndex);
         if (sourceIndex == 6)
-            return Ld8(_registers.registers8[ConvertReg8Index(targetIndex)], ReadBusRef(_registers.hl.reg));
-        return Ld8(_registers.registers8[ConvertReg8Index(targetIndex)], _registers.registers8[ConvertReg8Index(sourceIndex)]);
+            return Ld8Sa(targetIndex, _registers.hl.reg);
+        return Ld8R(targetIndex, sourceIndex);
     }
 
     if (opcode.row5 == 020)
@@ -254,7 +252,7 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
             const byte test = opcode.column == 0 ? !flag : flag;
 
             _cyclesThisInstruction += 4;
-            return Ret(test);
+            return RetTest(test);
         }
     }
     
@@ -267,12 +265,12 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
 
         if (opcode.high == 0xE || opcode.high == 0xF)
         {
-            const word imm = 0xff00 + static_cast<word>(ReadAtPcInc());
-            byte& valAtImm = ReadBusRef(imm);
+            const word address = 0xff00 + static_cast<word>(ReadAtPcInc());
+            constexpr byte aRegIndex = 0x7;
 
             if (opcode.high == 0xE)
-                return Ld8(valAtImm, _registers.a);
-            return Ld8(_registers.a, valAtImm);
+                return Ld8Ta(address, aRegIndex);
+            return Ld8Sa(aRegIndex, address);
         }
     }
 
@@ -280,8 +278,9 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
     {
         if (opcode.high < 0x4)
         {
-            Register16& target = opcode.high == 0x3 ? _registerSp : _registers.registers16[opcode.row];
-            return Ld16(target.reg, ReadImm16AtPc());
+            if (opcode.high == 0x3)
+                return LdSpTImm();
+            return Ld16Imm(opcode.row);
         }
 
         if (opcode.high > 0xB)
@@ -294,22 +293,29 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
     {
         if (opcode.row5 < 010)
         {
+            constexpr byte aRegIndex = 0x7;
+
             if (opcode.row5 % 2 == 0)
             {
+                word address;
                 if (opcode.row == 0x2)
-                    return Ld8(ReadBusRef(_registers.hl.reg++), _registers.a);
-                if (opcode.row == 0x3)
-                    return Ld8(ReadBusRef(_registers.hl.reg--), _registers.a);
-                
-                return Ld8(ReadBusRef(_registers.registers16[opcode.row].reg), _registers.a);
+                    address = _registers.hl.reg++;
+                else if (opcode.row == 0x3)
+                    address = _registers.hl.reg--;
+                else
+                    address = _registers.registers16[opcode.row].reg;
+                return Ld8Ta(address, aRegIndex);
             }
 
+            word address;
             if (opcode.row == 0x2)
-                return Ld8(_registers.a, ReadBusRef(_registers.hl.reg++));
-            if (opcode.row == 0x3)
-                return Ld8(_registers.a, ReadBusRef(_registers.hl.reg--));
-                
-            return Ld8( _registers.a, ReadBusRef(_registers.registers16[opcode.row].reg));
+                address = _registers.hl.reg++;
+            else if (opcode.row == 0x3)
+                address = _registers.hl.reg--;
+            else
+                address = _registers.registers16[opcode.row].reg;
+
+            return Ld8Sa(aRegIndex, address);
         }
 
         if (opcode.row5 > 027 && opcode.row5 < 034)
@@ -317,24 +323,26 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
             const byte flag = opcode.row5 < 032 ? _registers.f.z : _registers.f.c;
             const byte test = opcode.column == 0x2 ? !flag : flag;
             
-            return Jp(test, ReadImm16AtPc());
+            return JpTest(test, ReadImm16AtPc());
         }
 
         if (opcode.row5 > 033)
         {
+            constexpr byte aRegIndex = 0x7;
+
             if (opcode.row5 % 2 == 0)
             {
                 const word address = 0xff00 + static_cast<word>(_registers.c);
                 if (opcode.high == 0xE)
-                    return Ld8(ReadBusRef(address), _registers.a);
+                    return Ld8Ta(address, aRegIndex);
                 if (opcode.high == 0xF)
-                    return Ld8(_registers.a, ReadBus(address));
+                    return Ld8Sa(aRegIndex, address);
             }
 
             if (opcode.high == 0xE)
-                return Ld8(ReadBusRef(ReadImm16AtPc()), _registers.a);
+                return Ld8Ta(ReadImm16AtPc(), aRegIndex);
             if (opcode.high == 0xF)
-                return Ld8(_registers.a, ReadBus(ReadImm16AtPc()));
+                return Ld8Sa(aRegIndex, ReadImm16AtPc());
         }
     }
 
@@ -345,7 +353,7 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
         if (opcode.high == 0x4)
             return Inc16(_registerSp.reg);
         if (opcode.high == 0xC)
-            return Jp(1, ReadImm16AtPc());
+            return Jp(ReadImm16AtPc());
         if (opcode.high == 0xF)
             return Di();
     }
@@ -353,10 +361,7 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
     if (opcode.column3 == 04)
     {
         if (opcode.row5 == 06)
-        {
-            _cyclesThisInstruction += 4;
-            return Inc8(ReadBusRef(_registers.hl.reg));
-        }
+            return Inc8Add(_registers.hl.reg);
         if (opcode.row5 < 010)
             return Inc8(_registers.registers8[ConvertReg8Index(opcode.row5)]);
 
@@ -365,19 +370,16 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
             const byte flag = opcode.row5 < 032 ? _registers.f.z : _registers.f.c;
             const byte test = opcode.column == 0 ? !flag : flag;
             
-            return Call(test, ReadImm16AtPc());
+            return CallTest(test, ReadImm16AtPc());
         }
     }
 
     if (opcode.column3 == 05)
     {
         if (opcode.row5 == 06)
-        {
-            _cyclesThisInstruction += 4;
-            return Dec(ReadBusRef(_registers.hl.reg));
-        }
+            return Dec8Add(_registers.hl.reg);
         if (opcode.row5 < 010)
-            return Dec(_registers.registers8[ConvertReg8Index(opcode.row5)]);
+            return Dec8(_registers.registers8[ConvertReg8Index(opcode.row5)]);
     }
 
     if (opcode.low == 0x5)
@@ -401,12 +403,11 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
     {
         if (opcode.row5 < 010)
         {
-            const byte source = ReadAtPcInc();
             const byte targetRegister = opcode.row5;
 
             if (targetRegister == 0x6)
-                return Ld8(ReadBusRef(_registers.hl.reg), source);
-            return Ld8(_registers.registers8[ConvertReg8Index(targetRegister)], source);
+                return Ld8TaImm(_registers.hl.reg);
+            return Ld8Imm(targetRegister);
         }
     }
 
@@ -443,13 +444,7 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
     if (opcode.low == 0x8)
     {
         if (opcode.high == 0x0)
-        {
-            const word imm = ReadImm16AtPc();
-
-            Ld8(ReadBusRef(imm), _registerSp.hi);
-            Ld8(ReadBusRef(imm + 1), _registerSp.lo);
-            return;
-        }
+            return LdImmTaSp();
 
         if (opcode.high == 0xE)
             return AddSp();
@@ -464,19 +459,13 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
         if (opcode.high == 0x4)
             return Add16(_registerSp.reg);
         if (opcode.high == 0xC)
-            return Ret(1);
+            return Ret();
         if (opcode.high == 0xD)
             return Reti();
         if (opcode.high == 0xE)
             return JpHl();
-
         if (opcode.high == 0xF)
-        {
-            _cyclesThisInstruction += 4;
-            
-            Ld16(_registerSp.reg, _registers.hl.reg);
-            return;
-        }
+            return LdSpS(_registers.hl.reg);
     }
 
     if (opcode.low == 0xB)
@@ -493,7 +482,7 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
     
     if (opcode.low == 0xD)
         if (opcode.high == 0xC)
-            return Call(1, ReadImm16AtPc());
+            return Call(ReadImm16AtPc());
 
     if (opcode.low == 0xE)
     {
@@ -526,60 +515,89 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
 void Cpu::ExecutePrefix()
 {
     const Opcode prefixOpcode = FetchNextOpcode();
+    
+    const byte testBit = (prefixOpcode.row5 - 010) % 010;
+    byte target = prefixOpcode.column3 == 06 ? ReadBus(_registers.hl.reg) : _registers.registers8[ConvertReg8Index(prefixOpcode.column3)];
 
-    if (prefixOpcode.row5 > 07 && prefixOpcode.row5 < 020)
+    if (prefixOpcode.row5 == 00)
+        Rlc(target);
+    else if (prefixOpcode.row5 == 01)
+        Rrc(target);
+    else if (prefixOpcode.row5 == 02)
+        Rl(target);
+    else if (prefixOpcode.row5 == 03)
+        Rr(target);
+    else if (prefixOpcode.row5 == 04)
+        Sla(target);
+    else if (prefixOpcode.row5 == 05)
+        Sra(target);
+    else if (prefixOpcode.row5 == 06)
+        Swap(target);
+    else if (prefixOpcode.row5 == 07)
+        Srl(target);
+    else if (prefixOpcode.row5 > 07 && prefixOpcode.row5 < 020)
     {
-        const byte testR8 = prefixOpcode.column3 != 06
-                             ? _registers.registers8[ConvertReg8Index(prefixOpcode.column3)]
-                             : ReadBus(_registers.hl.reg);
-        const byte testBit = (prefixOpcode.row5 - 010) % 010;
-
-        Bit(testBit, testR8);
+        Bit(testBit, target);
         return;
     }
-    
-    byte& target = prefixOpcode.column3 != 06
-                             ? _registers.registers8[ConvertReg8Index(prefixOpcode.column3)]
-                             : ReadBusRef(_registers.hl.reg);
+    else if (prefixOpcode.row5 > 017 && prefixOpcode.row5 < 030)
+        Res(testBit, target);
+    else if (prefixOpcode.row5 > 027)
+        Set(testBit, target);
 
-    if (prefixOpcode.column3 == 06)
-        _cyclesThisInstruction += 4;
-    
-    if (prefixOpcode.row5 == 00)
-        return Rlc(target);
-    if (prefixOpcode.row5 == 01)
-        return Rrc(target);
-    if (prefixOpcode.row5 == 02)
-        return Rl(target);
-    if (prefixOpcode.row5 == 03)
-        return Rr(target);
-    if (prefixOpcode.row5 == 04)
-        return Sla(target);
-    if (prefixOpcode.row5 == 05)
-        return Sra(target);
     if (prefixOpcode.row5 == 06)
-        return Swap(target);
-    if (prefixOpcode.row5 == 07)
-        return Srl(target);
+        return WriteBus(_registers.hl.reg, target);
 
-    const byte testBit = (prefixOpcode.row5 - 010) % 010;
-    if (prefixOpcode.row5 > 017 && prefixOpcode.row5 < 030)
-        return Res(testBit, target);
-    if (prefixOpcode.row5 > 027)
-        return Set(testBit, target);
-
-    LOG("Prefix function Op Code not found. Row " << static_cast<int>(prefixOpcode.row5) << ", column " << static_cast<
-        int>(prefixOpcode.column3));
+    _registers.registers8[ConvertReg8Index(prefixOpcode.column3)] = target;
 }
 
-void Cpu::Ld8(byte& target, const byte source)
+void Cpu::Ld8R(const byte targetIndex, const byte sourceIndex)
 {
-    target = source;
+    _registers.registers8[ConvertReg8Index(targetIndex)] = _registers.registers8[ConvertReg8Index(sourceIndex)];
 }
 
-void Cpu::Ld16(word& target, const word source)
+void Cpu::Ld8Imm(const byte targetIndex)
 {
-    target = source;
+    _registers.registers8[ConvertReg8Index(targetIndex)] = ReadAtPcInc();
+}
+
+void Cpu::Ld8TaImm(const word address)
+{
+    WriteBus(address, ReadAtPcInc());
+}
+
+void Cpu::Ld8Sa(const byte targetIndex, const word sourceAddress)
+{
+    _registers.registers8[ConvertReg8Index(targetIndex)] = ReadBus(sourceAddress);
+}
+
+void Cpu::Ld8Ta(const word targetAddress, const byte sourceIndex)
+{
+    WriteBus(targetAddress, ConvertReg8Index(sourceIndex));
+}
+
+void Cpu::Ld16Imm(const byte targetIndex)
+{
+    _registers.registers16[targetIndex].reg = ReadImm16AtPc();
+}
+
+void Cpu::LdSpTImm()
+{
+    _registerSp.reg = ReadImm16AtPc();
+}
+
+void Cpu::LdSpS(const word val)
+{
+    _cyclesThisInstruction += 4;
+    _registerSp.reg = val;
+}
+
+void Cpu::LdImmTaSp()
+{
+    const word imm = ReadImm16AtPc();
+
+    WriteBus(imm, _registerSp.hi);
+    WriteBus(imm + 1, _registerSp.lo);
 }
 
 void Cpu::LdHlSpE8()
@@ -716,14 +734,18 @@ void Cpu::Jr(const byte test)
     _cyclesThisInstruction += 4;
 }
 
-void Cpu::Ret(const byte test)
+void Cpu::Ret()
+{
+    _cyclesThisInstruction += 4;
+    Pop(_registerPc);
+}
+
+void Cpu::RetTest(const byte test)
 {
     if (!test)
         return;
 
-    _cyclesThisInstruction += 4;
-
-    Pop(_registerPc);
+    Ret();
 }
 
 void Cpu::AddSp()
@@ -739,13 +761,18 @@ void Cpu::AddSp()
     _cyclesThisInstruction += 8;
 }
 
-void Cpu::Jp(const byte test, const word address)
+void Cpu::Jp(const word address)
+{
+    _registerPc.reg = address;
+    _cyclesThisInstruction += 4;
+}
+
+void Cpu::JpTest(const byte test, const word address)
 {
     if (!test)
         return;
 
-    _registerPc.reg = address;
-    _cyclesThisInstruction += 4;
+    Jp(address);
 }
 
 void Cpu::JpHl()
@@ -761,6 +788,13 @@ void Cpu::Inc8(byte& target)
     _registers.f.z = target == 0;
     _registers.f.n = 0;
     _registers.f.h = (prev & 0xF) == 0xF;
+}
+
+void Cpu::Inc8Add(const word address)
+{
+    byte target = ReadBus(address);
+    Inc8(target);
+    WriteBus(address, target);
 }
 
 void Cpu::Inc16(word& target)
@@ -779,16 +813,21 @@ void Cpu::Ei()
     _eiRequested = true;
 }
 
-void Cpu::Call(const byte test, const word address)
+void Cpu::Call(const word address)
+{
+    Push(_registerPc);
+    Jp(address);
+}
+
+void Cpu::CallTest(const byte test, const word address)
 {
     if (!test)
         return;
 
-    Push(_registerPc);
-    Jp(1, address);
+    Call(address);
 }
 
-void Cpu::Dec(byte& target)
+void Cpu::Dec8(byte& target)
 {
     const int diff = target - 1;
     
@@ -796,6 +835,13 @@ void Cpu::Dec(byte& target)
     target = static_cast<byte>(diff);
     _registers.f.n = 1;
     _registers.f.z = !target;
+}
+
+void Cpu::Dec8Add(word address)
+{
+    byte target = ReadBus(address);
+    Dec8(target);
+    WriteBus(address, target);
 }
 
 void Cpu::Dec16(word& target)
@@ -883,13 +929,13 @@ void Cpu::Scf()
 
 void Cpu::Rst(const word address)
 {
-    Call(1, address);
+    Call(address);
 }
 
 void Cpu::Reti()
 {
     _ime = 1;
-    Ret(1);
+    Ret();
 }
 
 void Cpu::Rrca()

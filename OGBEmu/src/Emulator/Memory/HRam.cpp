@@ -8,22 +8,17 @@ HRam::HRam() : _bytes(AddressConstants::EndHRamAddress - AddressConstants::Start
 {
 }
 
-byte& HRam::ReadRef(const word busAddress)
+byte HRam::Read(const word busAddress)
 {
     const word internalAddress = TranslateAddress(busAddress);
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
         LOG("Invalid HRam read, address " << busAddress);
-        return ReadRef(0);
+        return Read(0);
     }
 
     return _bytes[internalAddress];
-}
-
-byte HRam::Read(const word busAddress)
-{
-    return ReadRef(busAddress);
 }
 
 void HRam::Write(const word busAddress, const byte data)

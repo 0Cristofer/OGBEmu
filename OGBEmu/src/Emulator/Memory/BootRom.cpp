@@ -10,18 +10,13 @@ BootRom::BootRom(std::vector<byte> romBytes): _rom(std::move(romBytes))
     }
 }
 
-byte& BootRom::ReadRef(const word address)
+byte BootRom::Read(const word address)
 {
     if (address >= _rom.size())
     {
         LOG("Invalid Boot ROM read, address: " << address);
-        return ReadRef(0);
+        return Read(0);
     }
 
     return _rom[address];
-}
-
-byte BootRom::Read(const word address)
-{
-    return ReadRef(address);
 }

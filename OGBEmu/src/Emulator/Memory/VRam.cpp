@@ -8,22 +8,17 @@ VRam::VRam() : _bytes(AddressConstants::EndVRamAddress - AddressConstants::Start
 {
 }
 
-byte& VRam::ReadRef(const word busAddress)
+byte VRam::Read(const word busAddress)
 {
     const word internalAddress = TranslateAddress(busAddress);
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
         LOG("Invalid VRam read, address " << busAddress);
-        return ReadRef(0);
+        return Read(0);
     }
 
     return _bytes[internalAddress];
-}
-
-byte VRam::Read(const word busAddress)
-{
-    return ReadRef(busAddress);
 }
 
 void VRam::Write(const word busAddress, const byte data)

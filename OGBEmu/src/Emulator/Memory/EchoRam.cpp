@@ -8,7 +8,7 @@ EchoRam::EchoRam() : _bytes(AddressConstants::EndEchoRamAddress - AddressConstan
 {
 }
 
-byte& EchoRam::ReadRef(const word busAddress)
+byte EchoRam::Read(const word busAddress)
 {
     LOG("Invalid EchoRam read, address " << busAddress);
 
@@ -16,15 +16,10 @@ byte& EchoRam::ReadRef(const word busAddress)
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
-        return ReadRef(0);
+        return Read(0);
     }
 
     return _bytes[internalAddress];
-}
-
-byte EchoRam::Read(const word busAddress)
-{
-    return ReadRef(busAddress);
 }
 
 void EchoRam::Write(const word busAddress, const byte data)

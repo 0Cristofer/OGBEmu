@@ -21,7 +21,7 @@ Bus::Bus(BootRom* bootRom, Cartridge* cartridge, VRam* vRam, WRam* wRam, EchoRam
 {
 }
 
-byte& Bus::ReadRef(const word address)
+byte Bus::Read(const word address)
 {
     if (address <= AddressConstants::EndRomBank0Address)
     {
@@ -84,12 +84,7 @@ byte& Bus::ReadRef(const word address)
     }
 
     LOG("Trying to read unmapped area, address " << address);
-    return ReadRef(0);
-}
-
-byte Bus::Read(const word address)
-{
-    return ReadRef(address);
+    return Read(0);
 }
 
 void Bus::Write(const word address, const byte data)
@@ -174,7 +169,7 @@ bool Bus::IsBootRomEnabled()
     return Read(AddressConstants::BootRomBank) == 0;
 }
 
-byte& Bus::ReadCartridgeBank0(const word address)
+byte Bus::ReadCartridgeBank0(const word address)
 {
     if (address <= AddressConstants::EndBootRomAddress)
     {
@@ -185,70 +180,70 @@ byte& Bus::ReadCartridgeBank0(const word address)
     }
     
     LOG("ReadCartridgeBank0 not fully implemented, address " << address);
-    return _cartridge->ReadRef(address);
+    return _cartridge->Read(address);
 }
 
-byte& Bus::ReadBootRom(const word address) const
+byte Bus::ReadBootRom(const word address) const
 {
-    return _bootRom->ReadRef(address);
+    return _bootRom->Read(address);
 }
 
-byte& Bus::ReadCartridgeBankN(const word address)
+byte Bus::ReadCartridgeBankN(const word address)
 {
     LOG("ReadCartridgeBankN not implemented, address " << address);
-    return ReadRef(0);
+    return Read(0);
 }
 
-byte& Bus::ReadVRam(const word address) const
+byte Bus::ReadVRam(const word address) const
 {
-    return _vRam->ReadRef(address);
+    return _vRam->Read(address);
 }
 
-byte& Bus::ReadExternalRam(const word address)
+byte Bus::ReadExternalRam(const word address)
 {
     LOG("ReadExternalRam not implemented, address " << address);
-    return ReadRef(0);
+    return Read(0);
 }
 
-byte& Bus::ReadWRam(const word address) const
+byte Bus::ReadWRam(const word address) const
 {
-    return _wRam->ReadRef(address);
+    return _wRam->Read(address);
 }
 
-byte& Bus::ReadCgbWRam(const word address)
+byte Bus::ReadCgbWRam(const word address)
 {
     LOG("ReadCgbWRam not implemented, address " << address);
-    return ReadRef(0);
+    return Read(0);
 }
 
-byte& Bus::ReadEchoRam(const word address)
+byte Bus::ReadEchoRam(const word address)
 {
     LOG("ReadEchoRam not implemented, address " << address);
-    return ReadRef(0);
+    return Read(0);
 }
 
-byte& Bus::ReadOam(const word address) const
+byte Bus::ReadOam(const word address) const
 {
-    return _oam->ReadRef(address);
+    return _oam->Read(address);
 }
 
-byte& Bus::ReadNotUsed(const word address)
+byte Bus::ReadNotUsed(const word address)
 {
     LOG("ReadNotUsed not implemented, address " << address);
-    return ReadRef(0);
+    return Read(0);
 }
 
-byte& Bus::ReadIoRegisters(const word address) const
+byte Bus::ReadIoRegisters(const word address) const
 {
-    return _ioRegisters->ReadRef(address);
+    return _ioRegisters->Read(address);
 }
 
-byte& Bus::ReadHRam(const word address) const
+byte Bus::ReadHRam(const word address) const
 {
-    return _hRam->ReadRef(address);
+    return _hRam->Read(address);
 }
 
-byte& Bus::ReadIe(const word address)
+byte Bus::ReadIe(const word address)
 {
     return _ie;
 }

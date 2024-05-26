@@ -23,9 +23,9 @@ private:
     void HandleInterrupts();
 
     [[nodiscard]] byte ReadAtPcInc();
-    [[nodiscard]] byte& ReadBusRef(word address);
     [[nodiscard]] byte ReadBus(word address);
     [[nodiscard]] byte ReadAtSp() const;
+    void WriteBus(word address, byte data);
     void WriteAtSp(byte data) const;
     inline word ReadImm16AtPc();
 
@@ -35,8 +35,15 @@ private:
     void ExecutePrefix();
 
     // Most ALU instructions were based on https://github.com/mgba-emu/mgba/blob/master/src/sm83/isa-sm83.c
-    static void Ld8(byte& target, byte source);
-    static void Ld16(word& target, word source);
+    void Ld8R(byte targetIndex, byte sourceIndex);
+    void Ld8Imm(byte targetIndex);
+    void Ld8TaImm(word address);
+    void Ld8Sa(byte targetIndex, word sourceAddress);
+    void Ld8Ta(word targetAddress, byte sourceIndex);
+    void Ld16Imm(byte targetIndex);
+    void LdSpTImm();
+    void LdSpS(word val);
+    void LdImmTaSp();
     void LdHlSpE8();
     void Halt();
     void Add(byte val);
@@ -50,16 +57,21 @@ private:
     static void Nop();
     void Stop();
     void Jr(byte test);
-    void Ret(byte test);
+    void Ret();
+    void RetTest(byte test);
     void AddSp();
-    void Jp(byte test, word address);
+    void Jp(word address);
+    void JpTest(byte test, word address);
     void JpHl();
     void Inc8(byte& target);
+    void Inc8Add(word address);
     void Inc16(word& target);
     void Di();
     void Ei();
-    void Call(byte test, word address);
-    void Dec(byte& target);
+    void Call(word address);
+    void CallTest(byte test, word address);
+    void Dec8(byte& target);
+    void Dec8Add(word address);
     void Dec16(word& target);
     void Add16(word& target);
     void Push(Register16 register16Data);
