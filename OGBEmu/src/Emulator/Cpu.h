@@ -56,7 +56,8 @@ private:
     void Cp(byte val);
     static void Nop();
     void Stop();
-    void Jr(byte test);
+    void Jr(signed_byte offset);
+    void JrTest(byte test, signed_byte offset);
     void Ret();
     void RetTest(byte test);
     void AddSp();

@@ -243,13 +243,13 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
     if (opcode.column3 == 00)
     {
         if (opcode.row5 == 03)
-            return Jr(1);
-        if (opcode.row5 < 010)
+            return Jr(static_cast<signed_byte>(ReadAtPcInc()));
+        if (opcode.row5 > 03 && opcode.row5 < 010)
         {
             const byte flag = opcode.row5 < 06 ? _registers.f.z : _registers.f.c;
             const byte test = opcode.column == 0 ? !flag : flag;
             
-            return Jr(test);
+            return JrTest(test, static_cast<signed_byte>(ReadAtPcInc()));
         }
 
         if (opcode.row5 > 027 && opcode.row5 < 034)
@@ -390,18 +390,10 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
 
     if (opcode.low == 0x5)
     {
-        if (opcode.high > 0xB && opcode.high < 0xf)
+        if (opcode.high > 0xB)
         {
             _cyclesThisInstruction += 4;
             return Push(_registers.registers16[opcode.high - 0xC]);
-        }
-        if (opcode.high == 0xf)
-        {
-            Register16 register16;
-            register16.reg = static_cast<word>(static_cast<word>(_registers.a) << 8 | static_cast<int>(_registers.f.reg));
-
-            _cyclesThisInstruction += 4;
-            return Push(register16);
         }
     }
 
@@ -551,9 +543,8 @@ void Cpu::ExecutePrefix()
     else if (prefixOpcode.row5 > 027)
         Set(testBit, target);
 
-    if (prefixOpcode.row5 == 06)
+    if (prefixOpcode.column3 == 06)
         return WriteBus(_registers.hl.reg, target);
-
     _registers.registers8[ConvertReg8Index(prefixOpcode.column3)] = target;
 }
 
@@ -579,7 +570,7 @@ void Cpu::Ld8Sa(const byte targetIndex, const word sourceAddress)
 
 void Cpu::Ld8Ta(const word targetAddress, const byte sourceIndex)
 {
-    WriteBus(targetAddress, ConvertReg8Index(sourceIndex));
+    WriteBus(targetAddress, _registers.registers8[ConvertReg8Index(sourceIndex)]);
 }
 
 void Cpu::Ld16Imm(const byte targetIndex)
@@ -602,8 +593,8 @@ void Cpu::LdImmTaSp()
 {
     const word imm = ReadImm16AtPc();
 
-    WriteBus(imm, _registerSp.hi);
-    WriteBus(imm + 1, _registerSp.lo);
+    WriteBus(imm, _registerSp.lo);
+    WriteBus(imm + 1, _registerSp.hi);
 }
 
 void Cpu::LdHlSpE8()
@@ -726,18 +717,19 @@ void Cpu::Stop()
     _registerPc.reg++;
 }
 
-void Cpu::Jr(const byte test)
+void Cpu::Jr(const signed_byte offset)
 {
-    const signed_byte e8 = static_cast<signed_byte>(ReadAtPcInc());
-    const word newPc = _registerPc.reg + static_cast<word>(e8);
-
-    if (!test)
-    {
-        return;
-    }
+    const word newPc = _registerPc.reg + static_cast<word>(offset);
 
     _registerPc.reg = newPc;
     _cyclesThisInstruction += 4;
+}
+
+void Cpu::JrTest(const byte test, const signed_byte offset)
+{
+    if (!test)
+        return;
+    Jr(offset);
 }
 
 void Cpu::Ret()
@@ -864,18 +856,18 @@ void Cpu::Add16(word& target)
 
 void Cpu::Push(const Register16 register16Data)
 {
+    WriteAtSp(register16Data.lo);
     Dec16(_registerSp.reg);
     WriteAtSp(register16Data.hi);
     Dec16(_registerSp.reg);
-    WriteAtSp(register16Data.lo);
 }
 
 void Cpu::Pop(Register16& register16Target)
 {
-    register16Target.lo = ReadAtSp();
     Inc16(_registerSp.reg);
     register16Target.hi = ReadAtSp();
     Inc16(_registerSp.reg);
+    register16Target.lo = ReadAtSp();
 }
 
 void Cpu::Rlca()
