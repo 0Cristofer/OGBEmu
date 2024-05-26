@@ -35,22 +35,24 @@ private:
     [[nodiscard]] byte ReadNotUsed(word address);
     [[nodiscard]] byte ReadIoRegisters(word address) const;
     [[nodiscard]] byte ReadHRam(word address) const;
-    [[nodiscard]] byte ReadIe(word address);
+    [[nodiscard]] byte ReadIe(word address) const;
 
     static void WriteCartridgeBank0(word address, byte data);
     static void WriteBootRom(word address, byte data);
     static void WriteCartridgeBankN(word address, byte data);
     void WriteVRam(word address, byte data) const;
-    void WriteExternalRam(word address, byte data);
+    static void WriteExternalRam(word address, byte data);
     void WriteWRam(word address, byte data) const;
-    void WriteCgbWRam(word address, byte data);
+    static void WriteCgbWRam(word address, byte data);
     void WriteEchoRam(word address, byte data) const;
     void WriteOam(word address, byte data) const;
-    void WriteNotUsed(word address, byte data);
-    void WriteIoRegisters(word address, byte data) const;
+    static void WriteNotUsed(word address, byte data);
+    void WriteIoRegisters(word address, byte data);
     void WriteHRam(word address, byte data) const;
     void WriteIe(word address, byte data);
 
+    void DoDma(byte data);
+    
     BootRom* _bootRom;
     Cartridge* _cartridge;
     VRam* _vRam;

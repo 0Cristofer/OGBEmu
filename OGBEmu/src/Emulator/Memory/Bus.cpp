@@ -243,7 +243,7 @@ byte Bus::ReadHRam(const word address) const
     return _hRam->Read(address);
 }
 
-byte Bus::ReadIe(const word address)
+byte Bus::ReadIe(const word address) const
 {
     return _ie;
 }
@@ -302,8 +302,11 @@ void Bus::WriteNotUsed(const word address, const byte data)
     LOG("Invalid write WriteNotUsed " << address);
 }
 
-void Bus::WriteIoRegisters(const word address, const byte data) const
+void Bus::WriteIoRegisters(const word address, const byte data)
 {
+    if (address == AddressConstants::DmaStart)
+        return DoDma(data);
+    
     _ioRegisters->Write(address, data);
 }
 
@@ -315,4 +318,15 @@ void Bus::WriteHRam(const word address, const byte data) const
 void Bus::WriteIe(const word address, const byte data)
 {
     _ie = data;
+}
+
+void Bus::DoDma(const byte data)
+{
+    const word startAddress = static_cast<word>(data << 8);
+    constexpr word oamRange = AddressConstants::EndOamAddress - AddressConstants::StartOamAddress + 1;
+
+    for (word i = 0; i < oamRange; i++)
+    {
+        Write(AddressConstants::StartOamAddress + 0, Read(startAddress + i));
+    }
 }

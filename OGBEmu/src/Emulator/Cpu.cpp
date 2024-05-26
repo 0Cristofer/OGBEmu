@@ -20,6 +20,9 @@ byte Cpu::Update()
 {
     _cyclesThisInstruction = 0;
 
+    if (_registerPc.reg == 0x100)
+        LOG("Finished boot");
+
     if (!_halted)
     {
         const Opcode opcode = FetchNextOpcode();
@@ -169,6 +172,9 @@ void Cpu::ExecuteHighFunction(const Opcode opcode)
             return Ld8Ta(_registers.hl.reg, sourceIndex);
         if (sourceIndex == 6)
             return Ld8Sa(targetIndex, _registers.hl.reg);
+
+        if (opcode.row5 == 010 && opcode.column3 == 0)
+            LOG("Debug break");
         return Ld8R(targetIndex, sourceIndex);
     }
 
