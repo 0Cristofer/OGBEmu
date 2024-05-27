@@ -1,5 +1,7 @@
 #include "HRam.h"
 
+#include <format>
+
 #include "Core/Logger.h"
 
 #include "Emulator/Memory/AddressConstants.h"
@@ -8,14 +10,14 @@ HRam::HRam() : _bytes(AddressConstants::EndHRamAddress - AddressConstants::Start
 {
 }
 
-byte HRam::Read(const word busAddress)
+byte HRam::Read(const word busAddress) const
 {
     const word internalAddress = TranslateAddress(busAddress);
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
-        LOG("Invalid HRam read, address " << busAddress);
-        return Read(0);
+        DEBUGBREAKLOG("Invalid HRam read, address " << std::format("{:x}", busAddress));
+        return 0;
     }
 
     return _bytes[internalAddress];
@@ -27,7 +29,7 @@ void HRam::Write(const word busAddress, const byte data)
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
-        LOG("Invalid HRam write, address " << busAddress);
+        DEBUGBREAKLOG("Invalid HRam write, address " << std::format("{:x}", busAddress));
         return;
     }
 

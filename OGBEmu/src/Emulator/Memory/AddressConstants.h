@@ -20,8 +20,8 @@ namespace AddressConstants
     constexpr word EndExternalRamAddress = 0xBFFF;
     constexpr word StartWRamAddress = 0xC000;
     constexpr word EndWRamAddress = 0xCFFF;
-    constexpr word StartCgbWRamAddress = 0xD000;
-    constexpr word EndCgbWRamAddress = 0xDFFF;
+    constexpr word StartWRamCgbAddress = 0xD000;
+    constexpr word EndWRamCgbAddress = 0xDFFF;
     constexpr word StartEchoRamAddress = 0xE000;
     constexpr word EndEchoRamAddress = 0xFDFF;
     constexpr word StartOamAddress = 0xFE00;

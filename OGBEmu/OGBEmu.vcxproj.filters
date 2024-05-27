@@ -7,27 +7,21 @@
     <Filter Include="Emulator">
       <UniqueIdentifier>{CE9DC208-BA6A-1D14-E383-0BBCCFAF52A2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Emulator\Memory">
+      <UniqueIdentifier>{7601F9B3-E28C-6678-EB9D-E96C57A8C278}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\Definitions.h">
+      <Filter>Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Core\Logger.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Utils.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Emulator\BootRom.h">
-      <Filter>Emulator</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Emulator\Bus.h">
-      <Filter>Emulator</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Emulator\Cartridge.h">
-      <Filter>Emulator</Filter>
-    </ClInclude>
     <ClInclude Include="src\Emulator\Cpu.h">
-      <Filter>Emulator</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Emulator\CpuConstants.h">
       <Filter>Emulator</Filter>
     </ClInclude>
     <ClInclude Include="src\Emulator\Device.h">
@@ -36,7 +30,40 @@
     <ClInclude Include="src\Emulator\GbConstants.h">
       <Filter>Emulator</Filter>
     </ClInclude>
-    <ClInclude Include="src\Emulator\Ram.h">
+    <ClInclude Include="src\Emulator\Memory\AddressConstants.h">
+      <Filter>Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Memory\BootRom.h">
+      <Filter>Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Memory\Bus.h">
+      <Filter>Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Memory\Cartridge.h">
+      <Filter>Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Memory\EchoRam.h">
+      <Filter>Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Memory\HRam.h">
+      <Filter>Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Memory\IoRegisters.h">
+      <Filter>Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Memory\Oam.h">
+      <Filter>Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Memory\VRam.h">
+      <Filter>Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Memory\WRam.h">
+      <Filter>Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Memory\WRamCgb.h">
+      <Filter>Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Opcode.h">
       <Filter>Emulator</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,23 +74,41 @@
     <ClCompile Include="src\Core\Utils.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Emulator\BootRom.cpp">
-      <Filter>Emulator</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Emulator\Bus.cpp">
-      <Filter>Emulator</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Emulator\Cartridge.cpp">
-      <Filter>Emulator</Filter>
-    </ClCompile>
     <ClCompile Include="src\Emulator\Cpu.cpp">
       <Filter>Emulator</Filter>
     </ClCompile>
     <ClCompile Include="src\Emulator\Device.cpp">
       <Filter>Emulator</Filter>
     </ClCompile>
-    <ClCompile Include="src\Emulator\Ram.cpp">
-      <Filter>Emulator</Filter>
+    <ClCompile Include="src\Emulator\Memory\BootRom.cpp">
+      <Filter>Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Memory\Bus.cpp">
+      <Filter>Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Memory\Cartridge.cpp">
+      <Filter>Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Memory\EchoRam.cpp">
+      <Filter>Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Memory\HRam.cpp">
+      <Filter>Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Memory\IoRegisters.cpp">
+      <Filter>Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Memory\Oam.cpp">
+      <Filter>Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Memory\VRam.cpp">
+      <Filter>Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Memory\WRam.cpp">
+      <Filter>Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Memory\WRamCgb.cpp">
+      <Filter>Emulator\Memory</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>

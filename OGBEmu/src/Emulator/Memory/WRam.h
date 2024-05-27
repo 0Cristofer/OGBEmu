@@ -9,7 +9,7 @@ class WRam
 public:
     WRam();
     
-    [[nodiscard]] byte Read(word busAddress);
+    [[nodiscard]] byte Read(word busAddress) const;
     void Write(word busAddress, byte data);
 
 private:

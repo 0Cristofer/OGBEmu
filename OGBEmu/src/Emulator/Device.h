@@ -10,6 +10,7 @@
 #include "Emulator/Memory/Oam.h"
 #include "Emulator/Memory/VRam.h"
 #include "Emulator/Memory/WRam.h"
+#include "Emulator/Memory/WRamCgb.h"
 
 class Device
 {
@@ -26,6 +27,7 @@ private:
     Cartridge _cartridge;
     VRam _vRam;
     WRam _wRam;
+    WRamCgb _wRamCgb;
     EchoRam _echoRam;
     Oam _oam;
     IoRegisters _ioRegisters;

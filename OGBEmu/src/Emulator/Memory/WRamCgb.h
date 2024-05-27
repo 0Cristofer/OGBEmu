@@ -4,10 +4,10 @@
 
 #include "Core/Definitions.h"
 
-class EchoRam
+class WRamCgb
 {
 public:
-    EchoRam();
+    WRamCgb();
     
     [[nodiscard]] byte Read(word busAddress) const;
     void Write(word busAddress, byte data);

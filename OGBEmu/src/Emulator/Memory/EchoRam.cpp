@@ -1,5 +1,7 @@
 #include "EchoRam.h"
 
+#include <format>
+
 #include "Core/Logger.h"
 
 #include "Emulator/Memory/AddressConstants.h"
@@ -8,15 +10,16 @@ EchoRam::EchoRam() : _bytes(AddressConstants::EndEchoRamAddress - AddressConstan
 {
 }
 
-byte EchoRam::Read(const word busAddress)
+byte EchoRam::Read(const word busAddress) const
 {
-    LOG("Invalid EchoRam read, address " << busAddress);
+    DEBUGBREAKLOG("Invalid EchoRam read, address " << std::format("{:x}", busAddress));
 
     const word internalAddress = TranslateAddress(busAddress);
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
-        return Read(0);
+        DEBUGBREAKLOG("Invalid EchoRam read, address " << std::format("{:x}", busAddress));
+        return 0;
     }
 
     return _bytes[internalAddress];
@@ -24,12 +27,11 @@ byte EchoRam::Read(const word busAddress)
 
 void EchoRam::Write(const word busAddress, const byte data)
 {
-    LOG("Invalid EchoRam write, address " << busAddress);
-
     const word internalAddress = TranslateAddress(busAddress);
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
+        DEBUGBREAKLOG("Invalid EchoRam write, address " << std::format("{:x}", busAddress));
         return;
     }
 

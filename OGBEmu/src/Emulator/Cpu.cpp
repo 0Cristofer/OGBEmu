@@ -1,5 +1,7 @@
 #include "Cpu.h"
 
+#include <format>
+
 #include "Core/Logger.h"
 
 #include "Emulator/Memory/AddressConstants.h"
@@ -21,7 +23,12 @@ byte Cpu::Update()
     _cyclesThisInstruction = 0;
 
     if (_registerPc.reg == 0x100)
-        LOG("Finished boot");
+    {
+        DEBUGBREAKLOG("Finished boot");
+        // Hack to run tests with no screen
+        _bus->Write(0xff44, 0xff);
+        _bus->Write(0xff02, 0xff);
+    }
 
     if (!_halted)
     {
@@ -106,7 +113,7 @@ void Cpu::HandleInterrupts()
     }
     else
     {
-        LOG("Unknown interrupt: IE: " << interruptEnable << ", IF: " << interruptFlag);
+        DEBUGBREAKLOG("Unknown interrupt: IE: " << std::format("{:x}", interruptEnable) << ", IF: " << std::format("{:x}", interruptFlag));
         jumpAddress = AddressConstants::JoypadHandlerAddress;
         handledInterrupt = 0b00010000;
     }
@@ -160,7 +167,7 @@ void Cpu::ExecuteOpcode(const Opcode opcode)
 
 void Cpu::ExecuteHighFunction(const Opcode opcode)
 {
-    if (opcode.row5 > 010 && opcode.row5 < 020)
+    if (opcode.row5 > 07 && opcode.row5 < 020)
     {
         if (opcode.row5 == 016 && opcode.column3 == 06)
             return Halt();
@@ -174,7 +181,7 @@ void Cpu::ExecuteHighFunction(const Opcode opcode)
             return Ld8Sa(targetIndex, _registers.hl.reg);
 
         if (opcode.row5 == 010 && opcode.column3 == 0)
-            LOG("Debug break");
+            DEBUGBREAKLOG("LD B B");
         return Ld8R(targetIndex, sourceIndex);
     }
 
@@ -234,8 +241,7 @@ void Cpu::ExecuteHighFunction(const Opcode opcode)
         return Cp(_registers.registers8[ConvertReg8Index(opcode.column3)]);
     }
     
-    LOG("Row function Op Code not found. Row " << static_cast<int>(opcode.high) << ", column " << static_cast<int>(
-        opcode.low));
+    DEBUGBREAKLOG("Row function Op Code not found. Opcode: " << std::format("{:x}", opcode.code));
 }
 
 void Cpu::ExecuteLowFunction(const Opcode opcode)
@@ -506,8 +512,7 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
             return Ccf();
     }
 
-    LOG("Column function Op Code not found. Row " << static_cast<int>(opcode.high) << ", column " << static_cast<int>(
-        opcode.low));
+    DEBUGBREAKLOG("Column function Op Code not found. Opcode: " << std::format("{:x}", opcode.code));
 }
 
 void Cpu::ExecutePrefix()
@@ -713,7 +718,7 @@ void Cpu::Nop()
 
 void Cpu::Stop()
 {
-    LOG("Executing STOP");
+    DEBUGBREAKLOG("Executing STOP");
     _registerPc.reg++;
 }
 

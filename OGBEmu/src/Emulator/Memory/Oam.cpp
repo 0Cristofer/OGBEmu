@@ -1,5 +1,7 @@
 #include "Oam.h"
 
+#include <format>
+
 #include "Core/Logger.h"
 
 #include "Emulator/Memory/AddressConstants.h"
@@ -8,14 +10,14 @@ Oam::Oam() : _bytes(AddressConstants::EndOamAddress - AddressConstants::StartOam
 {
 }
 
-byte Oam::Read(const word busAddress)
+byte Oam::Read(const word busAddress) const
 {
     const word internalAddress = TranslateAddress(busAddress);
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
-        LOG("Invalid Oam read, address " << busAddress);
-        return Read(0);
+        DEBUGBREAKLOG("Invalid Oam read, address " << std::format("{:x}", busAddress));
+        return 0;
     }
 
     return _bytes[internalAddress];
@@ -27,7 +29,7 @@ void Oam::Write(const word busAddress, const byte data)
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
-        LOG("Invalid Oam write, address " << busAddress);
+        DEBUGBREAKLOG("Invalid Oam write, address " << std::format("{:x}", busAddress));
         return;
     }
 

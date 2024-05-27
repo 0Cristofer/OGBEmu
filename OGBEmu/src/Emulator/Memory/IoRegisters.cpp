@@ -1,20 +1,23 @@
 #include "IoRegisters.h"
 
-#include "AddressConstants.h"
+#include <format>
+
 #include "Core/Logger.h"
+
+#include "Emulator/Memory/AddressConstants.h"
 
 IoRegisters::IoRegisters() : _registers(AddressConstants::EndIoRegistersAddress - AddressConstants::StartIoRegistersAddress + 1)
 {
 }
 
-byte IoRegisters::Read(const word busAddress)
+byte IoRegisters::Read(const word busAddress) const
 {
     const word internalAddress = TranslateAddress(busAddress);
 
     if (internalAddress < 0 || internalAddress >=_registers.size())
     {
-        LOG("Invalid IO Register read, address " << busAddress);
-        return Read(0);
+        DEBUGBREAKLOG("Invalid IO Register read, address " << std::format("{:x}", busAddress));
+        return 0;
     }
 
     return _registers[internalAddress];
@@ -26,7 +29,7 @@ void IoRegisters::Write(const word busAddress, const byte data)
 
     if (internalAddress < 0 || internalAddress >=_registers.size())
     {
-        LOG("Invalid IO Register write, address " << busAddress);
+        DEBUGBREAKLOG("Invalid IO Register write, address " << std::format("{:x}", busAddress));
         return;
     }
 

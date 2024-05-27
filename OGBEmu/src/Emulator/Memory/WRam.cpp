@@ -1,5 +1,7 @@
 #include "WRam.h"
 
+#include <format>
+
 #include "Core/Logger.h"
 
 #include "Emulator/Memory/AddressConstants.h"
@@ -8,14 +10,14 @@ WRam::WRam() : _bytes(AddressConstants::EndWRamAddress - AddressConstants::Start
 {
 }
 
-byte WRam::Read(const word busAddress)
+byte WRam::Read(const word busAddress) const
 {
     const word internalAddress = TranslateAddress(busAddress);
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
-        LOG("Invalid WRam read, address " << busAddress);
-        return Read(0);
+        DEBUGBREAKLOG("Invalid WRam read, address " << std::format("{:x}", busAddress));
+        return 0;
     }
 
     return _bytes[internalAddress];
@@ -27,7 +29,7 @@ void WRam::Write(const word busAddress, const byte data)
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
-        LOG("Invalid WRam write, address " << busAddress);
+        DEBUGBREAKLOG("Invalid WRam write, address " << std::format("{:x}", busAddress));
         return;
     }
 

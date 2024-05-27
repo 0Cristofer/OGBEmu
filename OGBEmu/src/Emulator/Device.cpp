@@ -12,7 +12,7 @@ namespace
 
 Device::Device(BootRom bootRom, Cartridge cartridge, const int framesPerSecond) : _bootRom(std::move(bootRom)),
     _cartridge(std::move(cartridge)),
-    _bus(Bus(&_bootRom, &_cartridge, &_vRam, &_wRam, &_echoRam, &_oam, &_ioRegisters, &_hRam)),
+    _bus(Bus(&_bootRom, &_cartridge, &_vRam, &_wRam, &_wRamCgb, &_echoRam, &_oam, &_ioRegisters, &_hRam)),
     _cpu(&_bus),
     _framesPerSecond(framesPerSecond)
 {
