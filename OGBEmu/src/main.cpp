@@ -12,7 +12,7 @@ namespace
 
 Cartridge ReadCartridge(const std::string& romPath)
 {
-    Logger::Log("Cartridge rom path: " + romPath);
+    LOG("Cartridge rom path: " + romPath);
 
     std::vector<byte> romBytes = Utils::ReadBinaryFile(romPath);
 
@@ -21,7 +21,7 @@ Cartridge ReadCartridge(const std::string& romPath)
 
 BootRom ReadBootRom(const std::string& bootRomPath)
 {
-    Logger::Log("Boot rom path: " + bootRomPath);
+    LOG("Boot rom path: " + bootRomPath);
 
     std::vector<byte> bootRomBytes = Utils::ReadBinaryFile(bootRomPath);
 
@@ -32,7 +32,7 @@ int main(const int argc, char* argv[])
 {
     if (argc != 3)
     {
-        Logger::Log("Not enough program arguments, usage: OGBEmu bootRom.bin romPath.gb");
+        DEBUGBREAKLOG("Wrong number of program arguments, usage: OGBEmu bootRom.bin romPath.gb");
         return 0;
     }
 
@@ -40,7 +40,7 @@ int main(const int argc, char* argv[])
     BootRom bootRom = ReadBootRom(bootRomPath);
     if (!bootRom.IsValid())
     {
-        LOG("Invalid boot ROM, check path and file size. Only " << GbConstants::BootRomSize <<"-byte ROMs are accepted.");
+        DEBUGBREAKLOG("Invalid boot ROM, check path and file size. Only " << GbConstants::BootRomSize <<"-byte ROMs are accepted.");
         return 0;
     }
 
@@ -48,7 +48,7 @@ int main(const int argc, char* argv[])
     Cartridge cartridge = ReadCartridge(romPath);
     if (!cartridge.IsValid())
     {
-        LOG("Invalid cartridge ROM, check path and file size. Cartridge ROM sizes are minimun " << GbConstants::MinCartridgeRomSize << " bytes.");
+        DEBUGBREAKLOG("Invalid cartridge ROM, check path and file size. Cartridge ROM sizes are minimun " << GbConstants::MinCartridgeRomSize << " bytes.");
         return 0;
     }
 
