@@ -861,18 +861,18 @@ void Cpu::Add16(word& target)
 
 void Cpu::Push(const Register16 register16Data)
 {
-    WriteAtSp(register16Data.lo);
     Dec16(_registerSp.reg);
     WriteAtSp(register16Data.hi);
     Dec16(_registerSp.reg);
+    WriteAtSp(register16Data.lo);
 }
 
 void Cpu::Pop(Register16& register16Target)
 {
+    register16Target.lo = ReadAtSp();
     Inc16(_registerSp.reg);
     register16Target.hi = ReadAtSp();
     Inc16(_registerSp.reg);
-    register16Target.lo = ReadAtSp();
 }
 
 void Cpu::Rlca()
