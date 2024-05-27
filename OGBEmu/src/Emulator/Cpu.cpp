@@ -870,6 +870,10 @@ void Cpu::Push(const Register16 register16Data)
 void Cpu::Pop(Register16& register16Target)
 {
     register16Target.lo = ReadAtSp();
+
+    if (&register16Target.reg == &_registers.af.reg)
+        _registers.f.nu = 0; // If we're writing to the AF register, need to guarantee that the lower 4 bits stay 0
+
     Inc16(_registerSp.reg);
     register16Target.hi = ReadAtSp();
     Inc16(_registerSp.reg);
