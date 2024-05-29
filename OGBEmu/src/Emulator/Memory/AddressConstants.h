@@ -5,7 +5,24 @@
 namespace AddressConstants
 {
     // Cartridge rom addresses
-    constexpr word CartridgeTypeAddress = 0x1470;
+    constexpr word CartridgeTitleStartAddress = 0x134;
+    constexpr word CartridgeTitleNewEndAddress = 0x13F;
+    constexpr word CartridgeTitleOldEndAddress = 0x143;
+    constexpr word CartridgeManufacturerCodeStartAddress = 0x13F;
+    constexpr word CartridgeManufacturerCodeEndAddress = 0x142;
+    constexpr word CartridgeCgbFlagAddress = 0x143;
+    constexpr word CartridgeNewLicenseeCodeStartAddress = 0x144;
+    constexpr word CartridgeNewLicenseeCodeEndAddress = 0x145;
+    constexpr word CartridgeSgbFlagAddress = 0x146;
+    constexpr word CartridgeTypeAddress = 0x147;
+    constexpr word CartridgeRomSizeAddress = 0x148;
+    constexpr word CartridgeRamSizeAddress = 0x149;
+    constexpr word CartridgeDestinationCodeAddress = 0x14A;
+    constexpr word CartridgeOldLicenseeCodeAddress = 0x14B;
+    constexpr word CartridgeMaskRomVersionNumberAddress = 0x14C;
+    constexpr word CartridgeHeaderChecksumAddress = 0x14D;
+    constexpr word CartridgeGlobalChecksumAddressStart = 0x14E;
+    constexpr word CartridgeGlobalChecksumAddressEnd = 0x14F;
 
     // Bus addresses
     constexpr word StartBootRomAddress = 0x0000;

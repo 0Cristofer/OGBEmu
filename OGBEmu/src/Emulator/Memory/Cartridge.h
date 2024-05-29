@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include "Core/Definitions.h"
@@ -48,6 +49,13 @@ public:
     void Write(word address, byte data);
 
 private:
+    [[nodiscard]] std::string GetStringFromHeader(word startAddress, word endAddress) const;
+
     std::vector<byte> _rom;
+    
     CartridgeType _cartridgeType;
+    std::string _title;
+    std::string _manufacturerCode;
+    byte _oldLicenseeCode;
+    std::string _newLicenseeCode;
 };
