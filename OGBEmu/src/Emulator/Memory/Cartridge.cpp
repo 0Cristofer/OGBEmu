@@ -5,11 +5,16 @@
 #include "Core/Logger.h"
 
 #include "Emulator/Memory/AddressConstants.h"
+#include "Emulator/Memory/MBC/BaseMbc.h"
+#include "Emulator/Memory/MBC/Mbc1.h"
+#include "Emulator/Memory/MBC/NoMbc.h"
 
-Cartridge::Cartridge(std::vector<byte> romBytes) : _rom(std::move(romBytes))
+Cartridge::Cartridge(const std::vector<byte>& romBytes) : _rom(romBytes)
 {
     if (!IsValid())
     {
+        DEBUGBREAKLOG("Invalid cartridge ROM, check path and file size. Expected ROM size: " << static_cast<int>(GbConstants::RomBankSize) * (1 << _rom[AddressConstants::CartridgeRomSizeAddress])
+            << ", got: " << _rom.size());
         return;
     }
 
@@ -28,25 +33,73 @@ Cartridge::Cartridge(std::vector<byte> romBytes) : _rom(std::move(romBytes))
         _manufacturerCode = "";
 
     if (_rom[AddressConstants::CartridgeOldLicenseeCodeAddress] == GbConstants::NewLicenseeCode)
+    {
         _newLicenseeCode = GetStringFromHeader(AddressConstants::CartridgeNewLicenseeCodeStartAddress, AddressConstants::CartridgeNewLicenseeCodeEndAddress);
+        _oldLicenseeCode = 0;
+    }
     else
+    {
         _oldLicenseeCode = _rom[AddressConstants::CartridgeOldLicenseeCodeAddress];
+        _newLicenseeCode = "";
+    }
+
+    switch (_cartridgeType)
+    {
+    case CartridgeType::RomOnly:
+        _mbc = new NoMbc(&_rom);
+        return;
+    case CartridgeType::MBC1:
+    case CartridgeType::MBC1Ram:
+    case CartridgeType::MBC1RamBattery:
+        _mbc = new Mbc1(&_rom);
+        return;
+    case CartridgeType::MBC2:
+    case CartridgeType::MBC2Battery:
+    case CartridgeType::RomRam:
+    case CartridgeType::RomRamBattery:
+    case CartridgeType::MMM01:
+    case CartridgeType::MMM01Ram:
+    case CartridgeType::MMM01RamBattery:
+    case CartridgeType::MBC3TimerBattery:
+    case CartridgeType::MBC3TimerRamBattery:
+    case CartridgeType::MBC3:
+    case CartridgeType::MBC3Ram:
+    case CartridgeType::MBC3RamBattery:
+    case CartridgeType::MBC5:
+    case CartridgeType::MBC5Ram:
+    case CartridgeType::MBC5RamBattery:
+    case CartridgeType::MBC5Rumble:
+    case CartridgeType::MBC5RumbleRam:
+    case CartridgeType::MBC5RumbleRamBattery:
+    case CartridgeType::MBC6:
+    case CartridgeType::MBC7SensorRumbleRamBattery:
+    case CartridgeType::PocketCamera:
+    case CartridgeType::BandaiTama5:
+    case CartridgeType::HuC3:
+    case CartridgeType::HuC1RamBattery:
+        DEBUGBREAKLOG("Read Cartridge type not implemented, cartridge type: " << static_cast<int>(_cartridgeType));
+        break;
+    }
+}
+
+Cartridge::~Cartridge()
+{
+    delete _mbc;
+}
+
+bool Cartridge::IsValid() const
+{
+    return !_rom.empty() && static_cast<int>(_rom.size()) == GbConstants::RomBankSize * (1 << _rom[AddressConstants::CartridgeRomSizeAddress]);
 }
 
 byte Cartridge::Read(const word address) const
 {
-    if (address >= _rom.size())
-    {
-        DEBUGBREAKLOG("Invalid Cartridge ROM read, address: " << std::format("{:x}", address));
-        return 0;
-    }
-
-    return _rom[address];
+    return _mbc->Read(address);
 }
 
-void Cartridge::Write(word address, byte data)
+void Cartridge::Write(const word address, const byte data) const
 {
-    DEBUGBREAKLOG("Cartridge write not implemented, address: " << std::format("{:x}", address));
+    _mbc->Write(address, data);
 }
 
 std::string Cartridge::GetStringFromHeader(const word startAddress, const word endAddress) const

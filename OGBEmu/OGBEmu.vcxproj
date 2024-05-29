@@ -147,6 +147,9 @@
     <ClInclude Include="src\Emulator\Memory\EchoRam.h" />
     <ClInclude Include="src\Emulator\Memory\HRam.h" />
     <ClInclude Include="src\Emulator\Memory\IoRegisters.h" />
+    <ClInclude Include="src\Emulator\Memory\MBC\BaseMbc.h" />
+    <ClInclude Include="src\Emulator\Memory\MBC\Mbc1.h" />
+    <ClInclude Include="src\Emulator\Memory\MBC\NoMbc.h" />
     <ClInclude Include="src\Emulator\Memory\Oam.h" />
     <ClInclude Include="src\Emulator\Memory\VRam.h" />
     <ClInclude Include="src\Emulator\Memory\WRam.h" />
@@ -164,6 +167,8 @@
     <ClCompile Include="src\Emulator\Memory\EchoRam.cpp" />
     <ClCompile Include="src\Emulator\Memory\HRam.cpp" />
     <ClCompile Include="src\Emulator\Memory\IoRegisters.cpp" />
+    <ClCompile Include="src\Emulator\Memory\MBC\Mbc1.cpp" />
+    <ClCompile Include="src\Emulator\Memory\MBC\NoMbc.cpp" />
     <ClCompile Include="src\Emulator\Memory\Oam.cpp" />
     <ClCompile Include="src\Emulator\Memory\VRam.cpp" />
     <ClCompile Include="src\Emulator\Memory\WRam.cpp" />

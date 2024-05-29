@@ -4,10 +4,13 @@
 
 #include "Core/Logger.h"
 
-BootRom::BootRom(std::vector<byte> romBytes): _rom(std::move(romBytes))
+BootRom::BootRom(const std::vector<byte>& romBytes): _rom(romBytes)
 {
     if (!IsValid())
+    {
+        DEBUGBREAKLOG("Invalid boot ROM, check path and file size. Only " << GbConstants::BootRomSize <<"-byte ROMs are accepted.");
         return;
+    }
 }
 
 byte BootRom::Read(const word address) const

@@ -15,8 +15,9 @@
 class Device
 {
 public:
-    Device(BootRom bootRom, Cartridge cartridge, int framesPerSecond);
+    Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& cartridgeBytes, int framesPerSecond);
 
+    [[nodiscard]] bool IsValid() const;
     void Run();
 
 private:

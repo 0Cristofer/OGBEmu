@@ -10,6 +10,9 @@
     <Filter Include="Emulator\Memory">
       <UniqueIdentifier>{7601F9B3-E28C-6678-EB9D-E96C57A8C278}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Emulator\Memory\MBC">
+      <UniqueIdentifier>{97E20323-0344-E130-8CB1-27E3F81118F0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Definitions.h">
@@ -50,6 +53,15 @@
     </ClInclude>
     <ClInclude Include="src\Emulator\Memory\IoRegisters.h">
       <Filter>Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Memory\MBC\BaseMbc.h">
+      <Filter>Emulator\Memory\MBC</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Memory\MBC\Mbc1.h">
+      <Filter>Emulator\Memory\MBC</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Memory\MBC\NoMbc.h">
+      <Filter>Emulator\Memory\MBC</Filter>
     </ClInclude>
     <ClInclude Include="src\Emulator\Memory\Oam.h">
       <Filter>Emulator\Memory</Filter>
@@ -97,6 +109,12 @@
     </ClCompile>
     <ClCompile Include="src\Emulator\Memory\IoRegisters.cpp">
       <Filter>Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Memory\MBC\Mbc1.cpp">
+      <Filter>Emulator\Memory\MBC</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Memory\MBC\NoMbc.cpp">
+      <Filter>Emulator\Memory\MBC</Filter>
     </ClCompile>
     <ClCompile Include="src\Emulator\Memory\Oam.cpp">
       <Filter>Emulator\Memory</Filter>

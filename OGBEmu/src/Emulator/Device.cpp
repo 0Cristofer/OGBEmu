@@ -10,11 +10,11 @@ namespace
     constexpr unsigned char DefaultSimulationFramesPerSecond = 64;
 }
 
-Device::Device(BootRom bootRom, Cartridge cartridge, const int framesPerSecond) : _bootRom(std::move(bootRom)),
-    _cartridge(std::move(cartridge)),
-    _bus(Bus(&_bootRom, &_cartridge, &_vRam, &_wRam, &_wRamCgb, &_echoRam, &_oam, &_ioRegisters, &_hRam)),
-    _cpu(&_bus),
-    _framesPerSecond(framesPerSecond)
+Device::Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& cartridgeBytes, const int framesPerSecond) : _bootRom(bootRomBytes),
+                                                                                                                            _cartridge(cartridgeBytes),
+                                                                                                                            _bus(Bus(&_bootRom, &_cartridge, &_vRam, &_wRam, &_wRamCgb, &_echoRam, &_oam, &_ioRegisters, &_hRam)),
+                                                                                                                            _cpu(&_bus),
+                                                                                                                            _framesPerSecond(framesPerSecond)
 {
     if (!Utils::IsPowerOfTwo(_framesPerSecond))
     {
@@ -27,8 +27,16 @@ Device::Device(BootRom bootRom, Cartridge cartridge, const int framesPerSecond) 
     _maxCyclesPerFrame = Cpu::CpuClock * _frameTimeSeconds;
 }
 
+bool Device::IsValid() const
+{
+    return _bootRom.IsValid() && _cartridge.IsValid();
+}
+
 void Device::Run()
 {
+    if (!IsValid())
+        return;
+    
     constexpr double maxRunSeconds = 5000.;
 
     unsigned int totalCycles = 0;

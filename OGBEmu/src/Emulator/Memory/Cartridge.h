@@ -7,6 +7,8 @@
 
 #include "Emulator/GbConstants.h"
 
+class BaseMbc;
+
 enum class CartridgeType : byte
 {
     RomOnly = 0x00,
@@ -42,20 +44,22 @@ enum class CartridgeType : byte
 class Cartridge
 {
 public:
-    explicit Cartridge(std::vector<byte> romBytes);
+    explicit Cartridge(const std::vector<byte>& romBytes);
+    ~Cartridge();
 
-    [[nodiscard]] bool IsValid() const { return !_rom.empty() && _rom.size() >= GbConstants::MinCartridgeRomSize; }
+    [[nodiscard]] bool IsValid() const;
     [[nodiscard]] byte Read(word address) const;
-    void Write(word address, byte data);
+    void Write(word address, byte data) const;
 
 private:
     [[nodiscard]] std::string GetStringFromHeader(word startAddress, word endAddress) const;
-
+    
     std::vector<byte> _rom;
+    BaseMbc* _mbc = nullptr;
     
     CartridgeType _cartridgeType;
     std::string _title;
     std::string _manufacturerCode;
-    byte _oldLicenseeCode;
+    byte _oldLicenseeCode = 0;
     std::string _newLicenseeCode;
 };
