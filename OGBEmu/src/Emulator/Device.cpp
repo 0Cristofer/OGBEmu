@@ -36,7 +36,9 @@ void Device::Run()
 {
     if (!IsValid())
         return;
-    
+
+    LOG("Running");
+
     constexpr double maxRunSeconds = 5000.;
 
     unsigned int totalCycles = 0;

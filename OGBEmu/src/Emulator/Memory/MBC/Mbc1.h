@@ -14,4 +14,14 @@ public:
 
 private:
     std::vector<byte>* _rom;
+    std::vector<byte> _ram;
+
+    struct
+    {
+        byte ramBank:2;
+        byte romBank:5;
+    } _bankSelect;
+
+    byte _bankingMode;
+    byte _ramEnable;
 };

@@ -24,9 +24,8 @@ public:
 private:
     [[nodiscard]] bool IsBootRomEnabled() const;
     
-    [[nodiscard]] byte ReadCartridgeBank0(word address) const;
     [[nodiscard]] byte ReadBootRom(word address) const;
-    [[nodiscard]] byte ReadCartridgeBankN(word address) const;
+    [[nodiscard]] byte ReadCartridgeBank(word address) const;
     [[nodiscard]] byte ReadVRam(word address) const;
     [[nodiscard]] byte ReadExternalRam(word address) const;
     [[nodiscard]] byte ReadWRam(word address) const;
@@ -38,9 +37,8 @@ private:
     [[nodiscard]] byte ReadHRam(word address) const;
     [[nodiscard]] byte ReadIe(word address) const;
 
-    void WriteCartridgeBank0(word address, byte data) const;
     static void WriteBootRom(word address, byte data);
-    void WriteCartridgeBankN(word address, byte data) const;
+    void WriteCartridgeBank(word address, byte data) const;
     void WriteVRam(word address, byte data) const;
     void WriteExternalRam(word address, byte data) const;
     void WriteWRam(word address, byte data) const;

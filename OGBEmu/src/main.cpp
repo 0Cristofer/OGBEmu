@@ -50,9 +50,7 @@ int main(const int argc, char* argv[])
         return 0;
     }
 
-    LOG("Running");
     device.Run();
 
-    LOG("Finished");
     return 0;
 }

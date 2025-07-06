@@ -26,10 +26,8 @@ Bus::Bus(BootRom* bootRom, Cartridge* cartridge, VRam* vRam, WRam* wRam, WRamCgb
 
 byte Bus::Read(const word address) const
 {
-    if (address <= AddressConstants::EndRomBank0Address)
-        return ReadCartridgeBank0(address);
-    if (address >= AddressConstants::StartRomBankNAddress && address <= AddressConstants::EndRomBankNAddress)
-        return ReadCartridgeBankN(address);
+    if (address <= AddressConstants::EndRomBankNAddress)
+        return ReadCartridgeBank(address);
     if (address >= AddressConstants::StartVRamAddress && address <= AddressConstants::EndVRamAddress)
         return ReadVRam(address);
     if (address >= AddressConstants::StartExternalRamAddress && address <= AddressConstants::EndExternalRamAddress)
@@ -57,10 +55,8 @@ byte Bus::Read(const word address) const
 
 void Bus::Write(const word address, const byte data)
 {
-    if (address <= AddressConstants::EndRomBank0Address)
-        return WriteCartridgeBank0(address, data);
-    if (address >= AddressConstants::StartRomBankNAddress && address <= AddressConstants::EndRomBankNAddress)
-        return WriteCartridgeBankN(address, data);
+    if (address <= AddressConstants::EndRomBankNAddress)
+        return WriteCartridgeBank(address, data);
     if (address >= AddressConstants::StartVRamAddress && address <= AddressConstants::EndVRamAddress)
         return WriteVRam(address, data);
     if (address >= AddressConstants::StartExternalRamAddress && address <= AddressConstants::EndExternalRamAddress)
@@ -90,7 +86,12 @@ bool Bus::IsBootRomEnabled() const
     return Read(AddressConstants::BootRomBank) == 0;
 }
 
-byte Bus::ReadCartridgeBank0(const word address) const
+byte Bus::ReadBootRom(const word address) const
+{
+    return _bootRom->Read(address);
+}
+
+byte Bus::ReadCartridgeBank(const word address) const
 {
     if (address <= AddressConstants::EndBootRomAddress)
     {
@@ -100,16 +101,6 @@ byte Bus::ReadCartridgeBank0(const word address) const
         }
     }
     
-    return _cartridge->Read(address);
-}
-
-byte Bus::ReadBootRom(const word address) const
-{
-    return _bootRom->Read(address);
-}
-
-byte Bus::ReadCartridgeBankN(const word address) const
-{
     return _cartridge->Read(address);
 }
 
@@ -164,7 +155,12 @@ byte Bus::ReadIe(const word address) const
     return _ie;
 }
 
-void Bus::WriteCartridgeBank0(const word address, const byte data) const
+void Bus::WriteBootRom(const word address, const byte data)
+{
+    DEBUGBREAKLOG("Invalid write WriteBootRom " << address);
+}
+
+void Bus::WriteCartridgeBank(const word address, const byte data) const
 {
     if (address <= AddressConstants::EndBootRomAddress)
     {
@@ -174,16 +170,6 @@ void Bus::WriteCartridgeBank0(const word address, const byte data) const
         }
     }
     
-    _cartridge->Write(address, data);
-}
-
-void Bus::WriteBootRom(const word address, const byte data)
-{
-    DEBUGBREAKLOG("Invalid write WriteBootRom " << address);
-}
-
-void Bus::WriteCartridgeBankN(const word address, const byte data) const
-{
     _cartridge->Write(address, data);
 }
 
