@@ -55,6 +55,12 @@ byte Bus::Read(const word address) const
 
 void Bus::Write(const word address, const byte data)
 {
+    // Debug logging for suspicious address ranges
+    if (address >= 0xF700 && address <= 0xFEFF)
+    {
+        DEBUGBREAKLOG("SUSPICIOUS WRITE: address " << std::format("{:x}", address) << " data " << std::format("{:x}", data));
+    }
+    
     if (address <= AddressConstants::EndRomBankNAddress)
         return WriteCartridgeBank(address, data);
     if (address >= AddressConstants::StartVRamAddress && address <= AddressConstants::EndVRamAddress)
@@ -126,7 +132,9 @@ byte Bus::ReadCgbWRam(const word address) const
 
 byte Bus::ReadEchoRam(const word address) const
 {
-    return _echoRam->Read(address);
+    // Echo RAM mirrors WRAM - direct access to WRAM data
+    const word wramAddress = address - (AddressConstants::StartEchoRamAddress - AddressConstants::StartWRamAddress);
+    return ReadWRam(wramAddress);
 }
 
 byte Bus::ReadOam(const word address) const
@@ -170,7 +178,29 @@ void Bus::WriteCartridgeBank(const word address, const byte data) const
         }
     }
     
-    _cartridge->Write(address, data);
+    // Only allow writes to MBC control registers, not ROM data
+    // ROM data (0x0000-0x7FFF) should be read-only except for MBC control areas
+    if (address >= 0x0000 && address <= 0x7FFF)
+    {
+        // These are the valid MBC1 control register ranges that can be written to:
+        // 0x0000-0x1FFF: RAM Enable
+        // 0x2000-0x3FFF: ROM Bank Number  
+        // 0x4000-0x5FFF: RAM Bank Number/Upper ROM Bank bits
+        // 0x6000-0x7FFF: Banking Mode Select
+        
+        _cartridge->Write(address, data);
+        return;
+    }
+    
+    // External RAM area (0xA000-0xBFFF) - allow writes
+    if (address >= AddressConstants::StartExternalRamAddress && address <= AddressConstants::EndExternalRamAddress)
+    {
+        _cartridge->Write(address, data);
+        return;
+    }
+    
+    // All other addresses should not reach the cartridge
+    DEBUGBREAKLOG("Invalid cartridge write attempt to address: " << std::format("{:x}", address) << " data: " << std::format("{:x}", data));
 }
 
 void Bus::WriteVRam(const word address, const byte data) const
@@ -186,25 +216,18 @@ void Bus::WriteExternalRam(const word address, const byte data) const
 void Bus::WriteWRam(const word address, const byte data) const
 {
     _wRam->Write(address, data);
-    
-    const word echoRamAddress = address + (AddressConstants::StartEchoRamAddress - AddressConstants::StartWRamAddress);
-    if (echoRamAddress <= AddressConstants::EndEchoRamAddress)
-        _echoRam->Write(echoRamAddress, data);
 }
 
 void Bus::WriteCgbWRam(const word address, const byte data) const
 {
     _wRamCgb->Write(address, data);
-
-    const word echoRamAddress = address + (AddressConstants::StartEchoRamAddress - AddressConstants::StartWRamAddress);
-    if (echoRamAddress <= AddressConstants::EndEchoRamAddress)
-        _echoRam->Write(echoRamAddress, data);
 }
 
 void Bus::WriteEchoRam(const word address, const byte data)
 {
-    DEBUGBREAKLOG("Invalid write EchoRam " << std::format("{:x}", address));
-    Write(address - (AddressConstants::StartEchoRamAddress - AddressConstants::StartWRamAddress), data);
+    // Echo RAM mirrors WRAM - direct write to WRAM data
+    const word wramAddress = address - (AddressConstants::StartEchoRamAddress - AddressConstants::StartWRamAddress);
+    WriteWRam(wramAddress, data);
 }
 
 void Bus::WriteOam(const word address, const byte data) const
@@ -214,7 +237,7 @@ void Bus::WriteOam(const word address, const byte data) const
 
 void Bus::WriteNotUsed(const word address, const byte data)
 {
-    DEBUGBREAKLOG("Invalid write NotUsed " << std::format("{:x}", address));
+    DEBUGBREAKLOG("Invalid write NotUsed address: " << std::format("{:x}", address) << " data: " << std::format("{:x}", data));
 }
 
 void Bus::WriteIoRegisters(const word address, const byte data)
@@ -240,8 +263,10 @@ void Bus::DoDma(const byte data)
     const word startAddress = static_cast<word>(data << 8);
     constexpr word oamRange = AddressConstants::EndOamAddress - AddressConstants::StartOamAddress + 1;
 
+    DEBUGBREAKLOG("DMA OPERATION: source=" << std::format("{:x}", startAddress) << " count=" << oamRange);
+
     for (word i = 0; i < oamRange; i++)
     {
-        Write(AddressConstants::StartOamAddress + 0, Read(startAddress + i));
+        Write(AddressConstants::StartOamAddress + i, Read(startAddress + i));
     }
 }

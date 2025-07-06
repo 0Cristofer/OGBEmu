@@ -41,6 +41,7 @@ namespace AddressConstants
     constexpr word EndWRamCgbAddress = 0xDFFF;
     constexpr word StartEchoRamAddress = 0xE000;
     constexpr word EndEchoRamAddress = 0xFDFF;
+    constexpr word EndEchoRamMirrorAddress = 0xDDFF; // Last WRAM address that mirrors to EchoRam
     constexpr word StartOamAddress = 0xFE00;
     constexpr word EndOamAddress = 0xFE9F;
     constexpr word StartNotUsedAddress = 0xFEA0;

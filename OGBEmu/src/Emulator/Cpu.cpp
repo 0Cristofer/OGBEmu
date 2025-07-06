@@ -13,6 +13,7 @@ Cpu::Cpu(Bus* bus) : _registers(), _registerSp(), _bus(bus), _eiRequested(false)
     _ime = 0;
     _halted = 0;
     _registerPc.reg = 0;
+    _registerSp.reg = 0xFFFE; // Initialize stack pointer to Game Boy default value
     _bus->Write(AddressConstants::BootRomBank, 0);
     
     _bus->Write(0xff44, 0x90); // Hack to force boot with no screen
@@ -33,7 +34,49 @@ byte Cpu::Update()
     if (!_halted)
     {
         const Opcode opcode = FetchNextOpcode();
+        
+        // Only log stack-related and SP modification instructions
+        bool shouldLog = false;
+        
+        // Stack operations: PUSH, POP, CALL, RET, RST
+        if (opcode.code == 0xC5 || opcode.code == 0xD5 || opcode.code == 0xE5 || opcode.code == 0xF5 ||  // PUSH
+            opcode.code == 0xC1 || opcode.code == 0xD1 || opcode.code == 0xE1 || opcode.code == 0xF1 ||  // POP
+            opcode.code == 0xCD || (opcode.code & 0xC7) == 0xC4 ||  // CALL
+            opcode.code == 0xC9 || (opcode.code & 0xC7) == 0xC0 ||  // RET
+            (opcode.code & 0xC7) == 0xC7)  // RST
+        {
+            shouldLog = true;
+        }
+        
+        // SP modification instructions: ADD HL,SP, LD SP,HL, LD SP,nn, ADD SP,e8
+        if (opcode.code == 0x39 || opcode.code == 0xF9 || opcode.code == 0x31 || opcode.code == 0xE8)
+        {
+            shouldLog = true;
+        }
+        
+        if (shouldLog)
+        {
+            DEBUGBREAKLOG("BEFORE: PC: " << std::format("{:04x}", _registerPc.reg) << 
+                          " SP: " << std::format("{:04x}", _registerSp.reg) << 
+                          " HL: " << std::format("{:04x}", _registers.hl.reg) << 
+                          " AF: " << std::format("{:04x}", _registers.af.reg) << 
+                          " BC: " << std::format("{:04x}", _registers.bc.reg) << 
+                          " DE: " << std::format("{:04x}", _registers.de.reg) << 
+                          " Opcode: " << std::format("{:02x}", opcode.code));
+        }
+        
         ExecuteOpcode(opcode);
+        
+        if (shouldLog)
+        {
+            DEBUGBREAKLOG("AFTER:  PC: " << std::format("{:04x}", _registerPc.reg) << 
+                          " SP: " << std::format("{:04x}", _registerSp.reg) << 
+                          " HL: " << std::format("{:04x}", _registers.hl.reg) << 
+                          " AF: " << std::format("{:04x}", _registers.af.reg) << 
+                          " BC: " << std::format("{:04x}", _registers.bc.reg) << 
+                          " DE: " << std::format("{:04x}", _registers.de.reg) << 
+                          " Cycles: " << static_cast<int>(_cyclesThisInstruction));
+        }
     }
     else
         _cyclesThisInstruction += 4;
@@ -142,11 +185,37 @@ byte Cpu::ReadAtSp() const
 void Cpu::WriteBus(const word address, const byte data)
 {
     _cyclesThisInstruction += 4;
+    
+    // Log suspicious writes to debug the 0x39 pattern
+    if (address >= 0xFEA0 && address <= 0xFEFF)
+    {
+        DEBUGBREAKLOG("CPU writing to NotUsed region - PC: " << std::format("{:x}", _registerPc.reg) << 
+                      " SP: " << std::format("{:x}", _registerSp.reg) << 
+                      " address: " << std::format("{:x}", address) << 
+                      " data: " << std::format("{:x}", data));
+    }
+    
     _bus->Write(address, data);
 }
 
 void Cpu::WriteAtSp(const byte data) const
 {
+    // Log suspicious stack writes to debug the 0x39 pattern
+    if (_registerSp.reg >= 0xFEA0 && _registerSp.reg <= 0xFEFF)
+    {
+        DEBUGBREAKLOG("CRITICAL: Stack pointer corrupted! PC: " << std::format("{:x}", _registerPc.reg) << 
+                      " SP: " << std::format("{:x}", _registerSp.reg) << 
+                      " data: " << std::format("{:x}", data));
+    }
+    
+    // Add additional logging for all stack operations to find corruption source
+    if (_registerSp.reg < 0xFF80 || _registerSp.reg > 0xFFFE)
+    {
+        DEBUGBREAKLOG("STACK OUT OF BOUNDS: PC: " << std::format("{:x}", _registerPc.reg) << 
+                      " SP: " << std::format("{:x}", _registerSp.reg) << 
+                      " data: " << std::format("{:x}", data));
+    }
+    
     _bus->Write(_registerSp.reg, data);
 }
 
@@ -160,6 +229,10 @@ word Cpu::ReadImm16AtPc()
 
 void Cpu::ExecuteOpcode(const Opcode opcode)
 {
+    // Store current opcode for debug logging
+    static thread_local byte currentOpcode = 0;
+    currentOpcode = opcode.code;
+    
     if (opcode.high > 0x3 && opcode.high < 0xC)
         return ExecuteHighFunction(opcode);
     return ExecuteLowFunction(opcode);
@@ -460,7 +533,7 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
     {
         if (opcode.high < 0x3)
             return Add16(_registers.registers16[opcode.high].reg);
-        if (opcode.high == 0x4)
+        if (opcode.high == 0x3)
             return Add16(_registerSp.reg);
         if (opcode.high == 0xC)
             return Ret();
@@ -585,12 +658,15 @@ void Cpu::Ld16Imm(const byte targetIndex)
 
 void Cpu::LdSpTImm()
 {
-    _registerSp.reg = ReadImm16AtPc();
+    const word newSp = ReadImm16AtPc();
+    DEBUGBREAKLOG("LD SP,nn: Setting SP from " << std::format("{:x}", _registerSp.reg) << " to " << std::format("{:x}", newSp) << " at PC: " << std::format("{:x}", _registerPc.reg));
+    _registerSp.reg = newSp;
 }
 
 void Cpu::LdSpS(const word val)
 {
     _cyclesThisInstruction += 4;
+    DEBUGBREAKLOG("LD SP,HL: Setting SP from " << std::format("{:x}", _registerSp.reg) << " to " << std::format("{:x}", val) << " at PC: " << std::format("{:x}", _registerPc.reg));
     _registerSp.reg = val;
 }
 
@@ -853,10 +929,20 @@ void Cpu::Dec16(word& target)
     target--;
 }
 
-void Cpu::Add16(word& target)
+void Cpu::Add16(const word& source)
 {
     _cyclesThisInstruction += 4;
-    target++;
+    
+    const word original = _registers.hl.reg;
+    const word result = original + source;
+    
+    _registers.hl.reg = result;
+    
+    // Set flags according to Game Boy spec
+    _registers.f.n = 0;
+    _registers.f.h = (original & 0x0FFF) + (source & 0x0FFF) > 0x0FFF; // Half-carry from bit 11
+    _registers.f.c = result < original; // Carry from bit 15
+    // Z flag is not affected
 }
 
 void Cpu::Push(const Register16 register16Data)

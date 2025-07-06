@@ -74,7 +74,7 @@ private:
     void Dec8(byte& target);
     void Dec8Add(word address);
     void Dec16(word& target);
-    void Add16(word& target);
+    void Add16(const word& source);
     void Push(Register16 register16Data);
     void Pop(Register16& register16Target);
     void Rlca();
