@@ -9,6 +9,10 @@ bin-int/
 
 */imgui.ini
 
+# Log files
+emulator_log.txt
+*.log
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
