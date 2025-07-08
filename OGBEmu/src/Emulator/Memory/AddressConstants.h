@@ -58,6 +58,19 @@ namespace AddressConstants
     constexpr word DmaStart = 0xFF46;
     constexpr word BootRomBank = 0xFF50;
 
+    // LCD Control registers
+    constexpr word LcdControl = 0xFF40;     // LCDC - LCD Control
+    constexpr word LcdStatus = 0xFF41;      // STAT - LCD Status
+    constexpr word ScrollY = 0xFF42;        // SCY - Scroll Y
+    constexpr word ScrollX = 0xFF43;        // SCX - Scroll X
+    constexpr word LcdY = 0xFF44;           // LY - LCD Y Coordinate
+    constexpr word LcdYCompare = 0xFF45;    // LYC - LY Compare
+    constexpr word BackgroundPalette = 0xFF47;  // BGP - Background Palette
+    constexpr word ObjectPalette0 = 0xFF48;     // OBP0 - Object Palette 0
+    constexpr word ObjectPalette1 = 0xFF49;     // OBP1 - Object Palette 1
+    constexpr word WindowY = 0xFF4A;        // WY - Window Y Position
+    constexpr word WindowX = 0xFF4B;        // WX - Window X Position
+
     // Interrupt handler addresses (ISR)
     constexpr word VBlankHandlerAddress = 0x40;
     constexpr word LcdHandlerAddress = 0x48;

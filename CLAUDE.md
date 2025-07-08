@@ -73,6 +73,19 @@ The memory system follows Game Boy's memory map with dedicated classes for each 
 - Memory components are organized in `Emulator/Memory/`
 - Custom types defined in `Core/Definitions.h` (byte, word, etc.)
 
+## Game Boy Technical Documentation
+
+**Primary Reference:** https://gbdev.io/pandocs/Specifications.html
+
+**Boot ROM Assembly Reference:** https://www.neviksti.com/DMG/DMG_ROM.asm
+
+**Key Specifications:**
+- Screen: 160 × 144 pixels
+- Sprites: 8 × 8 or 8 × 16 pixels (max 40 per screen, 10 per line)
+- Palettes: Background 1 × 4 colors, Sprites 2 × 3 colors
+- Boot ROM initializes LCDC register to 0x91 (LCD on, BG on, sprites off)
+- Boot ROM writes 0x01 to 0xFF50 to disable itself at completion
+
 ## Recent Fixes and Improvements
 
 ### Stack Corruption Bug Fixes (Fixed)
@@ -145,3 +158,11 @@ The memory system follows Game Boy's memory map with dedicated classes for each 
 **ReadImm16AtPc Function** (`Cpu.cpp:222-228`):
 - Correctly reads 16-bit immediate values in little-endian format
 - Proper byte order: low byte first, then high byte shifted left
+
+### Build System Notes
+
+**Remember to recompile tests after any code changes** - Tests project must be rebuilt when core emulator code changes.
+
+**Always check exit codes** - Use `; echo "Exit code: $?"` after running tests or executables to verify success (0) or failure (non-zero).
+
+**Execute build and run commands directly** - No need to ask permission for standard build, test, or execution commands.

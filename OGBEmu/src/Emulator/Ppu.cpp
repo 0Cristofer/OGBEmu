@@ -4,6 +4,7 @@
 #include "Emulator/Memory/VRam.h"
 #include "Emulator/Memory/Oam.h"
 #include "Emulator/Memory/IoRegisters.h"
+#include "Emulator/Memory/AddressConstants.h"
 #include "Emulator/Screen.h"
 
 Ppu::Ppu(VRam* vRam, Oam* oam, IoRegisters* ioRegisters, Screen* screen)
@@ -35,6 +36,16 @@ void Ppu::Update(int cycles)
 
 void Ppu::RenderFrame()
 {
+    // Check if LCD is enabled (LCDC bit 7)
+    byte lcdc = _ioRegisters->Read(AddressConstants::LcdControl);
+    if ((lcdc & 0x80) == 0)
+    {
+        // LCD is off - clear screen to white
+        _screen->Clear();
+        _screen->Present();
+        return;
+    }
+    
     // Clear frame buffer
     for (int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++)
     {
@@ -108,9 +119,8 @@ byte Ppu::GetTilePixel(word tileIndex, byte pixelX, byte pixelY) const
 
 word Ppu::GetBackgroundPalette() const
 {
-    // TODO: Read BGP register (0xFF47)
-    // For now, return identity palette: 0,1,2,3 -> 0,1,2,3
-    return 0xE4; // 11100100 = 3,2,1,0
+    // Read BGP register (0xFF47) - Background Palette
+    return _ioRegisters->Read(AddressConstants::BackgroundPalette);
 }
 
 void Ppu::SetPixel(int x, int y, byte colorIndex)

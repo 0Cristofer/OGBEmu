@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OGBEmu", "OGBEmu\OGBEmu.vcxproj", "{44BF50C5-3061-7B9B-191C-8FEF055D02EC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tests", "tests\Tests.vcxproj", "{5865280E-C479-50BF-8DFB-F31EF9CE4CF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -16,6 +18,12 @@ Global
 		{44BF50C5-3061-7B9B-191C-8FEF055D02EC}.Dist|x64.Build.0 = Dist|x64
 		{44BF50C5-3061-7B9B-191C-8FEF055D02EC}.Release|x64.ActiveCfg = Release|x64
 		{44BF50C5-3061-7B9B-191C-8FEF055D02EC}.Release|x64.Build.0 = Release|x64
+		{5865280E-C479-50BF-8DFB-F31EF9CE4CF0}.Debug|x64.ActiveCfg = Debug|x64
+		{5865280E-C479-50BF-8DFB-F31EF9CE4CF0}.Debug|x64.Build.0 = Debug|x64
+		{5865280E-C479-50BF-8DFB-F31EF9CE4CF0}.Dist|x64.ActiveCfg = Dist|x64
+		{5865280E-C479-50BF-8DFB-F31EF9CE4CF0}.Dist|x64.Build.0 = Dist|x64
+		{5865280E-C479-50BF-8DFB-F31EF9CE4CF0}.Release|x64.ActiveCfg = Release|x64
+		{5865280E-C479-50BF-8DFB-F31EF9CE4CF0}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+#include "Core/Definitions.h"
 
 class Screen
 {
@@ -38,5 +39,5 @@ private:
         {8, 24, 32, 255}      // Darkest
     };
     
-    void RenderTile(int tileIndex, int x, int y, const class VRam* vram);
+    void RenderTile(int tileIndex, int x, int y, const class VRam* vram, byte palette);
 };
