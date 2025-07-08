@@ -8,7 +8,7 @@ This project uses Premake5 for project generation and Visual Studio for building
 
 **Generate project files:**
 ```bash
-premake5 vs2022
+cmd.exe /c GenerateProjects.bat
 ```
 
 **Build configurations:**
@@ -18,12 +18,12 @@ premake5 vs2022
 
 **Build from command line (after generating):**
 ```bash
-# Build all configurations
-msbuild OGBEmu.sln
+# Build all configurations (use full path on WSL)
+MSBuild.exe OGBEmu.sln
 
 # Build specific configuration
-msbuild OGBEmu.sln /p:Configuration=Debug
-msbuild OGBEmu.sln /p:Configuration=Release
+MSBuild.exe OGBEmu.sln /p:Configuration=Debug
+MSBuild.exe OGBEmu.sln /p:Configuration=Release
 ```
 
 ## Architecture Overview
@@ -73,6 +73,19 @@ The memory system follows Game Boy's memory map with dedicated classes for each 
 - Memory components are organized in `Emulator/Memory/`
 - Custom types defined in `Core/Definitions.h` (byte, word, etc.)
 
+## Game Boy Technical Documentation
+
+**Primary Reference:** https://gbdev.io/pandocs/Specifications.html
+
+**Boot ROM Assembly Reference:** https://www.neviksti.com/DMG/DMG_ROM.asm
+
+**Key Specifications:**
+- Screen: 160 × 144 pixels
+- Sprites: 8 × 8 or 8 × 16 pixels (max 40 per screen, 10 per line)
+- Palettes: Background 1 × 4 colors, Sprites 2 × 3 colors
+- Boot ROM initializes LCDC register to 0x91 (LCD on, BG on, sprites off)
+- Boot ROM writes 0x01 to 0xFF50 to disable itself at completion
+
 ## Recent Fixes and Improvements
 
 ### Stack Corruption Bug Fixes (Fixed)
@@ -109,14 +122,18 @@ The memory system follows Game Boy's memory map with dedicated classes for each 
 ### Logging System Improvements
 
 **File Logging** (`Logger.cpp`):
-- Added file output to `emulator_log.txt`
+- Added file output to `emulator_log.txt` (created relative to executable location)
 - Clean start each session (overwrites previous log)
+- Includes timestamps with millisecond precision for each log entry
+- Session header shows when logging started to distinguish between runs
 - Automatic fallback to console if file can't be opened
+- Log file is excluded from git tracking (added to .gitignore)
 
-**Targeted Logging** (`Cpu.cpp`):
-- Only logs stack-related and SP modification instructions
-- Reduces log size from 70k+ lines to manageable amount
-- Logs: PUSH, POP, CALL, RET, RST, ADD HL,SP, LD SP,HL, LD SP,nn, ADD SP,e8
+**Logging Performance Optimization** (`Cpu.cpp`):
+- Removed verbose stack operation logging that was causing performance issues
+- Stack operation logs (PUSH, POP, CALL, RET, RST) were generating 300k+ lines per run
+- Now only logs critical errors and debug breakpoints
+- Significant performance improvement for emulation speed
 
 ### Memory Map Notes
 
@@ -141,3 +158,15 @@ The memory system follows Game Boy's memory map with dedicated classes for each 
 **ReadImm16AtPc Function** (`Cpu.cpp:222-228`):
 - Correctly reads 16-bit immediate values in little-endian format
 - Proper byte order: low byte first, then high byte shifted left
+
+### Build System Notes
+
+**Remember to recompile tests after any code changes** - Tests project must be rebuilt when core emulator code changes.
+
+**Always check exit codes** - Use `; echo "Exit code: $?"` after running tests or executables to verify success (0) or failure (non-zero).
+
+**Execute build and run commands directly** - No need to ask permission for standard build, test, or execution commands.
+
+**Use git.exe instead of just git** - In WSL environment, use `git.exe` for all git commands to ensure proper Windows git integration.
+
+**Always check log timestamps before analyzing** - Always verify the timestamp of log files to ensure you're analyzing the most recent execution, unless stated otherwise.

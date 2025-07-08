@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="OGBEmu">
+      <UniqueIdentifier>{44BF50C5-3061-7B9B-191C-8FEF055D02EC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OGBEmu\src">
+      <UniqueIdentifier>{5B7F8272-4737-C4BF-B03E-9D1B9C155FB0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OGBEmu\src\Core">
+      <UniqueIdentifier>{9374A86A-FFFF-152F-0811-9923741B722F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OGBEmu\src\Emulator">
+      <UniqueIdentifier>{B3086B02-1F6A-4810-A8D7-8EC214387FCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OGBEmu\src\Emulator\Memory">
+      <UniqueIdentifier>{BB98A9D9-A7A8-55AA-1062-BAC8FC904443}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OGBEmu\src\Emulator\Memory\MBC">
+      <UniqueIdentifier>{5C940852-48BA-D2B8-3100-58841DC5F784}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\OGBEmu\src\Core\Definitions.h">
+      <Filter>OGBEmu\src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Core\Logger.h">
+      <Filter>OGBEmu\src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Core\Utils.h">
+      <Filter>OGBEmu\src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\AddressConstants.h">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\BootRom.h">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\Bus.h">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\Cartridge.h">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\EchoRam.h">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\HRam.h">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\IoRegisters.h">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\MBC\BaseMbc.h">
+      <Filter>OGBEmu\src\Emulator\Memory\MBC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\MBC\Mbc1.h">
+      <Filter>OGBEmu\src\Emulator\Memory\MBC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\MBC\NoMbc.h">
+      <Filter>OGBEmu\src\Emulator\Memory\MBC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\Oam.h">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\VRam.h">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\WRam.h">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\WRamCgb.h">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\OGBEmu\src\Core\Logger.cpp">
+      <Filter>OGBEmu\src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Core\Utils.cpp">
+      <Filter>OGBEmu\src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Memory\BootRom.cpp">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Memory\Bus.cpp">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Memory\Cartridge.cpp">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Memory\EchoRam.cpp">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Memory\HRam.cpp">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Memory\IoRegisters.cpp">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Memory\MBC\Mbc1.cpp">
+      <Filter>OGBEmu\src\Emulator\Memory\MBC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Memory\MBC\NoMbc.cpp">
+      <Filter>OGBEmu\src\Emulator\Memory\MBC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Memory\Oam.cpp">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Memory\VRam.cpp">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Memory\WRam.cpp">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Memory\WRamCgb.cpp">
+      <Filter>OGBEmu\src\Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="BootRomDisableTest.cpp" />
+  </ItemGroup>
+</Project>

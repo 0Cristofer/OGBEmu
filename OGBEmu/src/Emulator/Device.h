@@ -11,6 +11,8 @@
 #include "Emulator/Memory/VRam.h"
 #include "Emulator/Memory/WRam.h"
 #include "Emulator/Memory/WRamCgb.h"
+#include "Emulator/Screen.h"
+#include "Emulator/Ppu.h"
 
 class Device
 {
@@ -35,6 +37,8 @@ private:
     HRam _hRam;
     Bus _bus;
     Cpu _cpu;
+    Screen _screen;
+    Ppu _ppu;
 
     unsigned int _framesPerSecond;
     double _frameTimeSeconds;
