@@ -166,3 +166,5 @@ The memory system follows Game Boy's memory map with dedicated classes for each 
 **Always check exit codes** - Use `; echo "Exit code: $?"` after running tests or executables to verify success (0) or failure (non-zero).
 
 **Execute build and run commands directly** - No need to ask permission for standard build, test, or execution commands.
+
+**Use git.exe instead of just git** - In WSL environment, use `git.exe` for all git commands to ensure proper Windows git integration.

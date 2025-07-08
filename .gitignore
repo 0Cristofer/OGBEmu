@@ -13,6 +13,9 @@ bin-int/
 emulator_log.txt
 *.log
 
+# Claude Code local settings
+.claude/settings.local.json
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
