@@ -72,6 +72,8 @@
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\WRamCgb.h">
       <Filter>OGBEmu\src\Emulator\Memory</Filter>
     </ClInclude>
+    <ClInclude Include="BaseTest.h" />
+    <ClInclude Include="BootRomDisableTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\OGBEmu\src\Core\Logger.cpp">
@@ -116,6 +118,8 @@
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\WRamCgb.cpp">
       <Filter>OGBEmu\src\Emulator\Memory</Filter>
     </ClCompile>
+    <ClCompile Include="BaseTest.cpp" />
     <ClCompile Include="BootRomDisableTest.cpp" />
+    <ClCompile Include="TestRunner.cpp" />
   </ItemGroup>
 </Project>

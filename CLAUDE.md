@@ -75,9 +75,13 @@ The memory system follows Game Boy's memory map with dedicated classes for each 
 
 ## Game Boy Technical Documentation
 
+**Target Hardware:** DMG (Original Game Boy - Dot Matrix Game)
+
 **Primary Reference:** https://gbdev.io/pandocs/Specifications.html
 
 **Boot ROM Assembly Reference:** https://www.neviksti.com/DMG/DMG_ROM.asm
+
+**Test Suite Reference:** https://raw.githubusercontent.com/Gekkio/mooneye-test-suite/refs/heads/main/README.markdown
 
 **Key Specifications:**
 - Screen: 160 × 144 pixels
@@ -85,6 +89,11 @@ The memory system follows Game Boy's memory map with dedicated classes for each 
 - Palettes: Background 1 × 4 colors, Sprites 2 × 3 colors
 - Boot ROM initializes LCDC register to 0x91 (LCD on, BG on, sprites off)
 - Boot ROM writes 0x01 to 0xFF50 to disable itself at completion
+
+**Testing Guidelines:**
+- Use mooneye-test-suite for hardware validation
+- For boot register testing, use `boot_regs-dmgABC` (DMG variants A, B, C)
+- Test ROMs validate DMG-specific hardware behavior
 
 ## Recent Fixes and Improvements
 

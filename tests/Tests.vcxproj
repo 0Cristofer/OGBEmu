@@ -157,6 +157,8 @@
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\VRam.h" />
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\WRam.h" />
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\WRamCgb.h" />
+    <ClInclude Include="BaseTest.h" />
+    <ClInclude Include="BootRomDisableTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\OGBEmu\src\Core\Logger.cpp" />
@@ -173,7 +175,9 @@
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\VRam.cpp" />
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\WRam.cpp" />
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\WRamCgb.cpp" />
+    <ClCompile Include="BaseTest.cpp" />
     <ClCompile Include="BootRomDisableTest.cpp" />
+    <ClCompile Include="TestRunner.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

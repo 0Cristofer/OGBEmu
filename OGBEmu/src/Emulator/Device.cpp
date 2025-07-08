@@ -10,12 +10,13 @@ namespace
     constexpr unsigned char DefaultSimulationFramesPerSecond = 64;
 }
 
-Device::Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& cartridgeBytes, const int framesPerSecond) : _bootRom(bootRomBytes),
+Device::Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& cartridgeBytes, const int framesPerSecond, const double timeoutSeconds) : _bootRom(bootRomBytes),
                                                                                                                             _cartridge(cartridgeBytes),
                                                                                                                             _bus(Bus(&_bootRom, &_cartridge, &_vRam, &_wRam, &_wRamCgb, &_echoRam, &_oam, &_ioRegisters, &_hRam)),
                                                                                                                             _cpu(&_bus),
                                                                                                                             _ppu(&_vRam, &_oam, &_ioRegisters, &_screen),
-                                                                                                                            _framesPerSecond(framesPerSecond)
+                                                                                                                            _framesPerSecond(framesPerSecond),
+                                                                                                                            _timeoutSeconds(timeoutSeconds)
 {
     if (!Utils::IsPowerOfTwo(_framesPerSecond))
     {
@@ -43,9 +44,14 @@ void Device::Run()
     if (!IsValid())
         return;
 
-    LOG("Running");
-
-    constexpr double maxRunSeconds = 5000.;
+    if (_timeoutSeconds > 0.0)
+    {
+        LOG("Running with timeout: " << _timeoutSeconds << "s");
+    }
+    else
+    {
+        LOG("Running indefinitely (no timeout)");
+    }
 
     unsigned int totalCycles = 0;
     unsigned int totalFrames = 0;
@@ -53,7 +59,7 @@ void Device::Run()
     double runSeconds = 0;
 
     const auto runStartTime = std::chrono::steady_clock::now();
-    while (runSeconds < maxRunSeconds && !_screen.ShouldClose())
+    while ((_timeoutSeconds == 0.0 || runSeconds < _timeoutSeconds) && !_screen.ShouldClose())
     {
         const unsigned int cyclesDone = DoFrame();
 

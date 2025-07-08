@@ -17,7 +17,7 @@
 class Device
 {
 public:
-    Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& cartridgeBytes, int framesPerSecond);
+    Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& cartridgeBytes, int framesPerSecond, double timeoutSeconds = 0.0);
 
     [[nodiscard]] bool IsValid() const;
     void Run();
@@ -43,4 +43,5 @@ private:
     unsigned int _framesPerSecond;
     double _frameTimeSeconds;
     double _maxCyclesPerFrame;
+    double _timeoutSeconds;
 };
