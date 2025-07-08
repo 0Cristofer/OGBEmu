@@ -19,11 +19,11 @@ cmd.exe /c GenerateProjects.bat
 **Build from command line (after generating):**
 ```bash
 # Build all configurations (use full path on WSL)
-"/mnt/c/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" OGBEmu.sln
+MSBuild.exe OGBEmu.sln
 
 # Build specific configuration
-"/mnt/c/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" OGBEmu.sln /p:Configuration=Debug
-"/mnt/c/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" OGBEmu.sln /p:Configuration=Release
+MSBuild.exe OGBEmu.sln /p:Configuration=Debug
+MSBuild.exe OGBEmu.sln /p:Configuration=Release
 ```
 
 ## Architecture Overview
@@ -168,3 +168,5 @@ The memory system follows Game Boy's memory map with dedicated classes for each 
 **Execute build and run commands directly** - No need to ask permission for standard build, test, or execution commands.
 
 **Use git.exe instead of just git** - In WSL environment, use `git.exe` for all git commands to ensure proper Windows git integration.
+
+**Always check log timestamps before analyzing** - Always verify the timestamp of log files to ensure you're analyzing the most recent execution, unless stated otherwise.

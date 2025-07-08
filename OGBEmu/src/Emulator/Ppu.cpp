@@ -8,7 +8,7 @@
 #include "Emulator/Screen.h"
 
 Ppu::Ppu(VRam* vRam, Oam* oam, IoRegisters* ioRegisters, Screen* screen)
-    : _vRam(vRam), _oam(oam), _ioRegisters(ioRegisters), _screen(screen)
+    : _vRam(vRam), _oam(oam), _ioRegisters(ioRegisters), _screen(screen), _currentCycles(0), _currentScanline(0)
 {
     // Initialize frame buffer to white (Game Boy color index 0)
     for (int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++)
@@ -21,16 +21,39 @@ Ppu::Ppu(VRam* vRam, Oam* oam, IoRegisters* ioRegisters, Screen* screen)
 
 void Ppu::Update(int cycles)
 {
-    // For now, simple frame-based rendering
-    // TODO: Implement proper scanline timing (456 cycles per line)
-    static int cycleCcount = 0;
-    cycleCcount += cycles;
-    
-    // Render a frame every ~70224 cycles (Game Boy frame time)
-    if (cycleCcount >= 70224)
+    // Check if LCD is enabled
+    byte lcdc = _ioRegisters->Read(AddressConstants::LcdControl);
+    if ((lcdc & 0x80) == 0)
     {
-        RenderFrame();
-        cycleCcount = 0;
+        // LCD is disabled - reset PPU state
+        _currentCycles = 0;
+        _currentScanline = 0;
+        _ioRegisters->Write(AddressConstants::LcdY, 0);
+        return;
+    }
+    
+    _currentCycles += cycles;
+    
+    // Check if we've completed a scanline (456 cycles)
+    if (_currentCycles >= CYCLES_PER_SCANLINE)
+    {
+        _currentCycles -= CYCLES_PER_SCANLINE;
+        _currentScanline++;
+        
+        // Handle scanline overflow (154 total scanlines: 0-153)
+        if (_currentScanline >= TOTAL_SCANLINES)
+        {
+            _currentScanline = 0;
+        }
+        
+        // Update LY register
+        _ioRegisters->Write(AddressConstants::LcdY, _currentScanline);
+        
+        // Render frame when entering VBlank (scanline 144)
+        if (_currentScanline == VISIBLE_SCANLINES)
+        {
+            RenderFrame();
+        }
     }
 }
 

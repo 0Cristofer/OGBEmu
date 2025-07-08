@@ -14,6 +14,12 @@ public:
 
     void Update(int cycles);
     void RenderFrame();
+    
+    // PPU timing constants
+    static constexpr int CYCLES_PER_SCANLINE = 456;
+    static constexpr int VISIBLE_SCANLINES = 144;
+    static constexpr int VBLANK_SCANLINES = 10;
+    static constexpr int TOTAL_SCANLINES = VISIBLE_SCANLINES + VBLANK_SCANLINES;
 
 private:
     void RenderBackground();
@@ -42,4 +48,8 @@ private:
     
     // Frame buffer for rendered pixels
     byte _frameBuffer[SCREEN_WIDTH * SCREEN_HEIGHT];
+    
+    // PPU timing state
+    int _currentCycles;
+    byte _currentScanline;
 };
