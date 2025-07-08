@@ -78,6 +78,12 @@
     <ClInclude Include="src\Emulator\Opcode.h">
       <Filter>Emulator</Filter>
     </ClInclude>
+    <ClInclude Include="src\Emulator\Ppu.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Screen.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Logger.cpp">
@@ -127,6 +133,12 @@
     </ClCompile>
     <ClCompile Include="src\Emulator\Memory\WRamCgb.cpp">
       <Filter>Emulator\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Ppu.cpp">
+      <Filter>Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Screen.cpp">
+      <Filter>Emulator</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>

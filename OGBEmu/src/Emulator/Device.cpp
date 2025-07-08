@@ -14,6 +14,7 @@ Device::Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& c
                                                                                                                             _cartridge(cartridgeBytes),
                                                                                                                             _bus(Bus(&_bootRom, &_cartridge, &_vRam, &_wRam, &_wRamCgb, &_echoRam, &_oam, &_ioRegisters, &_hRam)),
                                                                                                                             _cpu(&_bus),
+                                                                                                                            _ppu(&_vRam, &_oam, &_ioRegisters, &_screen),
                                                                                                                             _framesPerSecond(framesPerSecond)
 {
     if (!Utils::IsPowerOfTwo(_framesPerSecond))
@@ -25,6 +26,11 @@ Device::Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& c
 
     _frameTimeSeconds = 1. / _framesPerSecond;
     _maxCyclesPerFrame = Cpu::CpuClock * _frameTimeSeconds;
+    
+    if (!_screen.Initialize())
+    {
+        LOG("Failed to initialize screen");
+    }
 }
 
 bool Device::IsValid() const
@@ -47,7 +53,7 @@ void Device::Run()
     double runSeconds = 0;
 
     const auto runStartTime = std::chrono::steady_clock::now();
-    while (runSeconds < maxRunSeconds)
+    while (runSeconds < maxRunSeconds && !_screen.ShouldClose())
     {
         const unsigned int cyclesDone = DoFrame();
 
@@ -83,7 +89,13 @@ unsigned Device::DoFrame()
         }
 
         cycleCount += cyclesExecuted;
+        
+        // Update PPU with CPU cycles
+        _ppu.Update(cyclesExecuted);
     }
+    
+    // PPU handles screen rendering now
+    // _screen.Clear() and Present() are called by PPU.RenderFrame()
     
     const auto frameEndTime = std::chrono::steady_clock::now();
     const std::chrono::duration<double> frameTime = frameEndTime - frameStartTime;

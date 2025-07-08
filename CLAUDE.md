@@ -8,7 +8,7 @@ This project uses Premake5 for project generation and Visual Studio for building
 
 **Generate project files:**
 ```bash
-premake5 vs2022
+cmd.exe /c GenerateProjects.bat
 ```
 
 **Build configurations:**
@@ -18,12 +18,12 @@ premake5 vs2022
 
 **Build from command line (after generating):**
 ```bash
-# Build all configurations
-msbuild OGBEmu.sln
+# Build all configurations (use full path on WSL)
+"/mnt/c/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" OGBEmu.sln
 
 # Build specific configuration
-msbuild OGBEmu.sln /p:Configuration=Debug
-msbuild OGBEmu.sln /p:Configuration=Release
+"/mnt/c/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" OGBEmu.sln /p:Configuration=Debug
+"/mnt/c/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" OGBEmu.sln /p:Configuration=Release
 ```
 
 ## Architecture Overview
@@ -109,14 +109,18 @@ The memory system follows Game Boy's memory map with dedicated classes for each 
 ### Logging System Improvements
 
 **File Logging** (`Logger.cpp`):
-- Added file output to `emulator_log.txt`
+- Added file output to `emulator_log.txt` (created relative to executable location)
 - Clean start each session (overwrites previous log)
+- Includes timestamps with millisecond precision for each log entry
+- Session header shows when logging started to distinguish between runs
 - Automatic fallback to console if file can't be opened
+- Log file is excluded from git tracking (added to .gitignore)
 
-**Targeted Logging** (`Cpu.cpp`):
-- Only logs stack-related and SP modification instructions
-- Reduces log size from 70k+ lines to manageable amount
-- Logs: PUSH, POP, CALL, RET, RST, ADD HL,SP, LD SP,HL, LD SP,nn, ADD SP,e8
+**Logging Performance Optimization** (`Cpu.cpp`):
+- Removed verbose stack operation logging that was causing performance issues
+- Stack operation logs (PUSH, POP, CALL, RET, RST) were generating 300k+ lines per run
+- Now only logs critical errors and debug breakpoints
+- Significant performance improvement for emulation speed
 
 ### Memory Map Notes
 

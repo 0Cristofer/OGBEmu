@@ -35,48 +35,7 @@ byte Cpu::Update()
     {
         const Opcode opcode = FetchNextOpcode();
         
-        // Only log stack-related and SP modification instructions
-        bool shouldLog = false;
-        
-        // Stack operations: PUSH, POP, CALL, RET, RST
-        if (opcode.code == 0xC5 || opcode.code == 0xD5 || opcode.code == 0xE5 || opcode.code == 0xF5 ||  // PUSH
-            opcode.code == 0xC1 || opcode.code == 0xD1 || opcode.code == 0xE1 || opcode.code == 0xF1 ||  // POP
-            opcode.code == 0xCD || (opcode.code & 0xC7) == 0xC4 ||  // CALL
-            opcode.code == 0xC9 || (opcode.code & 0xC7) == 0xC0 ||  // RET
-            (opcode.code & 0xC7) == 0xC7)  // RST
-        {
-            shouldLog = true;
-        }
-        
-        // SP modification instructions: ADD HL,SP, LD SP,HL, LD SP,nn, ADD SP,e8
-        if (opcode.code == 0x39 || opcode.code == 0xF9 || opcode.code == 0x31 || opcode.code == 0xE8)
-        {
-            shouldLog = true;
-        }
-        
-        if (shouldLog)
-        {
-            DEBUGBREAKLOG("BEFORE: PC: " << std::format("{:04x}", _registerPc.reg) << 
-                          " SP: " << std::format("{:04x}", _registerSp.reg) << 
-                          " HL: " << std::format("{:04x}", _registers.hl.reg) << 
-                          " AF: " << std::format("{:04x}", _registers.af.reg) << 
-                          " BC: " << std::format("{:04x}", _registers.bc.reg) << 
-                          " DE: " << std::format("{:04x}", _registers.de.reg) << 
-                          " Opcode: " << std::format("{:02x}", opcode.code));
-        }
-        
         ExecuteOpcode(opcode);
-        
-        if (shouldLog)
-        {
-            DEBUGBREAKLOG("AFTER:  PC: " << std::format("{:04x}", _registerPc.reg) << 
-                          " SP: " << std::format("{:04x}", _registerSp.reg) << 
-                          " HL: " << std::format("{:04x}", _registers.hl.reg) << 
-                          " AF: " << std::format("{:04x}", _registers.af.reg) << 
-                          " BC: " << std::format("{:04x}", _registers.bc.reg) << 
-                          " DE: " << std::format("{:04x}", _registers.de.reg) << 
-                          " Cycles: " << static_cast<int>(_cyclesThisInstruction));
-        }
     }
     else
         _cyclesThisInstruction += 4;
@@ -659,14 +618,14 @@ void Cpu::Ld16Imm(const byte targetIndex)
 void Cpu::LdSpTImm()
 {
     const word newSp = ReadImm16AtPc();
-    DEBUGBREAKLOG("LD SP,nn: Setting SP from " << std::format("{:x}", _registerSp.reg) << " to " << std::format("{:x}", newSp) << " at PC: " << std::format("{:x}", _registerPc.reg));
+    // DEBUGBREAKLOG("LD SP,nn: Setting SP from " << std::format("{:x}", _registerSp.reg) << " to " << std::format("{:x}", newSp) << " at PC: " << std::format("{:x}", _registerPc.reg));
     _registerSp.reg = newSp;
 }
 
 void Cpu::LdSpS(const word val)
 {
     _cyclesThisInstruction += 4;
-    DEBUGBREAKLOG("LD SP,HL: Setting SP from " << std::format("{:x}", _registerSp.reg) << " to " << std::format("{:x}", val) << " at PC: " << std::format("{:x}", _registerPc.reg));
+    // DEBUGBREAKLOG("LD SP,HL: Setting SP from " << std::format("{:x}", _registerSp.reg) << " to " << std::format("{:x}", val) << " at PC: " << std::format("{:x}", _registerPc.reg));
     _registerSp.reg = val;
 }
 

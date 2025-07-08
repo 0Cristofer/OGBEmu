@@ -13,6 +13,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
+IncludeDir["SDL3"] = "vendor/SDL3/include"
 
 project "OGBEmu"
 	location "OGBEmu"
@@ -37,10 +38,17 @@ project "OGBEmu"
 	includedirs
 	{
 		"%{prj.name}/src",
+		"%{IncludeDir.SDL3}",
+	}
+
+	libdirs
+	{
+		"vendor/SDL3/lib/x64",
 	}
 
 	links 
 	{
+		"SDL3"
 	}
 
 	filter "system:windows"
