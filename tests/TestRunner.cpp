@@ -6,6 +6,7 @@
 #include "BaseTest.h"
 #include "BootRomDisableTest.h"
 #include "CpuLoadInstructionsTest.h"
+#include "CpuArithmeticInstructionsTest.h"
 
 int main()
 {
@@ -15,10 +16,10 @@ int main()
     // Create list of all tests
     std::vector<std::unique_ptr<BaseTest>> tests;
     tests.push_back(std::make_unique<BootRomDisableTest>());
-    tests.push_back(std::make_unique<CpuLoadInstructionsTest>());
+    tests.push_back(std::make_unique<CpuArithmeticInstructionsTest>());
     
     // Add more tests here as they are created
-    // tests.push_back(std::make_unique<CpuArithmeticInstructionsTest>());
+    // tests.push_back(std::make_unique<CpuLoadInstructionsTest>());
     // tests.push_back(std::make_unique<PpuRenderingTest>());
     // tests.push_back(std::make_unique<MemoryBusTest>());
     

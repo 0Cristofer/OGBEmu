@@ -92,6 +92,7 @@
     </ClInclude>
     <ClInclude Include="BaseTest.h" />
     <ClInclude Include="BootRomDisableTest.h" />
+    <ClInclude Include="CpuArithmeticInstructionsTest.h" />
     <ClInclude Include="CpuLoadInstructionsTest.h" />
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +152,7 @@
     </ClCompile>
     <ClCompile Include="BaseTest.cpp" />
     <ClCompile Include="BootRomDisableTest.cpp" />
+    <ClCompile Include="CpuArithmeticInstructionsTest.cpp" />
     <ClCompile Include="CpuLoadInstructionsTest.cpp" />
     <ClCompile Include="TestRunner.cpp" />
   </ItemGroup>
