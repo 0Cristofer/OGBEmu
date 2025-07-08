@@ -7,6 +7,7 @@
 #include "BootRomDisableTest.h"
 #include "CpuLoadInstructionsTest.h"
 #include "CpuArithmeticInstructionsTest.h"
+#include "SimpleCpuTest.h"
 
 int main()
 {
@@ -16,6 +17,7 @@ int main()
     // Create list of all tests
     std::vector<std::unique_ptr<BaseTest>> tests;
     tests.push_back(std::make_unique<BootRomDisableTest>());
+    tests.push_back(std::make_unique<SimpleCpuTest>());
     tests.push_back(std::make_unique<CpuArithmeticInstructionsTest>());
     
     // Add more tests here as they are created
@@ -45,7 +47,7 @@ int main()
     }
     
     // Print summary
-    std::cout << "=== Test Results ===" << std::endl;
+    std::cout << std::dec << "=== Test Results ===" << std::endl;
     std::cout << "Total tests:  " << totalTests << std::endl;
     std::cout << "Passed:       " << passedTests << std::endl;
     std::cout << "Failed:       " << failedTests << std::endl;

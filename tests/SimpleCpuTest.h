@@ -15,31 +15,15 @@
 #include "Emulator/Cpu.h"
 #include <memory>
 
-class CpuArithmeticInstructionsTest : public BaseTest
+class SimpleCpuTest : public BaseTest
 {
 public:
-    CpuArithmeticInstructionsTest();
+    SimpleCpuTest();
 
     void Setup() override;
     void Run() override;
 
 private:
-    // Test methods
-    void TestBasicAddition();
-    void TestAdditionWithCarry();
-    void TestSubtraction();
-    void TestSubtractionWithCarry();
-    void TestBitwiseAnd();
-    void TestBitwiseOr();
-    void TestBitwiseXor();
-    void TestCompare();
-    
-    // Helper methods
-    void WriteProgramToCartridge(const std::vector<byte>& program);
-    void WriteProgram(const std::vector<byte>& program);
-    void ExecuteProgram(int steps);
-    void VerifyMemoryValue(word address, byte expected, const char* description);
-    
     // Memory components
     std::vector<byte> _bootRomData;
     std::vector<byte> _cartridgeData;

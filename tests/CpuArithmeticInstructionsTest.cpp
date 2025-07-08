@@ -46,21 +46,23 @@ void CpuArithmeticInstructionsTest::Run()
 
 void CpuArithmeticInstructionsTest::TestBasicAddition()
 {
-    // Test a simple sequence: LD A,5; ADD A,3; LD (0xC000),A
-    // This tests if ADD instruction works and we can verify the result
+    // Test a simple sequence starting from PC=0x00 (boot ROM location)
+    // Since boot ROM is disabled, CPU will read from cartridge at 0x00
     std::vector<byte> program = {
         0x3E, 0x05,        // LD A,5
-        0x3E, 0x03,        // LD A,3 (overwriting the 5 - this is a simple test)
-        0xC6, 0x02,        // ADD A,2  (A should become 5)
+        0xC6, 0x02,        // ADD A,2  (A should become 7)
         0xEA, 0x00, 0xC0,  // LD (0xC000),A
         0x76               // HALT
     };
     
-    WriteProgram(program);
-    ExecuteProgram(5);  // Execute 5 instructions
+    // Write program to cartridge starting at 0x00
+    WriteProgramToCartridge(program);
+    
+    // Execute several CPU cycles to let the program run
+    ExecuteProgram(10);  // Execute more cycles to be safe
     
     // Verify the result was written to memory
-    VerifyMemoryValue(0xC000, 0x05, "ADD A,n result");
+    VerifyMemoryValue(0xC000, 0x07, "ADD A,n result");
 }
 
 void CpuArithmeticInstructionsTest::TestAdditionWithCarry()
@@ -166,6 +168,24 @@ void CpuArithmeticInstructionsTest::TestCompare()
     ExecuteProgram(4);
     
     VerifyMemoryValue(0xC006, 0x05, "CP A,n (A unchanged)");
+}
+
+void CpuArithmeticInstructionsTest::WriteProgramToCartridge(const std::vector<byte>& program)
+{
+    // Recreate cartridge with the new program
+    for (size_t i = 0; i < program.size(); ++i) {
+        _cartridgeData[i] = program[i];
+    }
+    
+    // Recreate the cartridge and bus with updated data
+    _cartridge = std::make_unique<Cartridge>(_cartridgeData);
+    _bus = std::make_unique<Bus>(_bootRom.get(), _cartridge.get(), _vRam.get(), 
+                                _wRam.get(), _wRamCgb.get(), _echoRam.get(), 
+                                _oam.get(), _ioRegisters.get(), _hRam.get());
+    _cpu = std::make_unique<Cpu>(_bus.get());
+    
+    // Disable boot ROM for testing
+    _bus->Write(AddressConstants::BootRomBank, 0x01);
 }
 
 void CpuArithmeticInstructionsTest::WriteProgram(const std::vector<byte>& program)

@@ -94,6 +94,7 @@
     <ClInclude Include="BootRomDisableTest.h" />
     <ClInclude Include="CpuArithmeticInstructionsTest.h" />
     <ClInclude Include="CpuLoadInstructionsTest.h" />
+    <ClInclude Include="SimpleCpuTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\OGBEmu\src\Core\Logger.cpp">
@@ -103,9 +104,6 @@
       <Filter>OGBEmu\src\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\OGBEmu\src\Emulator\Cpu.cpp">
-      <Filter>OGBEmu\src\Emulator</Filter>
-    </ClCompile>
-    <ClCompile Include="..\OGBEmu\src\Emulator\Device.cpp">
       <Filter>OGBEmu\src\Emulator</Filter>
     </ClCompile>
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\BootRom.cpp">
@@ -144,16 +142,11 @@
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\WRamCgb.cpp">
       <Filter>OGBEmu\src\Emulator\Memory</Filter>
     </ClCompile>
-    <ClCompile Include="..\OGBEmu\src\Emulator\Ppu.cpp">
-      <Filter>OGBEmu\src\Emulator</Filter>
-    </ClCompile>
-    <ClCompile Include="..\OGBEmu\src\Emulator\Screen.cpp">
-      <Filter>OGBEmu\src\Emulator</Filter>
-    </ClCompile>
     <ClCompile Include="BaseTest.cpp" />
     <ClCompile Include="BootRomDisableTest.cpp" />
     <ClCompile Include="CpuArithmeticInstructionsTest.cpp" />
     <ClCompile Include="CpuLoadInstructionsTest.cpp" />
+    <ClCompile Include="SimpleCpuTest.cpp" />
     <ClCompile Include="TestRunner.cpp" />
   </ItemGroup>
 </Project>

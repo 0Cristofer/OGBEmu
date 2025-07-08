@@ -167,12 +167,12 @@
     <ClInclude Include="BootRomDisableTest.h" />
     <ClInclude Include="CpuArithmeticInstructionsTest.h" />
     <ClInclude Include="CpuLoadInstructionsTest.h" />
+    <ClInclude Include="SimpleCpuTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\OGBEmu\src\Core\Logger.cpp" />
     <ClCompile Include="..\OGBEmu\src\Core\Utils.cpp" />
     <ClCompile Include="..\OGBEmu\src\Emulator\Cpu.cpp" />
-    <ClCompile Include="..\OGBEmu\src\Emulator\Device.cpp" />
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\BootRom.cpp" />
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\Bus.cpp" />
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\Cartridge.cpp" />
@@ -185,12 +185,11 @@
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\VRam.cpp" />
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\WRam.cpp" />
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\WRamCgb.cpp" />
-    <ClCompile Include="..\OGBEmu\src\Emulator\Ppu.cpp" />
-    <ClCompile Include="..\OGBEmu\src\Emulator\Screen.cpp" />
     <ClCompile Include="BaseTest.cpp" />
     <ClCompile Include="BootRomDisableTest.cpp" />
     <ClCompile Include="CpuArithmeticInstructionsTest.cpp" />
     <ClCompile Include="CpuLoadInstructionsTest.cpp" />
+    <ClCompile Include="SimpleCpuTest.cpp" />
     <ClCompile Include="TestRunner.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
