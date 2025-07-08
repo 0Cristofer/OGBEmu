@@ -179,3 +179,5 @@ The memory system follows Game Boy's memory map with dedicated classes for each 
 **Use git.exe instead of just git** - In WSL environment, use `git.exe` for all git commands to ensure proper Windows git integration.
 
 **Always check log timestamps before analyzing** - Always verify the timestamp of log files to ensure you're analyzing the most recent execution, unless stated otherwise.
+
+**Test ROM Usage** - For simple execution tests, only use binaries under `bins/tests/` directory. This includes mooneye test suite ROMs and other test binaries. Do not use game ROMs from `bins/red1/` or `bins/red2/` for basic testing.

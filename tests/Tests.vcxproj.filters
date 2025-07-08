@@ -30,6 +30,15 @@
     <ClInclude Include="..\OGBEmu\src\Core\Utils.h">
       <Filter>OGBEmu\src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Cpu.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Device.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\GbConstants.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\AddressConstants.h">
       <Filter>OGBEmu\src\Emulator\Memory</Filter>
     </ClInclude>
@@ -72,8 +81,18 @@
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\WRamCgb.h">
       <Filter>OGBEmu\src\Emulator\Memory</Filter>
     </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Opcode.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Ppu.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Screen.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
     <ClInclude Include="BaseTest.h" />
     <ClInclude Include="BootRomDisableTest.h" />
+    <ClInclude Include="CpuLoadInstructionsTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\OGBEmu\src\Core\Logger.cpp">
@@ -81,6 +100,12 @@
     </ClCompile>
     <ClCompile Include="..\OGBEmu\src\Core\Utils.cpp">
       <Filter>OGBEmu\src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Cpu.cpp">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Device.cpp">
+      <Filter>OGBEmu\src\Emulator</Filter>
     </ClCompile>
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\BootRom.cpp">
       <Filter>OGBEmu\src\Emulator\Memory</Filter>
@@ -118,8 +143,15 @@
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\WRamCgb.cpp">
       <Filter>OGBEmu\src\Emulator\Memory</Filter>
     </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Ppu.cpp">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Screen.cpp">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClCompile>
     <ClCompile Include="BaseTest.cpp" />
     <ClCompile Include="BootRomDisableTest.cpp" />
+    <ClCompile Include="CpuLoadInstructionsTest.cpp" />
     <ClCompile Include="TestRunner.cpp" />
   </ItemGroup>
 </Project>

@@ -143,6 +143,9 @@
     <ClInclude Include="..\OGBEmu\src\Core\Definitions.h" />
     <ClInclude Include="..\OGBEmu\src\Core\Logger.h" />
     <ClInclude Include="..\OGBEmu\src\Core\Utils.h" />
+    <ClInclude Include="..\OGBEmu\src\Emulator\Cpu.h" />
+    <ClInclude Include="..\OGBEmu\src\Emulator\Device.h" />
+    <ClInclude Include="..\OGBEmu\src\Emulator\GbConstants.h" />
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\AddressConstants.h" />
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\BootRom.h" />
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\Bus.h" />
@@ -157,12 +160,18 @@
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\VRam.h" />
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\WRam.h" />
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\WRamCgb.h" />
+    <ClInclude Include="..\OGBEmu\src\Emulator\Opcode.h" />
+    <ClInclude Include="..\OGBEmu\src\Emulator\Ppu.h" />
+    <ClInclude Include="..\OGBEmu\src\Emulator\Screen.h" />
     <ClInclude Include="BaseTest.h" />
     <ClInclude Include="BootRomDisableTest.h" />
+    <ClInclude Include="CpuLoadInstructionsTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\OGBEmu\src\Core\Logger.cpp" />
     <ClCompile Include="..\OGBEmu\src\Core\Utils.cpp" />
+    <ClCompile Include="..\OGBEmu\src\Emulator\Cpu.cpp" />
+    <ClCompile Include="..\OGBEmu\src\Emulator\Device.cpp" />
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\BootRom.cpp" />
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\Bus.cpp" />
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\Cartridge.cpp" />
@@ -175,8 +184,11 @@
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\VRam.cpp" />
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\WRam.cpp" />
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\WRamCgb.cpp" />
+    <ClCompile Include="..\OGBEmu\src\Emulator\Ppu.cpp" />
+    <ClCompile Include="..\OGBEmu\src\Emulator\Screen.cpp" />
     <ClCompile Include="BaseTest.cpp" />
     <ClCompile Include="BootRomDisableTest.cpp" />
+    <ClCompile Include="CpuLoadInstructionsTest.cpp" />
     <ClCompile Include="TestRunner.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
