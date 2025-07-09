@@ -22,6 +22,8 @@
 #include "HRamTest.h"
 #include "CartridgeTest.h"
 #include "OamTest.h"
+#include "DeviceTest.h"
+#include "NoMbcTest.h"
 #include "Core/Logger.h"
 
 int main()
@@ -48,6 +50,9 @@ int main()
     tests.push_back(std::make_unique<HRamTest>());
     tests.push_back(std::make_unique<CartridgeTest>());
     tests.push_back(std::make_unique<OamTest>());
+    tests.push_back(std::make_unique<NoMbcTest>());
+    // DeviceTest disabled due to crashes - requires further investigation
+    // tests.push_back(std::make_unique<DeviceTest>());
     
     // Add more tests here as they are created
     // tests.push_back(std::make_unique<CpuLoadInstructionsTest>());

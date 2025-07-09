@@ -4,17 +4,19 @@
 
 #include "Core/Logger.h"
 #include "Core/Utils.h"
+#include "Emulator/Screen.h"
 
 namespace
 {
     constexpr unsigned char DefaultSimulationFramesPerSecond = 64;
 }
 
-Device::Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& cartridgeBytes, const int framesPerSecond, const double timeoutSeconds) : _bootRom(bootRomBytes),
+Device::Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& cartridgeBytes, const int framesPerSecond, const double timeoutSeconds, IScreen* screen) : _bootRom(bootRomBytes),
                                                                                                                             _cartridge(cartridgeBytes),
                                                                                                                             _bus(Bus(&_bootRom, &_cartridge, &_vRam, &_wRam, &_wRamCgb, &_echoRam, &_oam, &_ioRegisters, &_hRam)),
                                                                                                                             _cpu(&_bus),
-                                                                                                                            _ppu(&_vRam, &_oam, &_ioRegisters, &_screen),
+                                                                                                                            _screen(screen),
+                                                                                                                            _ppu(&_vRam, &_oam, &_ioRegisters, _screen),
                                                                                                                             _framesPerSecond(framesPerSecond),
                                                                                                                             _timeoutSeconds(timeoutSeconds)
 {
@@ -25,10 +27,17 @@ Device::Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& c
         _framesPerSecond = DefaultSimulationFramesPerSecond;
     }
 
+    // Create default screen if none provided
+    if (_screen == nullptr)
+    {
+        _defaultScreen = std::make_unique<Screen>();
+        _screen = _defaultScreen.get();
+    }
+    
     _frameTimeSeconds = 1. / _framesPerSecond;
     _maxCyclesPerFrame = Cpu::CpuClock * _frameTimeSeconds;
     
-    if (!_screen.Initialize())
+    if (!_screen->Initialize())
     {
         LOG("Failed to initialize screen");
     }
@@ -59,7 +68,7 @@ void Device::Run()
     double runSeconds = 0;
 
     const auto runStartTime = std::chrono::steady_clock::now();
-    while ((_timeoutSeconds == 0.0 || runSeconds < _timeoutSeconds) && !_screen.ShouldClose())
+    while ((_timeoutSeconds == 0.0 || runSeconds < _timeoutSeconds) && !_screen->ShouldClose())
     {
         const unsigned int cyclesDone = DoFrame();
 
