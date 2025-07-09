@@ -13,7 +13,7 @@ Cartridge::Cartridge(const std::vector<byte>& romBytes) : _rom(romBytes)
 {
     if (!IsValid())
     {
-        DEBUGBREAKLOG("Invalid cartridge ROM, check path and file size. Expected ROM size: " << static_cast<int>(GbConstants::RomBankSize) * (1 << _rom[AddressConstants::CartridgeRomSizeAddress])
+        DEBUGBREAKLOG("Invalid cartridge ROM, check path and file size. Expected ROM size: " << static_cast<int>(GbConstants::MinCartridgeRomSize) * (1 << _rom[AddressConstants::CartridgeRomSizeAddress])
             << ", got: " << _rom.size());
         return;
     }
@@ -89,7 +89,7 @@ Cartridge::~Cartridge()
 
 bool Cartridge::IsValid() const
 {
-    return !_rom.empty() && static_cast<int>(_rom.size()) == GbConstants::RomBankSize * (1 << _rom[AddressConstants::CartridgeRomSizeAddress]);
+    return !_rom.empty() && static_cast<int>(_rom.size()) == GbConstants::MinCartridgeRomSize * (1 << _rom[AddressConstants::CartridgeRomSizeAddress]);
 }
 
 byte Cartridge::Read(const word address) const

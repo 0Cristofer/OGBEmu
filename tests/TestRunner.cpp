@@ -14,6 +14,7 @@
 #include "EchoRamTest.h"
 #include "InterruptTest.h"
 #include "IoRegistersTest.h"
+#include "Mbc1Test.h"
 #include "SimpleCpuTest.h"
 #include "Core/Logger.h"
 
@@ -34,6 +35,7 @@ int main()
     tests.push_back(std::make_unique<EchoRamTest>());
     tests.push_back(std::make_unique<InterruptTest>());
     tests.push_back(std::make_unique<IoRegistersTest>());
+    tests.push_back(std::make_unique<Mbc1Test>());
     
     // Add more tests here as they are created
     // tests.push_back(std::make_unique<CpuLoadInstructionsTest>());
