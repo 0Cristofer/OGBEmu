@@ -26,6 +26,10 @@ MSBuild.exe OGBEmu.sln /p:Configuration=Debug
 MSBuild.exe OGBEmu.sln /p:Configuration=Release
 ```
 
+## Development Guidelines
+
+- Only use premake to do project changes
+
 ## Architecture Overview
 
 This is a Game Boy emulator written in C++20 with a component-based architecture:

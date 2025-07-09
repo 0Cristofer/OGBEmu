@@ -95,6 +95,7 @@
     </ClInclude>
     <ClInclude Include="BaseTest.h" />
     <ClInclude Include="BootRomDisableTest.h" />
+    <ClInclude Include="CartridgeTest.h" />
     <ClInclude Include="CpuArithmeticInstructionsTest.h" />
     <ClInclude Include="CpuFlagOperationsTest.h" />
     <ClInclude Include="CpuJumpInstructionsTest.h" />
@@ -107,6 +108,7 @@
     <ClInclude Include="Mbc1Test.h" />
     <ClInclude Include="MemoryBusTest.h" />
     <ClInclude Include="MockScreen.h" />
+    <ClInclude Include="OamTest.h" />
     <ClInclude Include="PpuTest.h" />
     <ClInclude Include="SimpleCpuTest.h" />
     <ClInclude Include="TestCpu.h" />
@@ -164,6 +166,7 @@
     </ClCompile>
     <ClCompile Include="BaseTest.cpp" />
     <ClCompile Include="BootRomDisableTest.cpp" />
+    <ClCompile Include="CartridgeTest.cpp" />
     <ClCompile Include="CpuArithmeticInstructionsTest.cpp" />
     <ClCompile Include="CpuFlagOperationsTest.cpp" />
     <ClCompile Include="CpuJumpInstructionsTest.cpp" />
@@ -175,6 +178,7 @@
     <ClCompile Include="IoRegistersTest.cpp" />
     <ClCompile Include="Mbc1Test.cpp" />
     <ClCompile Include="MemoryBusTest.cpp" />
+    <ClCompile Include="OamTest.cpp" />
     <ClCompile Include="PpuTest.cpp" />
     <ClCompile Include="SimpleCpuTest.cpp" />
     <ClCompile Include="TestCpu.cpp" />
