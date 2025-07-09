@@ -13,6 +13,7 @@
 #include "MemoryBusTest.h"
 #include "EchoRamTest.h"
 #include "InterruptTest.h"
+#include "IoRegistersTest.h"
 #include "SimpleCpuTest.h"
 #include "Core/Logger.h"
 
@@ -32,6 +33,7 @@ int main()
     tests.push_back(std::make_unique<MemoryBusTest>());
     tests.push_back(std::make_unique<EchoRamTest>());
     tests.push_back(std::make_unique<InterruptTest>());
+    tests.push_back(std::make_unique<IoRegistersTest>());
     
     // Add more tests here as they are created
     // tests.push_back(std::make_unique<CpuLoadInstructionsTest>());
