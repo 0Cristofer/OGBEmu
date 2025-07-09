@@ -9,6 +9,7 @@
 #include "CpuArithmeticInstructionsTest.h"
 #include "CpuJumpInstructionsTest.h"
 #include "CpuFlagOperationsTest.h"
+#include "CpuStackOperationsTest.h"
 #include "SimpleCpuTest.h"
 #include "Core/Logger.h"
 
@@ -24,6 +25,7 @@ int main()
     tests.push_back(std::make_unique<CpuArithmeticInstructionsTest>());
     tests.push_back(std::make_unique<CpuJumpInstructionsTest>());
     tests.push_back(std::make_unique<CpuFlagOperationsTest>());
+    tests.push_back(std::make_unique<CpuStackOperationsTest>());
     
     // Add more tests here as they are created
     // tests.push_back(std::make_unique<CpuLoadInstructionsTest>());

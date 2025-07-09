@@ -96,6 +96,7 @@
     <ClInclude Include="CpuFlagOperationsTest.h" />
     <ClInclude Include="CpuJumpInstructionsTest.h" />
     <ClInclude Include="CpuLoadInstructionsTest.h" />
+    <ClInclude Include="CpuStackOperationsTest.h" />
     <ClInclude Include="SimpleCpuTest.h" />
     <ClInclude Include="TestCpu.h" />
   </ItemGroup>
@@ -151,6 +152,7 @@
     <ClCompile Include="CpuFlagOperationsTest.cpp" />
     <ClCompile Include="CpuJumpInstructionsTest.cpp" />
     <ClCompile Include="CpuLoadInstructionsTest.cpp" />
+    <ClCompile Include="CpuStackOperationsTest.cpp" />
     <ClCompile Include="SimpleCpuTest.cpp" />
     <ClCompile Include="TestCpu.cpp" />
     <ClCompile Include="TestRunner.cpp" />
