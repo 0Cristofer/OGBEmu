@@ -101,6 +101,7 @@
     <ClInclude Include="CpuLoadInstructionsTest.h" />
     <ClInclude Include="CpuStackOperationsTest.h" />
     <ClInclude Include="EchoRamTest.h" />
+    <ClInclude Include="HRamTest.h" />
     <ClInclude Include="InterruptTest.h" />
     <ClInclude Include="IoRegistersTest.h" />
     <ClInclude Include="Mbc1Test.h" />
@@ -169,6 +170,7 @@
     <ClCompile Include="CpuLoadInstructionsTest.cpp" />
     <ClCompile Include="CpuStackOperationsTest.cpp" />
     <ClCompile Include="EchoRamTest.cpp" />
+    <ClCompile Include="HRamTest.cpp" />
     <ClCompile Include="InterruptTest.cpp" />
     <ClCompile Include="IoRegistersTest.cpp" />
     <ClCompile Include="Mbc1Test.cpp" />

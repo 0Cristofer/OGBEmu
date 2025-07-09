@@ -19,6 +19,7 @@
 #include "PpuTest.h"
 #include "VRamTest.h"
 #include "WRamTest.h"
+#include "HRamTest.h"
 #include "Core/Logger.h"
 
 int main()
@@ -42,6 +43,7 @@ int main()
     tests.push_back(std::make_unique<PpuTest>());
     tests.push_back(std::make_unique<VRamTest>());
     tests.push_back(std::make_unique<WRamTest>());
+    tests.push_back(std::make_unique<HRamTest>());
     
     // Add more tests here as they are created
     // tests.push_back(std::make_unique<CpuLoadInstructionsTest>());
