@@ -170,6 +170,8 @@
     <ClInclude Include="CpuJumpInstructionsTest.h" />
     <ClInclude Include="CpuLoadInstructionsTest.h" />
     <ClInclude Include="CpuStackOperationsTest.h" />
+    <ClInclude Include="EchoRamTest.h" />
+    <ClInclude Include="MemoryBusTest.h" />
     <ClInclude Include="SimpleCpuTest.h" />
     <ClInclude Include="TestCpu.h" />
   </ItemGroup>
@@ -196,6 +198,8 @@
     <ClCompile Include="CpuJumpInstructionsTest.cpp" />
     <ClCompile Include="CpuLoadInstructionsTest.cpp" />
     <ClCompile Include="CpuStackOperationsTest.cpp" />
+    <ClCompile Include="EchoRamTest.cpp" />
+    <ClCompile Include="MemoryBusTest.cpp" />
     <ClCompile Include="SimpleCpuTest.cpp" />
     <ClCompile Include="TestCpu.cpp" />
     <ClCompile Include="TestRunner.cpp" />

@@ -10,6 +10,8 @@
 #include "CpuJumpInstructionsTest.h"
 #include "CpuFlagOperationsTest.h"
 #include "CpuStackOperationsTest.h"
+#include "MemoryBusTest.h"
+#include "EchoRamTest.h"
 #include "SimpleCpuTest.h"
 #include "Core/Logger.h"
 
@@ -26,11 +28,12 @@ int main()
     tests.push_back(std::make_unique<CpuJumpInstructionsTest>());
     tests.push_back(std::make_unique<CpuFlagOperationsTest>());
     tests.push_back(std::make_unique<CpuStackOperationsTest>());
+    tests.push_back(std::make_unique<MemoryBusTest>());
+    tests.push_back(std::make_unique<EchoRamTest>());
     
     // Add more tests here as they are created
     // tests.push_back(std::make_unique<CpuLoadInstructionsTest>());
     // tests.push_back(std::make_unique<PpuRenderingTest>());
-    // tests.push_back(std::make_unique<MemoryBusTest>());
     
     int totalTests = static_cast<int>(tests.size());
     int passedTests = 0;
