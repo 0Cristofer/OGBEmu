@@ -42,6 +42,12 @@ protected:
     word GetPC() const { return _registerPc.reg; }
     byte GetIME() const { return _ime; }
     
+    // Flag getters for testing purposes
+    bool GetFlagZ() const { return _registers.f.z; }
+    bool GetFlagN() const { return _registers.f.n; }
+    bool GetFlagH() const { return _registers.f.h; }
+    bool GetFlagC() const { return _registers.f.c; }
+    
     // Helper methods for setting 16-bit register pairs
     void SetBC(word value) { _registers.bc.reg = value; }
     void SetDE(word value) { _registers.de.reg = value; }

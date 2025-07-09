@@ -42,6 +42,12 @@ public:
     word GetDE() const { return Cpu::GetDE(); }
     word GetHL() const { return Cpu::GetHL(); }
     
+    // Flag getters for testing
+    bool GetFlagZ() const { return Cpu::GetFlagZ(); }
+    bool GetFlagN() const { return Cpu::GetFlagN(); }
+    bool GetFlagH() const { return Cpu::GetFlagH(); }
+    bool GetFlagC() const { return Cpu::GetFlagC(); }
+    
     // Convenience method to initialize to post-boot ROM state
     void InitializePostBootState();
 };
