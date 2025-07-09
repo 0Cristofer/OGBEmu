@@ -181,6 +181,7 @@
     <ClInclude Include="SimpleCpuTest.h" />
     <ClInclude Include="TestCpu.h" />
     <ClInclude Include="VRamTest.h" />
+    <ClInclude Include="WRamTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\OGBEmu\src\Core\Logger.cpp" />
@@ -216,6 +217,7 @@
     <ClCompile Include="TestCpu.cpp" />
     <ClCompile Include="TestRunner.cpp" />
     <ClCompile Include="VRamTest.cpp" />
+    <ClCompile Include="WRamTest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
