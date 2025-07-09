@@ -2,6 +2,7 @@
 #include "Core/Utils.h"
 
 #include "Emulator/Device.h"
+#include "Emulator/Screen.h"
 
 #include <string>
 
@@ -63,7 +64,8 @@ int main(const int argc, char* argv[])
 
     LOG("");
     LOG("Starting up device");
-    Device device(bootRomBytes, cartridgeBytes, FramesPerSecond, timeoutSeconds);
+    Screen screen;
+    Device device(bootRomBytes, cartridgeBytes, FramesPerSecond, timeoutSeconds, &screen);
 
     if (!device.IsValid())
     {

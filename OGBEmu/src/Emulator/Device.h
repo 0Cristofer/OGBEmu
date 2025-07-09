@@ -18,7 +18,7 @@
 class Device
 {
 public:
-    Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& cartridgeBytes, int framesPerSecond, double timeoutSeconds = 0.0, IScreen* screen = nullptr);
+    Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& cartridgeBytes, int framesPerSecond, double timeoutSeconds, IScreen* screen);
 
     [[nodiscard]] bool IsValid() const;
     void Run();
@@ -39,7 +39,6 @@ private:
     Bus _bus;
     Cpu _cpu;
     IScreen* _screen;
-    std::unique_ptr<IScreen> _defaultScreen;
     Ppu _ppu;
 
     unsigned int _framesPerSecond;

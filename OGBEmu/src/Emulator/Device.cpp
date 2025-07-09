@@ -4,7 +4,6 @@
 
 #include "Core/Logger.h"
 #include "Core/Utils.h"
-#include "Emulator/Screen.h"
 
 namespace
 {
@@ -27,13 +26,6 @@ Device::Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& c
         _framesPerSecond = DefaultSimulationFramesPerSecond;
     }
 
-    // Create default screen if none provided
-    if (_screen == nullptr)
-    {
-        _defaultScreen = std::make_unique<Screen>();
-        _screen = _defaultScreen.get();
-    }
-    
     _frameTimeSeconds = 1. / _framesPerSecond;
     _maxCyclesPerFrame = Cpu::CpuClock * _frameTimeSeconds;
     
