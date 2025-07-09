@@ -94,9 +94,8 @@ project "Tests"
 	removefiles
 	{
 		"OGBEmu/src/main.cpp",
-		"OGBEmu/src/Emulator/Screen.cpp",
-		"OGBEmu/src/Emulator/Ppu.cpp",
 		"OGBEmu/src/Emulator/Device.cpp",
+		"OGBEmu/src/Emulator/Screen.cpp",
 	}
 
 	includedirs

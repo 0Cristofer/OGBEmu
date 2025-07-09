@@ -146,6 +146,7 @@
     <ClInclude Include="src\Emulator\Cpu.h" />
     <ClInclude Include="src\Emulator\Device.h" />
     <ClInclude Include="src\Emulator\GbConstants.h" />
+    <ClInclude Include="src\Emulator\IScreen.h" />
     <ClInclude Include="src\Emulator\Memory\AddressConstants.h" />
     <ClInclude Include="src\Emulator\Memory\BootRom.h" />
     <ClInclude Include="src\Emulator\Memory\Bus.h" />

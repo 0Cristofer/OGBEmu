@@ -33,6 +33,9 @@
     <ClInclude Include="src\Emulator\GbConstants.h">
       <Filter>Emulator</Filter>
     </ClInclude>
+    <ClInclude Include="src\Emulator\IScreen.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
     <ClInclude Include="src\Emulator\Memory\AddressConstants.h">
       <Filter>Emulator\Memory</Filter>
     </ClInclude>

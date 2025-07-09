@@ -146,6 +146,7 @@
     <ClInclude Include="..\OGBEmu\src\Emulator\Cpu.h" />
     <ClInclude Include="..\OGBEmu\src\Emulator\Device.h" />
     <ClInclude Include="..\OGBEmu\src\Emulator\GbConstants.h" />
+    <ClInclude Include="..\OGBEmu\src\Emulator\IScreen.h" />
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\AddressConstants.h" />
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\BootRom.h" />
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\Bus.h" />
@@ -175,6 +176,8 @@
     <ClInclude Include="IoRegistersTest.h" />
     <ClInclude Include="Mbc1Test.h" />
     <ClInclude Include="MemoryBusTest.h" />
+    <ClInclude Include="MockScreen.h" />
+    <ClInclude Include="PpuTest.h" />
     <ClInclude Include="SimpleCpuTest.h" />
     <ClInclude Include="TestCpu.h" />
   </ItemGroup>
@@ -194,6 +197,7 @@
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\VRam.cpp" />
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\WRam.cpp" />
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\WRamCgb.cpp" />
+    <ClCompile Include="..\OGBEmu\src\Emulator\Ppu.cpp" />
     <ClCompile Include="BaseTest.cpp" />
     <ClCompile Include="BootRomDisableTest.cpp" />
     <ClCompile Include="CpuArithmeticInstructionsTest.cpp" />
@@ -206,6 +210,7 @@
     <ClCompile Include="IoRegistersTest.cpp" />
     <ClCompile Include="Mbc1Test.cpp" />
     <ClCompile Include="MemoryBusTest.cpp" />
+    <ClCompile Include="PpuTest.cpp" />
     <ClCompile Include="SimpleCpuTest.cpp" />
     <ClCompile Include="TestCpu.cpp" />
     <ClCompile Include="TestRunner.cpp" />

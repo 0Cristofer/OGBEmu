@@ -58,6 +58,9 @@ void BaseTest::InitializePostBootHardwareState(Bus* bus)
     // Interrupt Flag
     bus->Write(0xFF0F, 0xE1);  // IF = $E1
     
+    // LCD Y Coordinate (post-boot state)
+    bus->Write(0xFF44, 0x90);  // LY = $90
+    
     // Disable boot ROM
     bus->Write(AddressConstants::BootRomBank, 0x01);  // Boot ROM disabled
 }

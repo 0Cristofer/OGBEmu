@@ -5,12 +5,12 @@
 class VRam;
 class Oam;
 class IoRegisters;
-class Screen;
+class IScreen;
 
 class Ppu
 {
 public:
-    Ppu(VRam* vRam, Oam* oam, IoRegisters* ioRegisters, Screen* screen);
+    Ppu(VRam* vRam, Oam* oam, IoRegisters* ioRegisters, IScreen* screen);
 
     void Update(int cycles);
     void RenderFrame();
@@ -31,7 +31,7 @@ private:
     VRam* _vRam;
     Oam* _oam;
     IoRegisters* _ioRegisters;
-    Screen* _screen;
+    IScreen* _screen;
 
     // Game Boy screen dimensions
     static constexpr int SCREEN_WIDTH = 160;
