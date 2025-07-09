@@ -109,6 +109,7 @@
     <ClInclude Include="PpuTest.h" />
     <ClInclude Include="SimpleCpuTest.h" />
     <ClInclude Include="TestCpu.h" />
+    <ClInclude Include="VRamTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\OGBEmu\src\Core\Logger.cpp">
@@ -175,5 +176,6 @@
     <ClCompile Include="SimpleCpuTest.cpp" />
     <ClCompile Include="TestCpu.cpp" />
     <ClCompile Include="TestRunner.cpp" />
+    <ClCompile Include="VRamTest.cpp" />
   </ItemGroup>
 </Project>

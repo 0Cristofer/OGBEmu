@@ -17,6 +17,7 @@
 #include "Mbc1Test.h"
 #include "SimpleCpuTest.h"
 #include "PpuTest.h"
+#include "VRamTest.h"
 #include "Core/Logger.h"
 
 int main()
@@ -38,6 +39,7 @@ int main()
     tests.push_back(std::make_unique<IoRegistersTest>());
     tests.push_back(std::make_unique<Mbc1Test>());
     tests.push_back(std::make_unique<PpuTest>());
+    tests.push_back(std::make_unique<VRamTest>());
     
     // Add more tests here as they are created
     // tests.push_back(std::make_unique<CpuLoadInstructionsTest>());
