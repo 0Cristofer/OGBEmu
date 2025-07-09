@@ -7,6 +7,7 @@
 #include "BootRomDisableTest.h"
 #include "CpuLoadInstructionsTest.h"
 #include "CpuArithmeticInstructionsTest.h"
+#include "CpuJumpInstructionsTest.h"
 #include "SimpleCpuTest.h"
 #include "Core/Logger.h"
 
@@ -20,6 +21,7 @@ int main()
     tests.push_back(std::make_unique<BootRomDisableTest>());
     tests.push_back(std::make_unique<SimpleCpuTest>());
     tests.push_back(std::make_unique<CpuArithmeticInstructionsTest>());
+    tests.push_back(std::make_unique<CpuJumpInstructionsTest>());
     
     // Add more tests here as they are created
     // tests.push_back(std::make_unique<CpuLoadInstructionsTest>());

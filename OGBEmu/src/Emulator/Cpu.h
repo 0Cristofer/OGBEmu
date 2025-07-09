@@ -15,6 +15,41 @@ public:
 
     static constexpr unsigned int CpuClock = 4194304;
 
+protected:
+    // Protected accessors for testing purposes
+    void SetA(byte value) { _registers.a = value; }
+    void SetF(byte value) { _registers.f.reg = value; }
+    void SetB(byte value) { _registers.b = value; }
+    void SetC(byte value) { _registers.c = value; }
+    void SetD(byte value) { _registers.d = value; }
+    void SetE(byte value) { _registers.e = value; }
+    void SetH(byte value) { _registers.h = value; }
+    void SetL(byte value) { _registers.l = value; }
+    void SetSP(word value) { _registerSp.reg = value; }
+    void SetPC(word value) { _registerPc.reg = value; }
+    void SetIME(byte value) { _ime = value; }
+    
+    // Protected getters for testing purposes
+    byte GetA() const { return _registers.a; }
+    byte GetF() const { return _registers.f.reg; }
+    byte GetB() const { return _registers.b; }
+    byte GetC() const { return _registers.c; }
+    byte GetD() const { return _registers.d; }
+    byte GetE() const { return _registers.e; }
+    byte GetH() const { return _registers.h; }
+    byte GetL() const { return _registers.l; }
+    word GetSP() const { return _registerSp.reg; }
+    word GetPC() const { return _registerPc.reg; }
+    byte GetIME() const { return _ime; }
+    
+    // Helper methods for setting 16-bit register pairs
+    void SetBC(word value) { _registers.bc.reg = value; }
+    void SetDE(word value) { _registers.de.reg = value; }
+    void SetHL(word value) { _registers.hl.reg = value; }
+    word GetBC() const { return _registers.bc.reg; }
+    word GetDE() const { return _registers.de.reg; }
+    word GetHL() const { return _registers.hl.reg; }
+
 private:
     union Register16;
     
