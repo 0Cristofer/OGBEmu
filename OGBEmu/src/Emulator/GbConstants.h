@@ -6,8 +6,8 @@ namespace GbConstants
 {
     // Sizes
     constexpr word BootRomSize = 256;
-    constexpr word MinCartridgeRomSize = 32 * 1024;
-    constexpr word RomBankSize = 32 * 1024;
+    constexpr word MinCartridgeRomSize = 32 * 1024;  // Minimum cartridge size for ROM size calculation
+    constexpr word RomBankSize = 16 * 1024;          // Individual ROM banks are 16KB
     constexpr word RamBankSize = 8 * 1024;
 
     // Flags values

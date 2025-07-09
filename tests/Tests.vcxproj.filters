@@ -30,6 +30,18 @@
     <ClInclude Include="..\OGBEmu\src\Core\Utils.h">
       <Filter>OGBEmu\src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Cpu.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Device.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\GbConstants.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\IScreen.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\AddressConstants.h">
       <Filter>OGBEmu\src\Emulator\Memory</Filter>
     </ClInclude>
@@ -72,6 +84,39 @@
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\WRamCgb.h">
       <Filter>OGBEmu\src\Emulator\Memory</Filter>
     </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Opcode.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Ppu.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Screen.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseTest.h" />
+    <ClInclude Include="BootRomDisableTest.h" />
+    <ClInclude Include="CartridgeTest.h" />
+    <ClInclude Include="CpuArithmeticInstructionsTest.h" />
+    <ClInclude Include="CpuFlagOperationsTest.h" />
+    <ClInclude Include="CpuJumpInstructionsTest.h" />
+    <ClInclude Include="CpuLoadInstructionsTest.h" />
+    <ClInclude Include="CpuStackOperationsTest.h" />
+    <ClInclude Include="DeviceTest.h" />
+    <ClInclude Include="EchoRamTest.h" />
+    <ClInclude Include="HRamTest.h" />
+    <ClInclude Include="InterruptTest.h" />
+    <ClInclude Include="IoRegistersTest.h" />
+    <ClInclude Include="Mbc1Test.h" />
+    <ClInclude Include="MemoryBusTest.h" />
+    <ClInclude Include="MockScreen.h" />
+    <ClInclude Include="NoMbcTest.h" />
+    <ClInclude Include="OamTest.h" />
+    <ClInclude Include="PpuTest.h" />
+    <ClInclude Include="SimpleCpuTest.h" />
+    <ClInclude Include="TestCpu.h" />
+    <ClInclude Include="VRamTest.h" />
+    <ClInclude Include="WRamCgbTest.h" />
+    <ClInclude Include="WRamTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\OGBEmu\src\Core\Logger.cpp">
@@ -79,6 +124,9 @@
     </ClCompile>
     <ClCompile Include="..\OGBEmu\src\Core\Utils.cpp">
       <Filter>OGBEmu\src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Cpu.cpp">
+      <Filter>OGBEmu\src\Emulator</Filter>
     </ClCompile>
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\BootRom.cpp">
       <Filter>OGBEmu\src\Emulator\Memory</Filter>
@@ -116,6 +164,32 @@
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\WRamCgb.cpp">
       <Filter>OGBEmu\src\Emulator\Memory</Filter>
     </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Ppu.cpp">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseTest.cpp" />
     <ClCompile Include="BootRomDisableTest.cpp" />
+    <ClCompile Include="CartridgeTest.cpp" />
+    <ClCompile Include="CpuArithmeticInstructionsTest.cpp" />
+    <ClCompile Include="CpuFlagOperationsTest.cpp" />
+    <ClCompile Include="CpuJumpInstructionsTest.cpp" />
+    <ClCompile Include="CpuLoadInstructionsTest.cpp" />
+    <ClCompile Include="CpuStackOperationsTest.cpp" />
+    <ClCompile Include="DeviceTest.cpp" />
+    <ClCompile Include="EchoRamTest.cpp" />
+    <ClCompile Include="HRamTest.cpp" />
+    <ClCompile Include="InterruptTest.cpp" />
+    <ClCompile Include="IoRegistersTest.cpp" />
+    <ClCompile Include="Mbc1Test.cpp" />
+    <ClCompile Include="MemoryBusTest.cpp" />
+    <ClCompile Include="NoMbcTest.cpp" />
+    <ClCompile Include="OamTest.cpp" />
+    <ClCompile Include="PpuTest.cpp" />
+    <ClCompile Include="SimpleCpuTest.cpp" />
+    <ClCompile Include="TestCpu.cpp" />
+    <ClCompile Include="TestRunner.cpp" />
+    <ClCompile Include="VRamTest.cpp" />
+    <ClCompile Include="WRamCgbTest.cpp" />
+    <ClCompile Include="WRamTest.cpp" />
   </ItemGroup>
 </Project>

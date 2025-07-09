@@ -5,9 +5,9 @@
 #include "Emulator/Memory/Oam.h"
 #include "Emulator/Memory/IoRegisters.h"
 #include "Emulator/Memory/AddressConstants.h"
-#include "Emulator/Screen.h"
+#include "Emulator/IScreen.h"
 
-Ppu::Ppu(VRam* vRam, Oam* oam, IoRegisters* ioRegisters, Screen* screen)
+Ppu::Ppu(VRam* vRam, Oam* oam, IoRegisters* ioRegisters, IScreen* screen)
     : _vRam(vRam), _oam(oam), _ioRegisters(ioRegisters), _screen(screen), _currentCycles(0), _currentScanline(0)
 {
     // Initialize frame buffer to white (Game Boy color index 0)
@@ -15,6 +15,9 @@ Ppu::Ppu(VRam* vRam, Oam* oam, IoRegisters* ioRegisters, Screen* screen)
     {
         _frameBuffer[i] = 0;
     }
+    
+    // Synchronize internal scanline with LY register
+    _currentScanline = _ioRegisters->Read(AddressConstants::LcdY);
     
     LOG("PPU initialized");
 }
@@ -31,6 +34,9 @@ void Ppu::Update(int cycles)
         _ioRegisters->Write(AddressConstants::LcdY, 0);
         return;
     }
+    
+    // Synchronize internal scanline with LY register at start of update
+    _currentScanline = _ioRegisters->Read(AddressConstants::LcdY);
     
     _currentCycles += cycles;
     

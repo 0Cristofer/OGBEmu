@@ -2,20 +2,21 @@
 
 #include <SDL3/SDL.h>
 #include "Core/Definitions.h"
+#include "IScreen.h"
 
-class Screen
+class Screen : public IScreen
 {
 public:
     Screen();
     ~Screen();
 
-    [[nodiscard]] bool Initialize();
-    void Shutdown();
-    void Clear();
-    void Present();
-    [[nodiscard]] bool ShouldClose() const;
+    bool Initialize() override;
+    void Shutdown() override;
+    void Clear() override;
+    void Present() override;
+    bool ShouldClose() const override;
     
-    void RenderBackground(const class VRam* vram, const class IoRegisters* ioRegisters);
+    void RenderBackground(const VRam* vram, const IoRegisters* ioRegisters) override;
 
 private:
     SDL_Window* _window;

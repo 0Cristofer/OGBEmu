@@ -414,6 +414,7 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
             const byte flag = opcode.row5 < 032 ? _registers.f.z : _registers.f.c;
             const byte test = opcode.column == 0 ? !flag : flag;
             
+            
             return CallTest(test, ReadImm16AtPc());
         }
     }

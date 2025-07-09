@@ -26,6 +26,10 @@ MSBuild.exe OGBEmu.sln /p:Configuration=Debug
 MSBuild.exe OGBEmu.sln /p:Configuration=Release
 ```
 
+## Development Guidelines
+
+- Only use premake to do project changes
+
 ## Architecture Overview
 
 This is a Game Boy emulator written in C++20 with a component-based architecture:
@@ -75,9 +79,13 @@ The memory system follows Game Boy's memory map with dedicated classes for each 
 
 ## Game Boy Technical Documentation
 
+**Target Hardware:** DMG (Original Game Boy - Dot Matrix Game)
+
 **Primary Reference:** https://gbdev.io/pandocs/Specifications.html
 
 **Boot ROM Assembly Reference:** https://www.neviksti.com/DMG/DMG_ROM.asm
+
+**Test Suite Reference:** https://raw.githubusercontent.com/Gekkio/mooneye-test-suite/refs/heads/main/README.markdown
 
 **Key Specifications:**
 - Screen: 160 × 144 pixels
@@ -85,6 +93,11 @@ The memory system follows Game Boy's memory map with dedicated classes for each 
 - Palettes: Background 1 × 4 colors, Sprites 2 × 3 colors
 - Boot ROM initializes LCDC register to 0x91 (LCD on, BG on, sprites off)
 - Boot ROM writes 0x01 to 0xFF50 to disable itself at completion
+
+**Testing Guidelines:**
+- Use mooneye-test-suite for hardware validation
+- For boot register testing, use `boot_regs-dmgABC` (DMG variants A, B, C)
+- Test ROMs validate DMG-specific hardware behavior
 
 ## Recent Fixes and Improvements
 
@@ -170,3 +183,5 @@ The memory system follows Game Boy's memory map with dedicated classes for each 
 **Use git.exe instead of just git** - In WSL environment, use `git.exe` for all git commands to ensure proper Windows git integration.
 
 **Always check log timestamps before analyzing** - Always verify the timestamp of log files to ensure you're analyzing the most recent execution, unless stated otherwise.
+
+**Test ROM Usage** - For simple execution tests, only use binaries under `bins/tests/` directory. This includes mooneye test suite ROMs and other test binaries. Do not use game ROMs from `bins/red1/` or `bins/red2/` for basic testing.

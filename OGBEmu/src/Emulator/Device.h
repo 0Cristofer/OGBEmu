@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "Emulator/Cpu.h"
 #include "Emulator/Memory/BootRom.h"
 #include "Emulator/Memory/Bus.h"
@@ -11,13 +12,13 @@
 #include "Emulator/Memory/VRam.h"
 #include "Emulator/Memory/WRam.h"
 #include "Emulator/Memory/WRamCgb.h"
-#include "Emulator/Screen.h"
+#include "Emulator/IScreen.h"
 #include "Emulator/Ppu.h"
 
 class Device
 {
 public:
-    Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& cartridgeBytes, int framesPerSecond);
+    Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& cartridgeBytes, int framesPerSecond, double timeoutSeconds, IScreen* screen);
 
     [[nodiscard]] bool IsValid() const;
     void Run();
@@ -37,10 +38,11 @@ private:
     HRam _hRam;
     Bus _bus;
     Cpu _cpu;
-    Screen _screen;
+    IScreen* _screen;
     Ppu _ppu;
 
     unsigned int _framesPerSecond;
     double _frameTimeSeconds;
     double _maxCyclesPerFrame;
+    double _timeoutSeconds;
 };

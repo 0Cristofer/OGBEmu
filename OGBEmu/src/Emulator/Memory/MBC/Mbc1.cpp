@@ -58,6 +58,7 @@ byte Mbc1::Read(word address)
                 return (*_rom)[bankOffset];
             }
         }
+        
         return (*_rom)[address];
     }
     
@@ -73,17 +74,18 @@ byte Mbc1::Read(word address)
             romBank |= (_bankSelect.ramBank << 5);
         }
         
+        // Calculate the number of ROM banks and mask appropriately
+        const word numRomBanks = static_cast<word>(_rom->size() / GbConstants::RomBankSize);
+        const byte bankMask = static_cast<byte>(numRomBanks - 1);
+        romBank &= bankMask;
+        if (romBank == 0) romBank = 1; // Bank 0 maps to bank 1 after masking
+        
         const word bankOffset = (address - AddressConstants::StartRomBankNAddress) + (romBank * GbConstants::RomBankSize);
         if (bankOffset < _rom->size())
         {
             const byte data = (*_rom)[bankOffset];
             
-            // Log ROM bank reads that return test pattern values
-            if (data == 0x39 || data == 0x00)
-            {
-                DEBUGBREAKLOG("MBC1 ROM Bank " << static_cast<int>(romBank) << " read: addr=" << std::format("{:x}", address) << 
-                             " bank_addr=" << std::format("{:x}", bankOffset) << " data=" << std::format("{:x}", data));
-            }
+            // ROM bank read successful
             
             return data;
         }
@@ -137,12 +139,7 @@ void Mbc1::Write(word address, byte data)
             _bankSelect.romBank = 1;
         }
         
-        // Log bank switches for debugging
-        if (oldBank != _bankSelect.romBank)
-        {
-            DEBUGBREAKLOG("MBC1 ROM bank switch: " << static_cast<int>(oldBank) << " -> " << static_cast<int>(_bankSelect.romBank) << 
-                         " (write " << std::format("{:x}", data) << " to " << std::format("{:x}", address) << ")");
-        }
+        // ROM bank switch completed
         
         return;
     }

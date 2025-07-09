@@ -87,10 +87,15 @@ project "Tests"
 	{
 		"tests/**.h",
 		"tests/**.cpp",
-		"OGBEmu/src/Core/**.h",
-		"OGBEmu/src/Core/**.cpp",
-		"OGBEmu/src/Emulator/Memory/**.h",
-		"OGBEmu/src/Emulator/Memory/**.cpp",
+		"OGBEmu/src/**.h",
+		"OGBEmu/src/**.cpp",
+	}
+	
+	removefiles
+	{
+		"OGBEmu/src/main.cpp",
+		"OGBEmu/src/Emulator/Device.cpp",
+		"OGBEmu/src/Emulator/Screen.cpp",
 	}
 
 	includedirs

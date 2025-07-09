@@ -37,14 +37,14 @@ void Logger::Log(const std::string& log)
     
     std::string timestampedLog = "[" + GetTimestamp() + "] " + log;
     
+    // Always output to console
+    std::cout << timestampedLog << '\n';
+    
+    // Also output to file if available
     if (logFile.is_open())
     {
         logFile << timestampedLog << '\n';
         logFile.flush();
-    }
-    else
-    {
-        std::cout << timestampedLog << '\n';
     }
 }
 

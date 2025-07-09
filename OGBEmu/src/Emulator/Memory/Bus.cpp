@@ -55,12 +55,6 @@ byte Bus::Read(const word address) const
 
 void Bus::Write(const word address, const byte data)
 {
-    // Debug logging for suspicious address ranges
-    if (address >= 0xF700 && address <= 0xFEFF)
-    {
-        DEBUGBREAKLOG("SUSPICIOUS WRITE: address " << std::format("{:x}", address) << " data " << std::format("{:x}", data));
-    }
-    
     if (address <= AddressConstants::EndRomBankNAddress)
         return WriteCartridgeBank(address, data);
     if (address >= AddressConstants::StartVRamAddress && address <= AddressConstants::EndVRamAddress)
