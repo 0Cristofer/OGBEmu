@@ -20,6 +20,8 @@
 #include "VRamTest.h"
 #include "WRamTest.h"
 #include "HRamTest.h"
+#include "CartridgeTest.h"
+#include "OamTest.h"
 #include "Core/Logger.h"
 
 int main()
@@ -44,6 +46,8 @@ int main()
     tests.push_back(std::make_unique<VRamTest>());
     tests.push_back(std::make_unique<WRamTest>());
     tests.push_back(std::make_unique<HRamTest>());
+    tests.push_back(std::make_unique<CartridgeTest>());
+    tests.push_back(std::make_unique<OamTest>());
     
     // Add more tests here as they are created
     // tests.push_back(std::make_unique<CpuLoadInstructionsTest>());
