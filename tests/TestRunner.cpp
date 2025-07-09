@@ -8,11 +8,12 @@
 #include "CpuLoadInstructionsTest.h"
 #include "CpuArithmeticInstructionsTest.h"
 #include "SimpleCpuTest.h"
+#include "Core/Logger.h"
 
 int main()
 {
-    std::cout << "=== Game Boy Emulator Test Suite ===" << std::endl;
-    std::cout << std::endl;
+    LOG("=== Game Boy Emulator Test Suite ===");
+    LOG("");
     
     // Create list of all tests
     std::vector<std::unique_ptr<BaseTest>> tests;
@@ -29,8 +30,8 @@ int main()
     int passedTests = 0;
     int failedTests = 0;
     
-    std::cout << "Running " << totalTests << " tests..." << std::endl;
-    std::cout << std::endl;
+    LOG("Running " << totalTests << " tests...");
+    LOG("");
     
     for (auto& test : tests)
     {
@@ -43,26 +44,26 @@ int main()
         {
             failedTests++;
         }
-        std::cout << std::endl;
+        LOG("");
     }
     
     // Print summary
-    std::cout << std::dec << "=== Test Results ===" << std::endl;
-    std::cout << "Total tests:  " << totalTests << std::endl;
-    std::cout << "Passed:       " << passedTests << std::endl;
-    std::cout << "Failed:       " << failedTests << std::endl;
-    std::cout << "Success rate: " << (totalTests > 0 ? (passedTests * 100 / totalTests) : 0) << "%" << std::endl;
+    LOG("=== Test Results ===");
+    LOG("Total tests:  " << totalTests);
+    LOG("Passed:       " << passedTests);
+    LOG("Failed:       " << failedTests);
+    LOG("Success rate: " << (totalTests > 0 ? (passedTests * 100 / totalTests) : 0) << "%");
     
     if (failedTests > 0)
     {
-        std::cout << std::endl;
-        std::cout << "Some tests failed! Check output above for details." << std::endl;
+        LOG("");
+        LOG("Some tests failed! Check output above for details.");
         return 1;
     }
     else
     {
-        std::cout << std::endl;
-        std::cout << "All tests passed! ✓" << std::endl;
+        LOG("");
+        LOG("All tests passed! ✓");
         return 0;
     }
 }

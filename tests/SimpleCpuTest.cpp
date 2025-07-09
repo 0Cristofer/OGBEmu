@@ -2,6 +2,7 @@
 #include "Emulator/Memory/AddressConstants.h"
 #include <cassert>
 #include <iostream>
+#include "Core/Logger.h"
 
 SimpleCpuTest::SimpleCpuTest() : BaseTest("Simple CPU Test")
 {
@@ -9,7 +10,7 @@ SimpleCpuTest::SimpleCpuTest() : BaseTest("Simple CPU Test")
 
 void SimpleCpuTest::Setup()
 {
-    std::cout << "  Setting up simple CPU test..." << std::endl;
+    LOG("  Setting up simple CPU test...");
     
     // Create minimal test setup
     _bootRomData = std::vector<byte>(256, 0x00);
@@ -20,7 +21,7 @@ void SimpleCpuTest::Setup()
     _cartridgeData[0x148] = 0x00;  // ROM size: 32KB
     _cartridgeData[0x149] = 0x00;  // RAM size: None
     
-    std::cout << "  Creating memory components..." << std::endl;
+    LOG("  Creating memory components...");
     
     // Create memory components
     _bootRom = std::make_unique<BootRom>(_bootRomData);
@@ -33,44 +34,44 @@ void SimpleCpuTest::Setup()
     _ioRegisters = std::make_unique<IoRegisters>();
     _hRam = std::make_unique<HRam>();
     
-    std::cout << "  Creating bus..." << std::endl;
+    LOG("  Creating bus...");
     
     // Create bus and CPU
     _bus = std::make_unique<Bus>(_bootRom.get(), _cartridge.get(), _vRam.get(), 
                                 _wRam.get(), _wRamCgb.get(), _echoRam.get(), 
                                 _oam.get(), _ioRegisters.get(), _hRam.get());
     
-    std::cout << "  Creating CPU..." << std::endl;
+    LOG("  Creating CPU...");
     
     _cpu = std::make_unique<Cpu>(_bus.get());
     
-    std::cout << "  Setup complete!" << std::endl;
+    LOG("  Setup complete!");
 }
 
 void SimpleCpuTest::Run()
 {
-    std::cout << "  Testing basic CPU functionality..." << std::endl;
+    LOG("  Testing basic CPU functionality...");
     
     // Test that we can write to memory
     _bus->Write(0xC000, 0x42);
     byte value = _bus->Read(0xC000);
     
     if (value == 0x42) {
-        std::cout << "  ✓ Memory read/write works" << std::endl;
+        LOG("  ✓ Memory read/write works");
     } else {
-        std::cout << "  ✗ Memory read/write failed" << std::endl;
+        LOG("  ✗ Memory read/write failed");
         throw std::runtime_error("Memory test failed");
     }
     
     // Test that CPU doesn't crash on single update
-    std::cout << "  Testing CPU update..." << std::endl;
+    LOG("  Testing CPU update...");
     try {
         _cpu->Update();
-        std::cout << "  ✓ CPU update completed without crashing" << std::endl;
+        LOG("  ✓ CPU update completed without crashing");
     } catch (const std::exception& e) {
-        std::cout << "  ✗ CPU update threw exception: " << e.what() << std::endl;
+        LOG("  ✗ CPU update threw exception: " << e.what());
         throw;
     }
     
-    std::cout << "  Simple CPU test completed successfully!" << std::endl;
+    LOG("  Simple CPU test completed successfully!");
 }

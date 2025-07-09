@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <exception>
+#include "Core/Logger.h"
 
 BaseTest::BaseTest(const std::string& testName) : _testName(testName)
 {
@@ -9,22 +10,22 @@ BaseTest::BaseTest(const std::string& testName) : _testName(testName)
 
 void BaseTest::Execute()
 {
-    std::cout << "Running test: " << _testName << std::endl;
+    LOG("Running test: " << _testName);
     
     try
     {
         Setup();
         Run();
-        std::cout << "✓ " << _testName << " PASSED" << std::endl;
+        LOG("✓ " << _testName << " PASSED");
     }
     catch (const std::exception& e)
     {
-        std::cout << "✗ " << _testName << " FAILED: " << e.what() << std::endl;
+        LOG("✗ " << _testName << " FAILED: " << e.what());
         throw;
     }
     catch (...)
     {
-        std::cout << "✗ " << _testName << " FAILED: Unknown exception" << std::endl;
+        LOG("✗ " << _testName << " FAILED: Unknown exception");
         throw;
     }
 }
