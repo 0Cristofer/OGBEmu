@@ -7,6 +7,12 @@
 #include "BootRomDisableTest.h"
 #include "CpuLoadInstructionsTest.h"
 #include "CpuArithmeticInstructionsTest.h"
+#include "CpuPrefixInstructionsTest.h"
+#include "CpuIncDecInstructionsTest.h"
+#include "CpuRotateInstructionsTest.h"
+#include "CpuDaaInstructionTest.h"
+#include "CpuStopInstructionTest.h"
+#include "Cpu16BitArithmeticTest.h"
 #include "CpuJumpInstructionsTest.h"
 #include "CpuFlagOperationsTest.h"
 #include "CpuStackOperationsTest.h"
@@ -42,6 +48,12 @@ int main()
     tests.push_back(std::make_unique<BootRomDisableTest>());
     tests.push_back(std::make_unique<SimpleCpuTest>());
     tests.push_back(std::make_unique<CpuArithmeticInstructionsTest>());
+    tests.push_back(std::make_unique<CpuPrefixInstructionsTest>());
+    tests.push_back(std::make_unique<CpuIncDecInstructionsTest>());
+    tests.push_back(std::make_unique<CpuRotateInstructionsTest>());
+    tests.push_back(std::make_unique<CpuDaaInstructionTest>());
+    tests.push_back(std::make_unique<CpuStopInstructionTest>());
+    tests.push_back(std::make_unique<Cpu16BitArithmeticTest>());
     tests.push_back(std::make_unique<CpuJumpInstructionsTest>());
     tests.push_back(std::make_unique<CpuFlagOperationsTest>());
     tests.push_back(std::make_unique<CpuStackOperationsTest>());
