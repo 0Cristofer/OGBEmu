@@ -71,7 +71,6 @@ void Ppu::RenderFrame()
     {
         // LCD is off - clear screen to white
         _screen->Clear();
-        _screen->Present();
         return;
     }
     
@@ -83,8 +82,7 @@ void Ppu::RenderFrame()
     
     // Clear screen and render background using Screen's method
     _screen->Clear();
-    _screen->RenderBackground(_vRam, _ioRegisters);
-    _screen->Present();
+    _screen->RenderBackground(*_vRam, *_ioRegisters);
 }
 
 void Ppu::RenderBackground()

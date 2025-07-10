@@ -21,7 +21,7 @@ Device::Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& c
 {
     if (!Utils::IsPowerOfTwo(_framesPerSecond))
     {
-        LOG("Simulation frames per second must be a power of two, got " << _framesPerSecond << ", defaulting to " <<
+        ERROR("Simulation frames per second must be a power of two, got " << _framesPerSecond << ", defaulting to " <<
             DefaultSimulationFramesPerSecond);
         _framesPerSecond = DefaultSimulationFramesPerSecond;
     }
@@ -31,7 +31,7 @@ Device::Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& c
     
     if (!_screen->Initialize())
     {
-        LOG("Failed to initialize screen");
+        ERROR("Failed to initialize screen");
     }
 }
 
@@ -109,6 +109,8 @@ unsigned Device::DoFrame()
 
     WaitForNextFrame(frameTime.count());
 
+    _screen->Present();
+
     return cycleCount;
 }
 
@@ -118,7 +120,7 @@ void Device::WaitForNextFrame(const double frameTimeSeconds) const
 
     if (remainingFrameTime < 0)
     {
-        LOG("Running behind, last frame took: " << frameTimeSeconds << "s");
+        LOG("Running behind, last frame took: " << frameTimeSeconds << "s, but should take " << _frameTimeSeconds << "s");
     }
 
     double remainingWaitTime = remainingFrameTime;

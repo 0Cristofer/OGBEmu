@@ -18,5 +18,5 @@ public:
     virtual void Present() = 0;
     virtual bool ShouldClose() const = 0;
     
-    virtual void RenderBackground(const VRam* vram, const IoRegisters* ioRegisters) = 0;
+    virtual void RenderBackground(const VRam& vRam, const IoRegisters& ioRegisters) = 0;
 };

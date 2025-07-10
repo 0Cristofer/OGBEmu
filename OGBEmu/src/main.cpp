@@ -8,7 +8,7 @@
 
 namespace
 {
-    constexpr int FramesPerSecond = 128;
+    constexpr int FramesPerSecond = 64;
 }
 
 std::vector<byte> ReadCartridge(const std::string& romPath)
@@ -31,9 +31,14 @@ std::vector<byte> ReadBootRom(const std::string& bootRomPath)
 
 int main(const int argc, char* argv[])
 {
+    // Enable debug logging for the emulator
+    Logger::SetDebugEnabled(true);
+    
+    DEBUG("Debug logging enabled for emulator");
+    
     if (argc < 3 || argc > 4)
     {
-        DEBUGBREAKLOG("Wrong number of program arguments, usage: OGBEmu bootRom.bin romPath.gb [timeout (0=infinite)]");
+        ERROR("Wrong number of program arguments, usage: OGBEmu bootRom.bin romPath.gb [timeout (0=infinite)]");
         return 0;
     }
 
@@ -51,13 +56,13 @@ int main(const int argc, char* argv[])
             timeoutSeconds = std::stod(argv[3]);
             if (timeoutSeconds < 0)
             {
-                DEBUGBREAKLOG("Timeout must be non-negative, got: " << timeoutSeconds);
+                ERROR("Timeout must be non-negative, got: " << timeoutSeconds);
                 return 0;
             }
         }
         catch (const std::exception& e)
         {
-            DEBUGBREAKLOG("Invalid timeout value: " << argv[3] << ", error: " << e.what());
+            ERROR("Invalid timeout value: " << argv[3] << ", error: " << e.what());
             return 0;
         }
     }
@@ -69,7 +74,7 @@ int main(const int argc, char* argv[])
 
     if (!device.IsValid())
     {
-        LOG("Invalid device, quitting");
+        ERROR("Invalid device, quitting");
         return 0;
     }
 

@@ -18,7 +18,7 @@ NoMbc::NoMbc(std::vector<byte>* rom) : _rom(rom)
     }
     
     if (ramSizeFlag != GbConstants::RamSizeFlagNoRam)
-        DEBUGBREAKLOG("Invalid Cartridge RAM size: " << static_cast<int>((*_rom)[AddressConstants::CartridgeRamSizeAddress]) << ", defaulting to no ram");
+        ERROR("Invalid Cartridge RAM size: " << static_cast<int>((*_rom)[AddressConstants::CartridgeRamSizeAddress]) << ", defaulting to no ram");
 }
 
 NoMbc::~NoMbc()
@@ -30,7 +30,7 @@ byte NoMbc::Read(word address)
 {
     if (address >= _rom->size())
     {
-        DEBUGBREAKLOG("Invalid NoMbc ROM read, address: " << std::format("{:x}", address));
+        ERROR("Invalid NoMbc ROM read, address: " << std::format("{:x}", address));
         return 0;
     }
 
@@ -42,7 +42,7 @@ void NoMbc::Write(const word address, const byte data)
     const word translatedAddress = TranslateAddress(address);
     if (translatedAddress >= _ram.size())
     {
-        DEBUGBREAKLOG("Invalid NoMbc RAM write, address: " << std::format("{:x}", address));
+        ERROR("Invalid NoMbc RAM write, address: " << std::format("{:x}", address));
         return;
     }
 

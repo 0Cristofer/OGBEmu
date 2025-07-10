@@ -8,7 +8,7 @@ BootRom::BootRom(const std::vector<byte>& romBytes): _rom(romBytes)
 {
     if (!IsValid())
     {
-        DEBUGBREAKLOG("Invalid boot ROM, check path and file size. Only " << GbConstants::BootRomSize <<"-byte ROMs are accepted.");
+        ERROR("Invalid boot ROM, check path and file size. Only " << GbConstants::BootRomSize <<"-byte ROMs are accepted.");
         return;
     }
 }
@@ -17,7 +17,7 @@ byte BootRom::Read(const word address) const
 {
     if (address >= _rom.size())
     {
-        DEBUGBREAKLOG("Invalid Boot ROM read, address: " << std::format("{:x}", address));
+        ERROR("Invalid Boot ROM read, address: " << std::format("{:x}", address));
         return 0;
     }
 

@@ -15,7 +15,7 @@ byte HRam::Read(const word busAddress) const
     // Check bounds before translation to avoid unsigned wraparound
     if (busAddress < AddressConstants::StartHRamAddress || busAddress > AddressConstants::EndHRamAddress)
     {
-        DEBUGBREAKLOG("Invalid HRam read, address " << std::format("{:x}", busAddress));
+        ERROR("Invalid HRam read, address " << std::format("{:x}", busAddress));
         return 0;
     }
 
@@ -23,7 +23,7 @@ byte HRam::Read(const word busAddress) const
 
     if (internalAddress >= _bytes.size())
     {
-        DEBUGBREAKLOG("Invalid HRam read, address " << std::format("{:x}", busAddress));
+        ERROR("Invalid HRam read, address " << std::format("{:x}", busAddress));
         return 0;
     }
 
@@ -35,7 +35,7 @@ void HRam::Write(const word busAddress, const byte data)
     // Check bounds before translation to avoid unsigned wraparound
     if (busAddress < AddressConstants::StartHRamAddress || busAddress > AddressConstants::EndHRamAddress)
     {
-        DEBUGBREAKLOG("Invalid HRam write, address " << std::format("{:x}", busAddress));
+        ERROR("Invalid HRam write, address " << std::format("{:x}", busAddress));
         return;
     }
 
@@ -43,7 +43,7 @@ void HRam::Write(const word busAddress, const byte data)
 
     if (internalAddress >= _bytes.size())
     {
-        DEBUGBREAKLOG("Invalid HRam write, address " << std::format("{:x}", busAddress));
+        ERROR("Invalid HRam write, address " << std::format("{:x}", busAddress));
         return;
     }
 
