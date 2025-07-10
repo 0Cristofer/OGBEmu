@@ -128,11 +128,19 @@ void OamTest::TestOamBoundaryConditions()
     VerifyOamValue(0xFE9F, 0x55, "OAM end boundary 0xFE9F");
     
     // Test just before start (should not affect OAM)
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing OAM boundary at 0xFDFF (intentional error expected)...");
     _bus->Write(0xFDFF, 0x66);
+    LOG("    OAM boundary test at 0xFDFF completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     VerifyOamValue(0xFE00, 0x44, "OAM isolation from 0xFDFF");
     
     // Test just after end (0xFEA0 is not used area)
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing OAM boundary at 0xFEA0 (intentional error expected)...");
     _bus->Write(0xFEA0, 0x77);
+    LOG("    OAM boundary test at 0xFEA0 completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     VerifyOamValue(0xFE9F, 0x55, "OAM isolation from 0xFEA0");
     
     LOG("    ✓ OAM boundary conditions test passed");

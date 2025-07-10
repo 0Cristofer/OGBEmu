@@ -144,7 +144,11 @@ void EchoRamTest::TestBoundaryConditions()
     VerifyMirror(0xCFFF, 0xEFFF, 0x88, "last mirrored address");
     
     // Address just before mirror range
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing EchoRam boundary at 0xBFFF (intentional error expected)...");
     _bus->Write(0xBFFF, 0x99);  // This is before WRAM, should not affect Echo RAM
+    LOG("    EchoRam boundary test at 0xBFFF completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     byte echoValue = _bus->Read(0xDFFF);  // This would be the "mirror" location
     // We can't easily test this since 0xBFFF is not in WRAM, but the principle is tested
     

@@ -144,13 +144,21 @@ void WRamCgbTest::TestWRamCgbBoundaryConditions()
     word aboveEnd = AddressConstants::EndWRamCgbAddress + 1;
     
     // Reading from addresses outside WRamCgb should return 0 (handled by WRamCgb itself)
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing WRamCgb boundary read below start (intentional error expected)...");
     value = _wRamCgb.Read(belowStart);
+    LOG("    WRamCgb boundary read below start completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     if (value != 0x00) {
         throw std::runtime_error("WRamCgb should return 0 for address below start");
     }
     LOG("    ✓ WRamCgb isolation from " << std::hex << belowStart << " - expected 0x68, got 0x" << static_cast<int>(_wRamCgb.Read(AddressConstants::StartWRamCgbAddress)));
     
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing WRamCgb boundary read above end (intentional error expected)...");
     value = _wRamCgb.Read(aboveEnd);
+    LOG("    WRamCgb boundary read above end completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     if (value != 0x00) {
         throw std::runtime_error("WRamCgb should return 0 for address above end");
     }
@@ -168,6 +176,8 @@ void WRamCgbTest::TestWRamCgbInvalidAddresses()
     word invalidHigh = 0xF000;
     
     // These should return 0 and not crash
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing invalid WRamCgb reads (intentional errors expected)...");
     byte value = _wRamCgb.Read(invalidLow);
     if (value != 0x00) {
         throw std::runtime_error("WRamCgb should return 0 for invalid low address");
@@ -179,10 +189,16 @@ void WRamCgbTest::TestWRamCgbInvalidAddresses()
         throw std::runtime_error("WRamCgb should return 0 for invalid high address");
     }
     LOG("    ✓ WRamCgb invalid high address " << std::hex << invalidHigh << " - expected 0x0, got 0x" << static_cast<int>(value));
+    LOG("    Invalid WRamCgb read tests completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     
     // Test writing to invalid addresses - should not crash
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing invalid WRamCgb writes (intentional errors expected)...");
     _wRamCgb.Write(invalidLow, 0x42);
     _wRamCgb.Write(invalidHigh, 0x42);
+    LOG("    Invalid WRamCgb write tests completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     
     LOG("    ✓ WRamCgb invalid address handling test passed");
 }

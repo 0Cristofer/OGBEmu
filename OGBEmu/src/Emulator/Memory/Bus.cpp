@@ -159,7 +159,7 @@ byte Bus::ReadIe(const word address) const
 
 void Bus::WriteBootRom(const word address, const byte data)
 {
-    ERROR("Invalid write WriteBootRom " << address);
+    ERROR("Invalid write WriteBootRom " << std::format("{:x}", address));
 }
 
 void Bus::WriteCartridgeBank(const word address, const byte data) const
