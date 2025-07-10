@@ -72,7 +72,11 @@ void MemoryBusTest::TestBootRomRouting()
     // Test Boot ROM address range (0x0000-0x00FF)
     // Boot ROM should be read-only in normal operation
     byte originalValue = _bus->Read(0x0050);
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing Boot ROM read-only behavior (intentional error expected)...");
     _bus->Write(0x0050, 0xAB);
+    LOG("    Boot ROM read-only test completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     byte afterWrite = _bus->Read(0x0050);
     
     // Should remain unchanged (read-only)
@@ -84,7 +88,11 @@ void MemoryBusTest::TestBootRomRouting()
     _bus->Write(AddressConstants::BootRomBank, 0x01);
     
     // Now cartridge should be accessible at same address
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing cartridge access after Boot ROM disable (intentional error expected)...");
     _bus->Write(0x0050, 0xCD);
+    LOG("    Cartridge access test completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     byte cartridgeValue = _bus->Read(0x0050);
     
     // This might still be read-only depending on cartridge implementation
@@ -223,9 +231,13 @@ void MemoryBusTest::TestNotUsedAddressRange()
     
     // Test not used address range (0xFEA0-0xFEFF)
     // This range should return 0xFF on read and ignore writes
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing NotUsed address range 0xFEA0 (intentional errors expected)...");
     byte originalValue = _bus->Read(0xFEA0);
     _bus->Write(0xFEA0, 0x12);
     byte afterWrite = _bus->Read(0xFEA0);
+    LOG("    NotUsed address range write test completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     
     // Verify the value didn't change (writes ignored)
     if (afterWrite != originalValue) {
@@ -233,8 +245,12 @@ void MemoryBusTest::TestNotUsedAddressRange()
     }
     
     // Test middle and end of range
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing NotUsed address range 0xFED0 and 0xFEFF (intentional errors expected)...");
     byte middleValue = _bus->Read(0xFED0);
     byte endValue = _bus->Read(0xFEFF);
+    LOG("    NotUsed address range read tests completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     
     // These should typically return 0xFF or some consistent value
     // The exact behavior may vary by implementation
@@ -324,7 +340,11 @@ void MemoryBusTest::VerifyReadOnly(word address, const std::string& regionName)
     
     // Attempt to write different value
     byte testValue = originalValue ^ 0xFF;  // Flip all bits
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing " << regionName << " read-only at 0x" << std::hex << address << " (intentional error expected)...");
     _bus->Write(address, testValue);
+    LOG("    Read-only test for " << regionName << " completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     
     // Read back and verify it didn't change
     byte readValue = _bus->Read(address);

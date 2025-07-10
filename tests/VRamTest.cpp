@@ -127,11 +127,19 @@ void VRamTest::TestVRamBoundaryConditions()
     VerifyVRamValue(0x9FFF, 0x55, "VRam end boundary 0x9FFF");
     
     // Test just before start (should not affect VRam)
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing VRam boundary at 0x7FFF (intentional error expected)...");
     _bus->Write(0x7FFF, 0x66);
+    LOG("    VRam boundary test at 0x7FFF completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     VerifyVRamValue(0x8000, 0x44, "VRam isolation from 0x7FFF");
     
     // Test just after end (should not affect VRam)
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing VRam boundary at 0xA000 (intentional error expected)...");
     _bus->Write(0xA000, 0x77);
+    LOG("    VRam boundary test at 0xA000 completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     VerifyVRamValue(0x9FFF, 0x55, "VRam isolation from 0xA000");
     
     LOG("    ✓ VRam boundary conditions test passed");

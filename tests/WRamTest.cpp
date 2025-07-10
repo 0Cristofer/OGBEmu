@@ -127,11 +127,19 @@ void WRamTest::TestWRamBoundaryConditions()
     VerifyWRamValue(0xCFFF, 0x55, "WRam end boundary 0xCFFF");
     
     // Test just before start (should not affect WRam)
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing WRam boundary at 0xBFFF (intentional error expected)...");
     _bus->Write(0xBFFF, 0x66);
+    LOG("    WRam boundary test at 0xBFFF completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     VerifyWRamValue(0xC000, 0x44, "WRam isolation from 0xBFFF");
     
     // Test just after end (should not affect WRam)
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing WRam boundary at 0xD000 (intentional error expected)...");
     _bus->Write(0xD000, 0x77);
+    LOG("    WRam boundary test at 0xD000 completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     VerifyWRamValue(0xCFFF, 0x55, "WRam isolation from 0xD000");
     
     LOG("    ✓ WRam boundary conditions test passed");

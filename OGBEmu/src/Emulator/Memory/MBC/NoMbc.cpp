@@ -18,7 +18,7 @@ NoMbc::NoMbc(std::vector<byte>* rom) : _rom(rom)
     }
     
     if (ramSizeFlag != GbConstants::RamSizeFlagNoRam)
-        ERROR("Invalid Cartridge RAM size: " << static_cast<int>((*_rom)[AddressConstants::CartridgeRamSizeAddress]) << ", defaulting to no ram");
+        ERROR("Invalid Cartridge RAM size: " << std::format("{:x}", static_cast<int>((*_rom)[AddressConstants::CartridgeRamSizeAddress])) << ", defaulting to no ram");
 }
 
 NoMbc::~NoMbc()

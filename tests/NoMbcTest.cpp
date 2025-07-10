@@ -71,7 +71,11 @@ void NoMbcTest::TestNoMbcRomReadInvalidAddress()
     
     // Test reading from address beyond ROM size
     word invalidAddress = static_cast<word>(_romData.size() + 0x1000);
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing invalid NoMbc ROM read (intentional error expected)...");
     byte value = noMbc.Read(invalidAddress);
+    LOG("    Invalid NoMbc ROM read test completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     if (value != 0x00) {
         throw std::runtime_error("NoMbc should return 0x00 for invalid ROM address");
     }
@@ -104,7 +108,11 @@ void NoMbcTest::TestNoMbcRamWriteInvalidAddress()
     
     // Test writing to address beyond RAM size
     word invalidAddress = AddressConstants::StartExternalRamAddress + GbConstants::RamBankSize + 0x1000;
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing invalid NoMbc RAM write (intentional error expected)...");
     noMbc.Write(invalidAddress, 0x42);
+    LOG("    Invalid NoMbc RAM write test completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     
     // No exception should be thrown, just logged
     LOG("    ✓ NoMbc RAM write with invalid address handled correctly");
@@ -119,7 +127,11 @@ void NoMbcTest::TestNoMbcRamSizeDetection()
     NoMbc noMbcNoRam(&_romData);
     
     // Writing to RAM should not crash when no RAM is configured
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing NoMbc write with no RAM configured (intentional error expected)...");
     noMbcNoRam.Write(AddressConstants::StartExternalRamAddress, 0x42);
+    LOG("    NoMbc no RAM write test completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     
     LOG("    ✓ No RAM configuration handled correctly");
     
@@ -160,7 +172,11 @@ void NoMbcTest::TestNoMbcRamConfiguration()
     NoMbc noMbcNoRam(&_romData);
     
     // Should not crash with no RAM
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing NoMbc write with no RAM configured (intentional error expected)...");
     noMbcNoRam.Write(AddressConstants::StartExternalRamAddress, 0x42);
+    LOG("    NoMbc no RAM write test completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     
     LOG("    ✓ No RAM configuration works correctly");
     
@@ -188,7 +204,11 @@ void NoMbcTest::TestNoMbcEdgeCases()
     }
     
     // Test reading exactly at ROM size (should fail)
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing NoMbc ROM boundary read (intentional error expected)...");
     value = noMbc.Read(static_cast<word>(_romData.size()));
+    LOG("    NoMbc ROM boundary read test completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     if (value != 0x00) {
         throw std::runtime_error("NoMbc should return 0x00 for address at ROM size");
     }
@@ -201,7 +221,11 @@ void NoMbcTest::TestNoMbcEdgeCases()
     noMbcWithRam.Write(AddressConstants::StartExternalRamAddress + GbConstants::RamBankSize - 1, 0x42);
     
     // Write to first invalid RAM address (should fail gracefully)
+    LOG("    ---- INTENTIONAL ERROR REGION START ----");
+    LOG("    Testing NoMbc RAM boundary write (intentional error expected)...");
     noMbcWithRam.Write(AddressConstants::StartExternalRamAddress + GbConstants::RamBankSize, 0x42);
+    LOG("    NoMbc RAM boundary write test completed.");
+    LOG("    ---- INTENTIONAL ERROR REGION END ----");
     
     LOG("    ✓ NoMbc edge cases handled correctly");
 }

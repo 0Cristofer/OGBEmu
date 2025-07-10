@@ -24,7 +24,7 @@ Mbc1::Mbc1(std::vector<byte>* rom) : _rom(rom)
         break;
     default:
         numRamBanks = 1;
-        ERROR("Mbc1 invalid number of RAM banks, defaulting to " << numRamBanks);
+        ERROR("Mbc1 invalid number of RAM banks, defaulting to " << std::format("{:x}", numRamBanks));
         break;
     }
 
