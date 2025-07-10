@@ -9,6 +9,7 @@
 #include "CpuArithmeticInstructionsTest.h"
 #include "CpuPrefixInstructionsTest.h"
 #include "CpuIncDecInstructionsTest.h"
+#include "CpuRotateInstructionsTest.h"
 #include "CpuJumpInstructionsTest.h"
 #include "CpuFlagOperationsTest.h"
 #include "CpuStackOperationsTest.h"
@@ -46,6 +47,7 @@ int main()
     tests.push_back(std::make_unique<CpuArithmeticInstructionsTest>());
     tests.push_back(std::make_unique<CpuPrefixInstructionsTest>());
     tests.push_back(std::make_unique<CpuIncDecInstructionsTest>());
+    tests.push_back(std::make_unique<CpuRotateInstructionsTest>());
     tests.push_back(std::make_unique<CpuJumpInstructionsTest>());
     tests.push_back(std::make_unique<CpuFlagOperationsTest>());
     tests.push_back(std::make_unique<CpuStackOperationsTest>());
