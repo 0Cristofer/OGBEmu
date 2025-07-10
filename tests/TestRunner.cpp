@@ -29,6 +29,11 @@
 
 int main()
 {
+    // Disable debug logging for tests to reduce noise
+    Logger::SetDebugEnabled(false);
+    
+    DEBUG("This debug message should not appear in test output");
+    
     LOG("=== Game Boy Emulator Test Suite ===");
     LOG("");
     

@@ -6,6 +6,8 @@
 #include <iomanip>
 #include <sstream>
 
+bool Logger::s_debugEnabled = true;
+
 std::string GetTimestamp()
 {
     auto now = std::chrono::system_clock::now();
@@ -19,7 +21,7 @@ std::string GetTimestamp()
     return ss.str();
 }
 
-void Logger::Log(const std::string& log)
+void Logger::LogWithLevel(const std::string& log, LogLevel level)
 {
     static bool firstCall = true;
     static std::ofstream logFile;
@@ -35,10 +37,30 @@ void Logger::Log(const std::string& log)
         firstCall = false;
     }
     
-    std::string timestampedLog = "[" + GetTimestamp() + "] " + log;
+    std::string levelPrefix;
+    std::string colorCode;
+    std::string resetCode = "\033[0m";
     
-    // Always output to console
-    std::cout << timestampedLog << '\n';
+    switch (level)
+    {
+        case LogLevel::Debug:
+            levelPrefix = "[DEBUG] ";
+            colorCode = "\033[33m"; // Yellow
+            break;
+        case LogLevel::Log:
+            levelPrefix = "[LOG] ";
+            colorCode = "\033[34m"; // Blue
+            break;
+        case LogLevel::Error:
+            levelPrefix = "[ERROR] ";
+            colorCode = "\033[31m"; // Red
+            break;
+    }
+    
+    std::string timestampedLog = "[" + GetTimestamp() + "] " + levelPrefix + log;
+    
+    // Always output to console with color
+    std::cout << colorCode << timestampedLog << resetCode << '\n';
     
     // Also output to file if available
     if (logFile.is_open())
@@ -48,7 +70,30 @@ void Logger::Log(const std::string& log)
     }
 }
 
-void Logger::DebugBreakLog(const std::string& log)
+void Logger::Log(const std::string& log)
 {
-    Log(log);
+    LogWithLevel(log, LogLevel::Log);
+}
+
+void Logger::Error(const std::string& log)
+{
+    LogWithLevel(log, LogLevel::Error);
+}
+
+void Logger::Debug(const std::string& log)
+{
+    if (s_debugEnabled)
+    {
+        LogWithLevel(log, LogLevel::Debug);
+    }
+}
+
+void Logger::SetDebugEnabled(bool enabled)
+{
+    s_debugEnabled = enabled;
+}
+
+bool Logger::IsDebugEnabled()
+{
+    return s_debugEnabled;
 }
