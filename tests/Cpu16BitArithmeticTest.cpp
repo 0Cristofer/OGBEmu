@@ -212,7 +212,7 @@ void Cpu16BitArithmeticTest::TestAddSpE8()
     std::vector<byte> program = {
         0x31, 0x00, 0x50,  // LD SP,0x5000
         0xE8, 0x10,        // ADD SP,+16 (0x5000 + 16 = 0x5010)
-        0xF9,              // LD HL,SP
+        0xF8, 0x00,        // LD HL,SP+0 (copy SP to HL)
         0x7C,              // LD A,H
         0xEA, 0x0E, 0xC0,  // LD (0xC00E),A
         0x7D,              // LD A,L

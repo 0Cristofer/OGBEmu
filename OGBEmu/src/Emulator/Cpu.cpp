@@ -741,7 +741,12 @@ void Cpu::Nop()
 
 void Cpu::Stop()
 {
-    _registerPc.reg++;
+    // STOP is a 2-byte instruction: 0x10 0x00
+    // Need to read and consume the second byte (normally 0x00)
+    ReadAtPcInc();
+    
+    // Halt the CPU until button press or interrupt
+    _halted = 1;
 }
 
 void Cpu::Jr(const signed_byte offset)
@@ -776,13 +781,23 @@ void Cpu::RetTest(const byte test)
 void Cpu::AddSp()
 {
     const signed_byte e8 = static_cast<signed_byte>(ReadAtPcInc());
-
-    _registers.f.z = 0;
-    _registers.f.n = 0;
-    _registers.f.c = (e8 & 0xff) + (_registerSp.reg & 0xFF) >= 0x100;
-    _registers.f.h = (e8 & 0xf) + (_registerSp.reg & 0xF) >= 0x10;
-    _registerSp.reg += e8;
-
+    const word oldSp = _registerSp.reg;
+    
+    // Perform the addition
+    _registerSp.reg = oldSp + e8;
+    
+    // Flag calculations for ADD SP,e8 treat it as 8-bit arithmetic
+    // on the low byte of SP with the signed immediate value
+    const byte spLow = oldSp & 0xFF;
+    const byte e8Unsigned = static_cast<byte>(e8);
+    
+    _registers.f.z = 0;  // Always 0
+    _registers.f.n = 0;  // Always 0  
+    _registers.f.h = ((spLow & 0xF) + (e8Unsigned & 0xF)) > 0xF;  // Half-carry from bit 3
+    _registers.f.c = ((spLow & 0xFF) + (e8Unsigned & 0xFF)) > 0xFF;  // Carry from bit 7
+    
+    // ADD SP,e8 takes 16 cycles total: 4 opcode + 4 immediate + 8 execution
+    // ReadAtPcInc already added 8 cycles (4 opcode + 4 immediate)
     _cyclesThisInstruction += 8;
 }
 
