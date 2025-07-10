@@ -15,8 +15,8 @@ public:
     void Clear() override;
     void Present() override;
     bool ShouldClose() const override;
-    
-    void RenderBackground(const VRam* vram, const IoRegisters* ioRegisters) override;
+
+    void RenderBackground(const VRam& vRam, const IoRegisters& ioRegisters) override;
 
 private:
     SDL_Window* _window;
@@ -40,5 +40,5 @@ private:
         {8, 24, 32, 255}      // Darkest
     };
     
-    void RenderTile(int tileIndex, int x, int y, const class VRam* vram, byte palette);
+    void RenderTile(int tileIndex, int x, int y, const VRam& vRam, byte palette);
 };

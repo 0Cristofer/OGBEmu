@@ -24,7 +24,7 @@ Mbc1::Mbc1(std::vector<byte>* rom) : _rom(rom)
         break;
     default:
         numRamBanks = 1;
-        DEBUGBREAKLOG("Mbc1 invalid number of RAM banks, defaulting to " << numRamBanks);
+        ERROR("Mbc1 invalid number of RAM banks, defaulting to " << numRamBanks);
         break;
     }
 
@@ -41,7 +41,7 @@ byte Mbc1::Read(word address)
     // Only handle addresses that MBC1 should respond to
     if (address > AddressConstants::EndExternalRamAddress)
     {
-        DEBUGBREAKLOG("MBC1 Read called with invalid address: " << std::format("{:x}", address));
+        ERROR("MBC1 Read called with invalid address: " << std::format("{:x}", address));
         return 0xFF;
     }
     
@@ -118,7 +118,7 @@ void Mbc1::Write(word address, byte data)
     // Only handle addresses that MBC1 should respond to
     if (address > AddressConstants::EndExternalRamAddress)
     {
-        DEBUGBREAKLOG("MBC1 Write called with invalid address: " << std::format("{:x}", address));
+        ERROR("MBC1 Write called with invalid address: " << std::format("{:x}", address));
         return;
     }
     

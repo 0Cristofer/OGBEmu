@@ -18,7 +18,7 @@ bool Screen::Initialize()
 {
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
-        DEBUGBREAKLOG("SDL could not initialize! SDL_Error: " << SDL_GetError());
+        ERROR("SDL could not initialize! SDL_Error: " << SDL_GetError());
         return false;
     }
 
@@ -28,7 +28,7 @@ bool Screen::Initialize()
 
     if (_window == nullptr)
     {
-        DEBUGBREAKLOG("Window could not be created! SDL_Error: " << SDL_GetError());
+        ERROR("Window could not be created! SDL_Error: " << SDL_GetError());
         SDL_Quit();
         return false;
     }
@@ -36,7 +36,7 @@ bool Screen::Initialize()
     _renderer = SDL_CreateRenderer(_window, nullptr);
     if (_renderer == nullptr)
     {
-        DEBUGBREAKLOG("Renderer could not be created! SDL_Error: " << SDL_GetError());
+        ERROR("Renderer could not be created! SDL_Error: " << SDL_GetError());
         SDL_DestroyWindow(_window);
         SDL_Quit();
         return false;
@@ -90,10 +90,10 @@ bool Screen::ShouldClose() const
     return _shouldClose;
 }
 
-void Screen::RenderBackground(const VRam* vram, const IoRegisters* ioRegisters)
+void Screen::RenderBackground(const VRam& vRam, const IoRegisters& ioRegisters)
 {
     // Check LCDC register to see if background is enabled (bit 0)
-    byte lcdc = ioRegisters->Read(AddressConstants::LcdControl);
+    byte lcdc = ioRegisters.Read(AddressConstants::LcdControl);
     if ((lcdc & 0x01) == 0)
     {
         // Background disabled - clear to white
@@ -101,11 +101,11 @@ void Screen::RenderBackground(const VRam* vram, const IoRegisters* ioRegisters)
     }
     
     // Get background palette (BGP register)
-    byte bgp = ioRegisters->Read(AddressConstants::BackgroundPalette);
+    byte bgp = ioRegisters.Read(AddressConstants::BackgroundPalette);
     
     // Get scroll values
-    byte scrollY = ioRegisters->Read(AddressConstants::ScrollY);
-    byte scrollX = ioRegisters->Read(AddressConstants::ScrollX);
+    byte scrollY = ioRegisters.Read(AddressConstants::ScrollY);
+    byte scrollX = ioRegisters.Read(AddressConstants::ScrollX);
     
     // Background tile map starts at 0x9800 (can also be 0x9C00 based on LCDC bit 3)
     int bgMapStart = (lcdc & 0x08) ? 0x9C00 : 0x9800;
@@ -121,15 +121,15 @@ void Screen::RenderBackground(const VRam* vram, const IoRegisters* ioRegisters)
             
             // Get tile index from background map
             const int mapIndex = (mapY * BACKGROUND_WIDTH) + mapX;
-            const int tileIndex = vram->Read(bgMapStart + mapIndex);
+            const int tileIndex = vRam.Read(bgMapStart + mapIndex);
             
             // Render the tile with palette
-            RenderTile(tileIndex, tileX * TILE_SIZE, tileY * TILE_SIZE, vram, bgp);
+            RenderTile(tileIndex, tileX * TILE_SIZE, tileY * TILE_SIZE, vRam, bgp);
         }
     }
 }
 
-void Screen::RenderTile(int tileIndex, int x, int y, const VRam* vram, byte palette)
+void Screen::RenderTile(int tileIndex, int x, int y, const VRam& vRam, byte palette)
 {
     // Tile data starts at 0x8000
     constexpr int TILE_DATA_START = 0x8000;
@@ -139,8 +139,8 @@ void Screen::RenderTile(int tileIndex, int x, int y, const VRam* vram, byte pale
     for (int row = 0; row < TILE_SIZE; ++row)
     {
         // Each row is 2 bytes (low and high bits)
-        const byte lowByte = vram->Read(tileDataAddress + (row * 2));
-        const byte highByte = vram->Read(tileDataAddress + (row * 2) + 1);
+        const byte lowByte = vRam.Read(tileDataAddress + (row * 2));
+        const byte highByte = vRam.Read(tileDataAddress + (row * 2) + 1);
         
         for (int col = 0; col < TILE_SIZE; ++col)
         {

@@ -25,7 +25,7 @@ byte Cpu::Update()
 
     if (_registerPc.reg == 0x100)
     {
-        DEBUGBREAKLOG("Finished boot");
+        LOG("Finished boot");
         // Hack to run tests with no screen
         _bus->Write(0xff44, 0xff);
         _bus->Write(0xff02, 0xff);
@@ -115,7 +115,7 @@ void Cpu::HandleInterrupts()
     }
     else
     {
-        DEBUGBREAKLOG("Unknown interrupt: IE: " << std::format("{:x}", interruptEnable) << ", IF: " << std::format("{:x}", interruptFlag));
+        ERROR("Unknown interrupt: IE: " << std::format("{:x}", interruptEnable) << ", IF: " << std::format("{:x}", interruptFlag));
         jumpAddress = AddressConstants::JoypadHandlerAddress;
         handledInterrupt = 0b00010000;
     }
@@ -145,15 +145,6 @@ void Cpu::WriteBus(const word address, const byte data)
 {
     _cyclesThisInstruction += 4;
     
-    // Log suspicious writes to debug the 0x39 pattern
-    if (address >= 0xFEA0 && address <= 0xFEFF)
-    {
-        DEBUGBREAKLOG("CPU writing to NotUsed region - PC: " << std::format("{:x}", _registerPc.reg) << 
-                      " SP: " << std::format("{:x}", _registerSp.reg) << 
-                      " address: " << std::format("{:x}", address) << 
-                      " data: " << std::format("{:x}", data));
-    }
-    
     _bus->Write(address, data);
 }
 
@@ -162,7 +153,7 @@ void Cpu::WriteAtSp(const byte data) const
     // Log suspicious stack writes to debug the 0x39 pattern
     if (_registerSp.reg >= 0xFEA0 && _registerSp.reg <= 0xFEFF)
     {
-        DEBUGBREAKLOG("CRITICAL: Stack pointer corrupted! PC: " << std::format("{:x}", _registerPc.reg) << 
+        ERROR("CRITICAL: Stack pointer corrupted! PC: " << std::format("{:x}", _registerPc.reg) << 
                       " SP: " << std::format("{:x}", _registerSp.reg) << 
                       " data: " << std::format("{:x}", data));
     }
@@ -170,7 +161,7 @@ void Cpu::WriteAtSp(const byte data) const
     // Add additional logging for all stack operations to find corruption source
     if (_registerSp.reg < 0xFF80 || _registerSp.reg > 0xFFFE)
     {
-        DEBUGBREAKLOG("STACK OUT OF BOUNDS: PC: " << std::format("{:x}", _registerPc.reg) << 
+        ERROR("STACK OUT OF BOUNDS: PC: " << std::format("{:x}", _registerPc.reg) << 
                       " SP: " << std::format("{:x}", _registerSp.reg) << 
                       " data: " << std::format("{:x}", data));
     }
@@ -188,10 +179,6 @@ word Cpu::ReadImm16AtPc()
 
 void Cpu::ExecuteOpcode(const Opcode opcode)
 {
-    // Store current opcode for debug logging
-    static thread_local byte currentOpcode = 0;
-    currentOpcode = opcode.code;
-    
     if (opcode.high > 0x3 && opcode.high < 0xC)
         return ExecuteHighFunction(opcode);
     return ExecuteLowFunction(opcode);
@@ -213,7 +200,7 @@ void Cpu::ExecuteHighFunction(const Opcode opcode)
             return Ld8Sa(targetIndex, _registers.hl.reg);
 
         if (opcode.row5 == 010 && opcode.column3 == 0)
-            DEBUGBREAKLOG("LD B B");
+            DEBUG("LD B B");
         return Ld8R(targetIndex, sourceIndex);
     }
 
@@ -273,7 +260,7 @@ void Cpu::ExecuteHighFunction(const Opcode opcode)
         return Cp(_registers.registers8[ConvertReg8Index(opcode.column3)]);
     }
     
-    DEBUGBREAKLOG("Row function Op Code not found. Opcode: " << std::format("{:x}", opcode.code));
+    ERROR("Row function Op Code not found. Opcode: " << std::format("{:x}", opcode.code));
 }
 
 void Cpu::ExecuteLowFunction(const Opcode opcode)
@@ -545,7 +532,7 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
             return Ccf();
     }
 
-    DEBUGBREAKLOG("Column function Op Code not found. Opcode: " << std::format("{:x}", opcode.code));
+    ERROR("Column function Op Code not found. Opcode: " << std::format("{:x}", opcode.code));
 }
 
 void Cpu::ExecutePrefix()
@@ -754,7 +741,6 @@ void Cpu::Nop()
 
 void Cpu::Stop()
 {
-    DEBUGBREAKLOG("Executing STOP");
     _registerPc.reg++;
 }
 

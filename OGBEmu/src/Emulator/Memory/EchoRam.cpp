@@ -12,13 +12,11 @@ EchoRam::EchoRam() : _bytes(AddressConstants::EndEchoRamAddress - AddressConstan
 
 byte EchoRam::Read(const word busAddress) const
 {
-    DEBUGBREAKLOG("Invalid EchoRam read, address " << std::format("{:x}", busAddress));
-
     const word internalAddress = TranslateAddress(busAddress);
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
-        DEBUGBREAKLOG("Invalid EchoRam read, address " << std::format("{:x}", busAddress));
+        ERROR("Invalid EchoRam read, address " << std::format("{:x}", busAddress));
         return 0;
     }
 
@@ -31,7 +29,7 @@ void EchoRam::Write(const word busAddress, const byte data)
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
-        DEBUGBREAKLOG("Invalid EchoRam write, address " << std::format("{:x}", busAddress));
+        ERROR("Invalid EchoRam write, address " << std::format("{:x}", busAddress));
         return;
     }
 

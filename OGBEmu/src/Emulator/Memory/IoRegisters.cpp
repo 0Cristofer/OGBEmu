@@ -16,7 +16,7 @@ byte IoRegisters::Read(const word busAddress) const
 
     if (internalAddress < 0 || internalAddress >=_registers.size())
     {
-        DEBUGBREAKLOG("Invalid IO Register read, address " << std::format("{:x}", busAddress));
+        ERROR("Invalid IO Register read, address " << std::format("{:x}", busAddress));
         return 0;
     }
 
@@ -29,7 +29,7 @@ void IoRegisters::Write(const word busAddress, const byte data)
 
     if (internalAddress < 0 || internalAddress >=_registers.size())
     {
-        DEBUGBREAKLOG("Invalid IO Register write, address " << std::format("{:x}", busAddress));
+        ERROR("Invalid IO Register write, address " << std::format("{:x}", busAddress));
         return;
     }
 

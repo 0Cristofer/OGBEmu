@@ -16,7 +16,7 @@ byte WRam::Read(const word busAddress) const
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
-        DEBUGBREAKLOG("Invalid WRam read, address " << std::format("{:x}", busAddress));
+        ERROR("Invalid WRam read, address " << std::format("{:x}", busAddress));
         return 0;
     }
 
@@ -29,7 +29,7 @@ void WRam::Write(const word busAddress, const byte data)
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
-        DEBUGBREAKLOG("Invalid WRam write, address " << std::format("{:x}", busAddress));
+        ERROR("Invalid WRam write, address " << std::format("{:x}", busAddress));
         return;
     }
 

@@ -16,7 +16,7 @@ byte Oam::Read(const word busAddress) const
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
-        DEBUGBREAKLOG("Invalid Oam read, address " << std::format("{:x}", busAddress));
+        ERROR("Invalid Oam read, address " << std::format("{:x}", busAddress));
         return 0;
     }
 
@@ -29,7 +29,7 @@ void Oam::Write(const word busAddress, const byte data)
 
     if (internalAddress < 0 || internalAddress >=_bytes.size())
     {
-        DEBUGBREAKLOG("Invalid Oam write, address " << std::format("{:x}", busAddress));
+        ERROR("Invalid Oam write, address " << std::format("{:x}", busAddress));
         return;
     }
 

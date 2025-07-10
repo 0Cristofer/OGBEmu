@@ -13,7 +13,7 @@ Cartridge::Cartridge(const std::vector<byte>& romBytes) : _rom(romBytes)
 {
     if (!IsValid())
     {
-        DEBUGBREAKLOG("Invalid cartridge ROM, check path and file size. Expected ROM size: " << static_cast<int>(GbConstants::MinCartridgeRomSize) * (1 << _rom[AddressConstants::CartridgeRomSizeAddress])
+        ERROR("Invalid cartridge ROM, check path and file size. Expected ROM size: " << static_cast<int>(GbConstants::MinCartridgeRomSize) * (1 << _rom[AddressConstants::CartridgeRomSizeAddress])
             << ", got: " << _rom.size());
         return;
     }
@@ -77,7 +77,7 @@ Cartridge::Cartridge(const std::vector<byte>& romBytes) : _rom(romBytes)
     case CartridgeType::BandaiTama5:
     case CartridgeType::HuC3:
     case CartridgeType::HuC1RamBattery:
-        DEBUGBREAKLOG("Read Cartridge type not implemented, cartridge type: " << static_cast<int>(_cartridgeType));
+        ERROR("Read Cartridge type not implemented, cartridge type: " << static_cast<int>(_cartridgeType));
         break;
     }
 }

@@ -49,7 +49,7 @@ byte Bus::Read(const word address) const
     if (address >= AddressConstants::StartIeAddress)
         return ReadIe(address);
 
-    DEBUGBREAKLOG("Trying to read unmapped area, address " << std::format("{:x}", address));
+    ERROR("Trying to read unmapped area, address " << std::format("{:x}", address));
     return 0;
 }
 
@@ -78,7 +78,7 @@ void Bus::Write(const word address, const byte data)
     if (address >= AddressConstants::StartIeAddress)
         return WriteIe(address, data);
 
-    DEBUGBREAKLOG("Trying to write unmapped area, address " << std::format("{:x}", address));
+    ERROR("Trying to write unmapped area, address " << std::format("{:x}", address));
 }
 
 bool Bus::IsBootRomEnabled() const
@@ -138,7 +138,7 @@ byte Bus::ReadOam(const word address) const
 
 byte Bus::ReadNotUsed(const word address)
 {
-    DEBUGBREAKLOG("Invalid read NotUsed, address " << std::format("{:x}", address));
+    ERROR("Invalid read NotUsed, address " << std::format("{:x}", address));
     return 0;
 }
 
@@ -159,7 +159,7 @@ byte Bus::ReadIe(const word address) const
 
 void Bus::WriteBootRom(const word address, const byte data)
 {
-    DEBUGBREAKLOG("Invalid write WriteBootRom " << address);
+    ERROR("Invalid write WriteBootRom " << address);
 }
 
 void Bus::WriteCartridgeBank(const word address, const byte data) const
@@ -194,7 +194,7 @@ void Bus::WriteCartridgeBank(const word address, const byte data) const
     }
     
     // All other addresses should not reach the cartridge
-    DEBUGBREAKLOG("Invalid cartridge write attempt to address: " << std::format("{:x}", address) << " data: " << std::format("{:x}", data));
+    ERROR("Invalid cartridge write attempt to address: " << std::format("{:x}", address) << " data: " << std::format("{:x}", data));
 }
 
 void Bus::WriteVRam(const word address, const byte data) const
@@ -231,7 +231,7 @@ void Bus::WriteOam(const word address, const byte data) const
 
 void Bus::WriteNotUsed(const word address, const byte data)
 {
-    DEBUGBREAKLOG("Invalid write NotUsed address: " << std::format("{:x}", address) << " data: " << std::format("{:x}", data));
+    ERROR("Invalid write NotUsed address: " << std::format("{:x}", address) << " data: " << std::format("{:x}", data));
 }
 
 void Bus::WriteIoRegisters(const word address, const byte data)
@@ -256,8 +256,6 @@ void Bus::DoDma(const byte data)
 {
     const word startAddress = static_cast<word>(data << 8);
     constexpr word oamRange = AddressConstants::EndOamAddress - AddressConstants::StartOamAddress + 1;
-
-    DEBUGBREAKLOG("DMA OPERATION: source=" << std::format("{:x}", startAddress) << " count=" << oamRange);
 
     for (word i = 0; i < oamRange; i++)
     {
