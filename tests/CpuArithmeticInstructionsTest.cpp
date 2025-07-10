@@ -42,6 +42,13 @@ void CpuArithmeticInstructionsTest::Setup()
 void CpuArithmeticInstructionsTest::Run()
 {
     TestBasicAddition();
+    TestAdditionWithCarry();
+    TestSubtraction();
+    TestSubtractionWithCarry();
+    TestBitwiseAnd();
+    TestBitwiseOr();
+    TestBitwiseXor();
+    TestCompare();
 }
 
 void CpuArithmeticInstructionsTest::TestBasicAddition()
@@ -67,20 +74,29 @@ void CpuArithmeticInstructionsTest::TestBasicAddition()
 
 void CpuArithmeticInstructionsTest::TestAdditionWithCarry()
 {
-    // Test ADC instruction
+    // Test ADC instruction with carry flag set
     std::vector<byte> program = {
         0x3E, 0xFF,        // LD A,0xFF
         0xC6, 0x01,        // ADD A,1 (should set carry flag)
         0x3E, 0x05,        // LD A,5
         0xCE, 0x02,        // ADC A,2 (5 + 2 + carry = 8)
         0xEA, 0x01, 0xC0,  // LD (0xC001),A
+        
+        // Test ADC without carry flag (use fresh state)
+        0x3E, 0x00,        // LD A,0x00
+        0xC6, 0x00,        // ADD A,0x00 (clears carry flag)
+        0x3E, 0x10,        // LD A,0x10
+        0xCE, 0x05,        // ADC A,0x05 (16 + 5 + 0 = 21)
+        0xEA, 0x0A, 0xC0,  // LD (0xC00A),A
         0x76               // HALT
     };
     
-    WriteProgram(program);
-    ExecuteProgram(6);
+    WriteProgramToCartridge(program);
+    ExecuteProgram(30);
     
-    VerifyMemoryValue(0xC001, 0x08, "ADC A,n result");
+    VerifyMemoryValue(0xC001, 0x08, "ADC A,n with carry");
+    VerifyMemoryValue(0xC00A, 0x15, "ADC A,n without carry");
+    std::cout << "  ✓ ADC instruction tests passed" << std::endl;
 }
 
 void CpuArithmeticInstructionsTest::TestSubtraction()
@@ -93,16 +109,30 @@ void CpuArithmeticInstructionsTest::TestSubtraction()
         0x76               // HALT
     };
     
-    WriteProgram(program);
-    ExecuteProgram(4);
+    WriteProgramToCartridge(program);
+    ExecuteProgram(15);
     
     VerifyMemoryValue(0xC002, 0x07, "SUB A,n result");
+    std::cout << "  ✓ SUB instruction test passed" << std::endl;
 }
 
 void CpuArithmeticInstructionsTest::TestSubtractionWithCarry()
 {
-    // Test SBC instruction (more complex, skipping for now)
-    std::cout << "  ✓ SBC instruction test skipped (not implemented)" << std::endl;
+    // Test SBC instruction
+    std::vector<byte> program = {
+        0x3E, 0x01,        // LD A,0x01
+        0xD6, 0x02,        // SUB A,0x02 (1 - 2 = -1, sets carry flag)
+        0x3E, 0x10,        // LD A,0x10
+        0xDE, 0x05,        // SBC A,0x05 (16 - 5 - carry = 10)
+        0xEA, 0x09, 0xC0,  // LD (0xC009),A
+        0x76               // HALT
+    };
+    
+    WriteProgramToCartridge(program);
+    ExecuteProgram(20);
+    
+    VerifyMemoryValue(0xC009, 0x0A, "SBC A,n result");
+    std::cout << "  ✓ SBC instruction test passed" << std::endl;
 }
 
 void CpuArithmeticInstructionsTest::TestBitwiseAnd()
@@ -115,10 +145,11 @@ void CpuArithmeticInstructionsTest::TestBitwiseAnd()
         0x76               // HALT
     };
     
-    WriteProgram(program);
-    ExecuteProgram(4);
+    WriteProgramToCartridge(program);
+    ExecuteProgram(15);
     
     VerifyMemoryValue(0xC003, 0x05, "AND A,n result");
+    std::cout << "  ✓ AND instruction test passed" << std::endl;
 }
 
 void CpuArithmeticInstructionsTest::TestBitwiseOr()
@@ -131,10 +162,11 @@ void CpuArithmeticInstructionsTest::TestBitwiseOr()
         0x76               // HALT
     };
     
-    WriteProgram(program);
-    ExecuteProgram(4);
+    WriteProgramToCartridge(program);
+    ExecuteProgram(15);
     
     VerifyMemoryValue(0xC004, 0x5F, "OR A,n result");
+    std::cout << "  ✓ OR instruction test passed" << std::endl;
 }
 
 void CpuArithmeticInstructionsTest::TestBitwiseXor()
@@ -147,10 +179,11 @@ void CpuArithmeticInstructionsTest::TestBitwiseXor()
         0x76               // HALT
     };
     
-    WriteProgram(program);
-    ExecuteProgram(4);
+    WriteProgramToCartridge(program);
+    ExecuteProgram(15);
     
     VerifyMemoryValue(0xC005, 0x55, "XOR A,n result");
+    std::cout << "  ✓ XOR instruction test passed" << std::endl;
 }
 
 void CpuArithmeticInstructionsTest::TestCompare()
@@ -164,10 +197,11 @@ void CpuArithmeticInstructionsTest::TestCompare()
         0x76               // HALT
     };
     
-    WriteProgram(program);
-    ExecuteProgram(4);
+    WriteProgramToCartridge(program);
+    ExecuteProgram(15);
     
     VerifyMemoryValue(0xC006, 0x05, "CP A,n (A unchanged)");
+    std::cout << "  ✓ CP instruction test passed" << std::endl;
 }
 
 void CpuArithmeticInstructionsTest::WriteProgramToCartridge(const std::vector<byte>& program)
