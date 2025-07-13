@@ -5,11 +5,19 @@
 #include "Emulator/Opcode.h"
 
 class Bus;
+class Timer;
+class Ppu;
+class Apu;
+class Dma;
+class Joypad;
+class IScreen;
 
 class Cpu
 {
 public:
     explicit Cpu(Bus* bus);
+    
+    void SetComponents(Timer* timer, Ppu* ppu, Apu* apu, Dma* dma, Joypad* joypad, IScreen* screen);
 
     byte Update();
 
@@ -202,9 +210,17 @@ private:
     Register16 _registerPc;
 
     Bus* _bus;
+    Timer* _timer;
+    Ppu* _ppu;
+    Apu* _apu;
+    Dma* _dma;
+    Joypad* _joypad;
+    IScreen* _screen;
 
     byte _cyclesThisInstruction = 0;
     byte _ime;
     byte _halted;
     bool _eiRequested;
+    
+    void DoCycles(byte cycles);
 };

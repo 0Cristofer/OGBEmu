@@ -313,5 +313,12 @@ void DmaTest::VerifyOamTransferFromRom(word sourceAddress)
 
 int DmaTest::SimulateDmaUpdate()
 {
-    return _dma->Update();
+    int cycles = 0;
+    while (_dma->IsActive())
+    {
+        _dma->Update();
+        cycles += 4;
+    }
+
+    return cycles;
 }

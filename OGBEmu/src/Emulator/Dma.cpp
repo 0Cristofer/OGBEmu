@@ -11,11 +11,11 @@ Dma::Dma(Bus* bus)
     LOG("DMA initialized");
 }
 
-int Dma::Update()
+void Dma::Update()
 {
     if (!_isActive)
     {
-        return 0;
+        return;
     }
     
     // Transfer one byte per update (simulating the 160 cycle transfer)
@@ -35,12 +35,7 @@ int Dma::Update()
         {
             _isActive = false;
         }
-        
-        // Each byte transfer takes 4 cycles
-        return 4;
     }
-    
-    return 0;
 }
 
 void Dma::StartTransfer(byte sourceHighByte)

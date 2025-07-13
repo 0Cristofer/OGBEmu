@@ -11,7 +11,7 @@ public:
     Dma(Bus* bus);
     
     // Update DMA transfer (returns cycles consumed)
-    int Update();
+    void Update();
     
     // Start DMA transfer when 0xFF46 is written
     void StartTransfer(byte sourceHighByte);

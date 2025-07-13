@@ -46,6 +46,9 @@ Device::Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& c
     
     // Enable APU by default
     _apu.SetEnabled(true);
+    
+    // Set up CPU component references for cycle-accurate updates
+    _cpu.SetComponents(&_timer, &_ppu, &_apu, &_dma, &_joypad, _screen);
 }
 
 bool Device::IsValid() const
@@ -112,34 +115,9 @@ unsigned long Device::DoFrame()
         }
 
         cycleCount += cyclesExecuted;
-        
-        // DMA needs special handling as it consumes cycles
-        int dmaCycles = _dma.Update();
-        if (dmaCycles > 0)
-        {
-            cycleCount += dmaCycles;
-        }
-
-        // Update all components with CPU cycles
-        _timer.Update(cyclesExecuted);
-        _ppu.Update(cyclesExecuted);
-        
-        // Update APU
-        _apu.Update(cyclesExecuted);
-
-        // Update joypad (doesn't need cycles)
-        _joypad.Update();
     }
      
     // PPU handles screen rendering now
-    // Handle audio output
-    const auto& audioBuffer = _apu.GetAudioBuffer();
-    if (!audioBuffer.empty())
-    {
-        _screen->PlayAudio(audioBuffer.data(), audioBuffer.size());
-        _apu.ClearAudioBuffer();
-    }
-    
     const auto frameEndTime = std::chrono::steady_clock::now();
     const std::chrono::duration<double> frameTime = frameEndTime - frameStartTime;
 

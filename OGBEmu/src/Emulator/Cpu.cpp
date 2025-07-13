@@ -6,14 +6,30 @@
 
 #include "Emulator/Memory/AddressConstants.h"
 #include "Emulator/Memory/Bus.h"
+#include "Emulator/Timer.h"
+#include "Emulator/Ppu.h"
+#include "Emulator/Apu.h"
+#include "Emulator/Dma.h"
+#include "Emulator/Joypad.h"
+#include "Emulator/IScreen.h"
 
-Cpu::Cpu(Bus* bus) : _registers(), _registerSp(), _bus(bus), _eiRequested(false)
+Cpu::Cpu(Bus* bus) : _registers(), _registerSp(), _bus(bus), _timer(nullptr), _ppu(nullptr), _apu(nullptr), _dma(nullptr), _joypad(nullptr), _screen(nullptr), _eiRequested(false)
 {
     // This is the only hardware initialization needed, everything else is done by the boot rom
     _ime = 0;
     _halted = 0;
     _registerPc.reg = 0;
     _bus->Write(AddressConstants::BootRomBank, 0);
+}
+
+void Cpu::SetComponents(Timer* timer, Ppu* ppu, Apu* apu, Dma* dma, Joypad* joypad, IScreen* screen)
+{
+    _timer = timer;
+    _ppu = ppu;
+    _apu = apu;
+    _dma = dma;
+    _joypad = joypad;
+    _screen = screen;
 }
 
 byte Cpu::Update()
@@ -32,7 +48,9 @@ byte Cpu::Update()
         ExecuteOpcode(opcode);
     }
     else
-        _cyclesThisInstruction += 4;
+    {
+        DoCycles(4);
+    }
 
     UpdateIme();
     HandleInterrupts();
@@ -114,7 +132,7 @@ void Cpu::HandleInterrupts()
         handledInterrupt = 0b00010000;
     }
 
-    _cyclesThisInstruction += 4;
+    DoCycles(4);
     WriteBus(AddressConstants::InterruptFlag, interruptFlag ^ handledInterrupt); // "Acknowledge" the interrupt by zeroing its bit
     Call(jumpAddress);
 }
@@ -126,8 +144,10 @@ byte Cpu::ReadAtPcInc()
 
 byte Cpu::ReadBus(const word address)
 {
-    _cyclesThisInstruction += 4;
-    return _bus->Read(address);
+    byte data = _bus->Read(address);
+    DoCycles(4);
+
+    return data;
 }
 
 byte Cpu::ReadAtSp() const
@@ -137,9 +157,8 @@ byte Cpu::ReadAtSp() const
 
 void Cpu::WriteBus(const word address, const byte data)
 {
-    _cyclesThisInstruction += 4;
-    
     _bus->Write(address, data);
+    DoCycles(4);
 }
 
 void Cpu::WriteAtSp(const byte data) const
@@ -260,7 +279,7 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
             const byte flag = opcode.row5 < 032 ? _registers.f.z : _registers.f.c;
             const byte test = opcode.column == 0 ? !flag : flag;
 
-            _cyclesThisInstruction += 4;
+            DoCycles(4);
             return RetTest(test);
         }
     }
@@ -396,7 +415,7 @@ void Cpu::ExecuteLowFunction(const Opcode opcode)
     {
         if (opcode.high > 0xB)
         {
-            _cyclesThisInstruction += 4;
+            DoCycles(4);
             return Push(_registers.registers16[opcode.high - 0xC]);
         }
     }
@@ -589,8 +608,8 @@ void Cpu::LdSpTImm()
 
 void Cpu::LdSpS(const word val)
 {
-    _cyclesThisInstruction += 4;
     _registerSp.reg = val;
+    DoCycles(4);
 }
 
 void Cpu::LdImmTaSp()
@@ -613,7 +632,7 @@ void Cpu::LdHlSpE8()
     _registers.f.h = (newSp & 0xf) + (e8 & 0xf);
     _registers.f.c = (newSp & 0xff) + (e8 & 0xff);
 
-    _cyclesThisInstruction += 4;
+    DoCycles(4);
 }
 
 void Cpu::Halt()
@@ -730,7 +749,7 @@ void Cpu::Jr(const signed_byte offset)
     const word newPc = _registerPc.reg + static_cast<word>(offset);
 
     _registerPc.reg = newPc;
-    _cyclesThisInstruction += 4;
+    DoCycles(4);
 }
 
 void Cpu::JrTest(const byte test, const signed_byte offset)
@@ -742,8 +761,8 @@ void Cpu::JrTest(const byte test, const signed_byte offset)
 
 void Cpu::Ret()
 {
-    _cyclesThisInstruction += 4;
     Pop(_registerPc);
+    DoCycles(4);
 }
 
 void Cpu::RetTest(const byte test)
@@ -774,13 +793,13 @@ void Cpu::AddSp()
     
     // ADD SP,e8 takes 16 cycles total: 4 opcode + 4 immediate + 8 execution
     // ReadAtPcInc already added 8 cycles (4 opcode + 4 immediate)
-    _cyclesThisInstruction += 8;
+    DoCycles(8);
 }
 
 void Cpu::Jp(const word address)
 {
     _registerPc.reg = address;
-    _cyclesThisInstruction += 4;
+    DoCycles(4);
 }
 
 void Cpu::JpTest(const byte test, const word address)
@@ -815,8 +834,8 @@ void Cpu::Inc8Add(const word address)
 
 void Cpu::Inc16(word& target)
 {
-    _cyclesThisInstruction += 4;
     target++;
+    DoCycles(4);
 }
 
 void Cpu::Di()
@@ -862,14 +881,12 @@ void Cpu::Dec8Add(word address)
 
 void Cpu::Dec16(word& target)
 {
-    _cyclesThisInstruction += 4;
     target--;
+    DoCycles(4);
 }
 
 void Cpu::Add16(const word& source)
 {
-    _cyclesThisInstruction += 4;
-    
     const word original = _registers.hl.reg;
     const word result = original + source;
     
@@ -880,6 +897,8 @@ void Cpu::Add16(const word& source)
     _registers.f.h = (original & 0x0FFF) + (source & 0x0FFF) > 0x0FFF; // Half-carry from bit 11
     _registers.f.c = result < original; // Carry from bit 15
     // Z flag is not affected
+
+    DoCycles(4);
 }
 
 void Cpu::Push(const Register16 register16Data)
@@ -1092,4 +1111,39 @@ void Cpu::Res(const byte testBit, byte& testR8)
 void Cpu::Set(const byte testBit, byte& testR8)
 {
     testR8 |= 1 << testBit;
+}
+
+void Cpu::DoCycles(byte cycles)
+{
+    _cyclesThisInstruction += cycles;
+
+    for (byte i = 0; i < cycles; ++i)
+    {
+        if (_timer)
+            _timer->Update(i);
+        if (_ppu)
+            _ppu->Update(i);
+        if (_apu)
+            _apu->Update(i);
+        if (_dma)
+        {
+            _dma->Update();
+        }
+        if (_joypad)
+        {
+            _joypad->Update();
+        }
+
+        // Audio is currently broken. Disable.
+        // Handle audio output
+        // if (_screen && _apu)
+        // {
+        //     const auto& audioBuffer = _apu->GetAudioBuffer();
+        //     if (!audioBuffer.empty())
+        //     {
+        //         _screen->PlayAudio(audioBuffer.data(), audioBuffer.size());
+        //         _apu->ClearAudioBuffer();
+        //     }
+        // }
+    }
 }
