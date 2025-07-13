@@ -30,16 +30,25 @@
     <ClInclude Include="..\OGBEmu\src\Core\Utils.h">
       <Filter>OGBEmu\src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Apu.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
     <ClInclude Include="..\OGBEmu\src\Emulator\Cpu.h">
       <Filter>OGBEmu\src\Emulator</Filter>
     </ClInclude>
     <ClInclude Include="..\OGBEmu\src\Emulator\Device.h">
       <Filter>OGBEmu\src\Emulator</Filter>
     </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Dma.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
     <ClInclude Include="..\OGBEmu\src\Emulator\GbConstants.h">
       <Filter>OGBEmu\src\Emulator</Filter>
     </ClInclude>
     <ClInclude Include="..\OGBEmu\src\Emulator\IScreen.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Joypad.h">
       <Filter>OGBEmu\src\Emulator</Filter>
     </ClInclude>
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\AddressConstants.h">
@@ -69,6 +78,12 @@
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\MBC\Mbc1.h">
       <Filter>OGBEmu\src\Emulator\Memory\MBC</Filter>
     </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\MBC\Mbc3.h">
+      <Filter>OGBEmu\src\Emulator\Memory\MBC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Memory\MBC\Mbc5.h">
+      <Filter>OGBEmu\src\Emulator\Memory\MBC</Filter>
+    </ClInclude>
     <ClInclude Include="..\OGBEmu\src\Emulator\Memory\MBC\NoMbc.h">
       <Filter>OGBEmu\src\Emulator\Memory\MBC</Filter>
     </ClInclude>
@@ -93,6 +108,10 @@
     <ClInclude Include="..\OGBEmu\src\Emulator\Screen.h">
       <Filter>OGBEmu\src\Emulator</Filter>
     </ClInclude>
+    <ClInclude Include="..\OGBEmu\src\Emulator\Timer.h">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="ApuTest.h" />
     <ClInclude Include="BaseTest.h" />
     <ClInclude Include="BootRomDisableTest.h" />
     <ClInclude Include="CartridgeTest.h" />
@@ -107,19 +126,24 @@
     <ClInclude Include="CpuRotateInstructionsTest.h" />
     <ClInclude Include="CpuStackOperationsTest.h" />
     <ClInclude Include="CpuStopInstructionTest.h" />
-    <ClInclude Include="DeviceTest.h" />
+    <ClInclude Include="DmaTest.h" />
     <ClInclude Include="EchoRamTest.h" />
     <ClInclude Include="HRamTest.h" />
     <ClInclude Include="InterruptTest.h" />
     <ClInclude Include="IoRegistersTest.h" />
+    <ClInclude Include="JoypadTest.h" />
     <ClInclude Include="Mbc1Test.h" />
+    <ClInclude Include="Mbc3Test.h" />
+    <ClInclude Include="Mbc5Test.h" />
     <ClInclude Include="MemoryBusTest.h" />
     <ClInclude Include="MockScreen.h" />
     <ClInclude Include="NoMbcTest.h" />
     <ClInclude Include="OamTest.h" />
+    <ClInclude Include="PpuInterruptTest.h" />
     <ClInclude Include="PpuTest.h" />
     <ClInclude Include="SimpleCpuTest.h" />
     <ClInclude Include="TestCpu.h" />
+    <ClInclude Include="TimerTest.h" />
     <ClInclude Include="VRamTest.h" />
     <ClInclude Include="WRamCgbTest.h" />
     <ClInclude Include="WRamTest.h" />
@@ -131,7 +155,16 @@
     <ClCompile Include="..\OGBEmu\src\Core\Utils.cpp">
       <Filter>OGBEmu\src\Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Apu.cpp">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClCompile>
     <ClCompile Include="..\OGBEmu\src\Emulator\Cpu.cpp">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Dma.cpp">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Joypad.cpp">
       <Filter>OGBEmu\src\Emulator</Filter>
     </ClCompile>
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\BootRom.cpp">
@@ -155,6 +188,12 @@
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\MBC\Mbc1.cpp">
       <Filter>OGBEmu\src\Emulator\Memory\MBC</Filter>
     </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Memory\MBC\Mbc3.cpp">
+      <Filter>OGBEmu\src\Emulator\Memory\MBC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Memory\MBC\Mbc5.cpp">
+      <Filter>OGBEmu\src\Emulator\Memory\MBC</Filter>
+    </ClCompile>
     <ClCompile Include="..\OGBEmu\src\Emulator\Memory\MBC\NoMbc.cpp">
       <Filter>OGBEmu\src\Emulator\Memory\MBC</Filter>
     </ClCompile>
@@ -173,6 +212,10 @@
     <ClCompile Include="..\OGBEmu\src\Emulator\Ppu.cpp">
       <Filter>OGBEmu\src\Emulator</Filter>
     </ClCompile>
+    <ClCompile Include="..\OGBEmu\src\Emulator\Timer.cpp">
+      <Filter>OGBEmu\src\Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="ApuTest.cpp" />
     <ClCompile Include="BaseTest.cpp" />
     <ClCompile Include="BootRomDisableTest.cpp" />
     <ClCompile Include="CartridgeTest.cpp" />
@@ -187,19 +230,24 @@
     <ClCompile Include="CpuRotateInstructionsTest.cpp" />
     <ClCompile Include="CpuStackOperationsTest.cpp" />
     <ClCompile Include="CpuStopInstructionTest.cpp" />
-    <ClCompile Include="DeviceTest.cpp" />
+    <ClCompile Include="DmaTest.cpp" />
     <ClCompile Include="EchoRamTest.cpp" />
     <ClCompile Include="HRamTest.cpp" />
     <ClCompile Include="InterruptTest.cpp" />
     <ClCompile Include="IoRegistersTest.cpp" />
+    <ClCompile Include="JoypadTest.cpp" />
     <ClCompile Include="Mbc1Test.cpp" />
+    <ClCompile Include="Mbc3Test.cpp" />
+    <ClCompile Include="Mbc5Test.cpp" />
     <ClCompile Include="MemoryBusTest.cpp" />
     <ClCompile Include="NoMbcTest.cpp" />
     <ClCompile Include="OamTest.cpp" />
+    <ClCompile Include="PpuInterruptTest.cpp" />
     <ClCompile Include="PpuTest.cpp" />
     <ClCompile Include="SimpleCpuTest.cpp" />
     <ClCompile Include="TestCpu.cpp" />
     <ClCompile Include="TestRunner.cpp" />
+    <ClCompile Include="TimerTest.cpp" />
     <ClCompile Include="VRamTest.cpp" />
     <ClCompile Include="WRamCgbTest.cpp" />
     <ClCompile Include="WRamTest.cpp" />

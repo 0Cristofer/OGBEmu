@@ -14,13 +14,14 @@
 #include "Emulator/Memory/Oam.h"
 #include "Emulator/Memory/VRam.h"
 #include "Emulator/Memory/WRam.h"
+#include "Emulator/Dma.h"
 
 Bus::Bus(BootRom* bootRom, Cartridge* cartridge, VRam* vRam, WRam* wRam, WRamCgb* wRamCgb, EchoRam* echoRam, Oam* oam,
          IoRegisters* ioRegisters, HRam* hRam) : _bootRom(bootRom),
                                                  _cartridge(cartridge), _vRam(vRam), _wRam(wRam), _wRamCgb(wRamCgb), _echoRam(echoRam),
                                                  _oam(oam),
                                                  _ioRegisters(ioRegisters),
-                                                 _hRam(hRam), _ie(0)
+                                                 _hRam(hRam), _ie(0), _dma(nullptr)
 {
 }
 
@@ -126,9 +127,13 @@ byte Bus::ReadCgbWRam(const word address) const
 
 byte Bus::ReadEchoRam(const word address) const
 {
-    // Echo RAM mirrors WRAM - direct access to WRAM data
-    const word wramAddress = address - (AddressConstants::StartEchoRamAddress - AddressConstants::StartWRamAddress);
-    return ReadWRam(wramAddress);
+    word wRamAddress = address - AddressConstants::StartEchoRamAddress + AddressConstants::StartWRamAddress;
+    if (wRamAddress >= AddressConstants::EndEchoRamMirrorAddress)
+    {
+     
+        wRamAddress = address - AddressConstants::EndEchoRamMirrorAddress + AddressConstants::StartWRamAddress;
+    }
+    return ReadWRam(wRamAddress);
 }
 
 byte Bus::ReadOam(const word address) const
@@ -220,8 +225,13 @@ void Bus::WriteCgbWRam(const word address, const byte data) const
 void Bus::WriteEchoRam(const word address, const byte data)
 {
     // Echo RAM mirrors WRAM - direct write to WRAM data
-    const word wramAddress = address - (AddressConstants::StartEchoRamAddress - AddressConstants::StartWRamAddress);
-    WriteWRam(wramAddress, data);
+    word wRamAddress = address - AddressConstants::StartEchoRamAddress + AddressConstants::StartWRamAddress;
+    if (wRamAddress >= AddressConstants::EndEchoRamMirrorAddress)
+    {
+     
+        wRamAddress = address - AddressConstants::EndEchoRamMirrorAddress + AddressConstants::StartWRamAddress;
+    }
+    WriteWRam(wRamAddress, data);
 }
 
 void Bus::WriteOam(const word address, const byte data) const
@@ -238,7 +248,7 @@ void Bus::WriteIoRegisters(const word address, const byte data)
 {
     _ioRegisters->Write(address, data);
 
-    if (address == AddressConstants::DmaStart)
+    if (address == AddressConstants::DmaStart && _dma != nullptr)
         DoDma(data);
 }
 
@@ -254,11 +264,13 @@ void Bus::WriteIe(const word address, const byte data)
 
 void Bus::DoDma(const byte data)
 {
-    const word startAddress = static_cast<word>(data << 8);
-    constexpr word oamRange = AddressConstants::EndOamAddress - AddressConstants::StartOamAddress + 1;
-
-    for (word i = 0; i < oamRange; i++)
+    if (_dma != nullptr)
     {
-        Write(AddressConstants::StartOamAddress + i, Read(startAddress + i));
+        _dma->StartTransfer(data);
     }
+}
+
+bool Bus::IsDmaActive() const
+{
+    return _dma != nullptr && _dma->IsActive();
 }

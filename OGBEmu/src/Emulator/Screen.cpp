@@ -4,8 +4,10 @@
 #include "Emulator/Memory/VRam.h"
 #include "Emulator/Memory/IoRegisters.h"
 #include "Emulator/Memory/AddressConstants.h"
+#include "Memory/Bus.h"
+#include "Emulator/Joypad.h"
 
-Screen::Screen() : _window(nullptr), _renderer(nullptr), _shouldClose(false)
+Screen::Screen() : _window(nullptr), _renderer(nullptr), _shouldClose(false), _audioDevice(0), _audioStream(nullptr), _audioInitialized(false)
 {
 }
 
@@ -16,7 +18,7 @@ Screen::~Screen()
 
 bool Screen::Initialize()
 {
-    if (!SDL_Init(SDL_INIT_VIDEO))
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
     {
         ERROR("SDL could not initialize! SDL_Error: " << SDL_GetError());
         return false;
@@ -42,12 +44,21 @@ bool Screen::Initialize()
         return false;
     }
 
+    // Initialize audio
+    if (!InitializeAudio())
+    {
+        ERROR("Failed to initialize audio");
+        // Continue without audio
+    }
+    
     LOG("Screen initialized successfully");
     return true;
 }
 
 void Screen::Shutdown()
 {
+    ShutdownAudio();
+    
     if (_renderer)
     {
         SDL_DestroyRenderer(_renderer);
@@ -73,14 +84,51 @@ void Screen::Clear()
 void Screen::Present()
 {
     SDL_RenderPresent(_renderer);
-    
-    // Handle SDL events
+}
+
+void Screen::ProcessEvents(Joypad* joypad)
+{
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
         if (event.type == SDL_EVENT_QUIT)
         {
             _shouldClose = true;
+        }
+        else if (event.type == SDL_EVENT_KEY_DOWN || event.type == SDL_EVENT_KEY_UP)
+        {
+            bool pressed = (event.type == SDL_EVENT_KEY_DOWN);
+            
+            // Map keyboard keys to Game Boy buttons
+            switch (event.key.key)
+            {
+                case SDLK_RIGHT:  // Right arrow -> Right
+                    if (joypad) joypad->SetButtonState(Joypad::Right, pressed);
+                    break;
+                case SDLK_LEFT:   // Left arrow -> Left
+                    if (joypad) joypad->SetButtonState(Joypad::Left, pressed);
+                    break;
+                case SDLK_UP:     // Up arrow -> Up
+                    if (joypad) joypad->SetButtonState(Joypad::Up, pressed);
+                    break;
+                case SDLK_DOWN:   // Down arrow -> Down
+                    if (joypad) joypad->SetButtonState(Joypad::Down, pressed);
+                    break;
+                case SDLK_Z:      // Z -> A button
+                    if (joypad) joypad->SetButtonState(Joypad::A, pressed);
+                    break;
+                case SDLK_X:      // X -> B button
+                    if (joypad) joypad->SetButtonState(Joypad::B, pressed);
+                    break;
+                case SDLK_SPACE:  // Space -> Select
+                    if (joypad) joypad->SetButtonState(Joypad::Select, pressed);
+                    break;
+                case SDLK_RETURN: // Enter -> Start
+                    if (joypad) joypad->SetButtonState(Joypad::Start, pressed);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
@@ -90,10 +138,10 @@ bool Screen::ShouldClose() const
     return _shouldClose;
 }
 
-void Screen::RenderBackground(const VRam& vRam, const IoRegisters& ioRegisters)
+void Screen::RenderBackground(const Bus& bus)
 {
     // Check LCDC register to see if background is enabled (bit 0)
-    byte lcdc = ioRegisters.Read(AddressConstants::LcdControl);
+    byte lcdc = bus.Read(AddressConstants::LcdControl);
     if ((lcdc & 0x01) == 0)
     {
         // Background disabled - clear to white
@@ -101,11 +149,11 @@ void Screen::RenderBackground(const VRam& vRam, const IoRegisters& ioRegisters)
     }
     
     // Get background palette (BGP register)
-    byte bgp = ioRegisters.Read(AddressConstants::BackgroundPalette);
+    byte bgp = bus.Read(AddressConstants::BackgroundPalette);
     
     // Get scroll values
-    byte scrollY = ioRegisters.Read(AddressConstants::ScrollY);
-    byte scrollX = ioRegisters.Read(AddressConstants::ScrollX);
+    byte scrollY = bus.Read(AddressConstants::ScrollY);
+    byte scrollX = bus.Read(AddressConstants::ScrollX);
     
     // Background tile map starts at 0x9800 (can also be 0x9C00 based on LCDC bit 3)
     int bgMapStart = (lcdc & 0x08) ? 0x9C00 : 0x9800;
@@ -121,15 +169,15 @@ void Screen::RenderBackground(const VRam& vRam, const IoRegisters& ioRegisters)
             
             // Get tile index from background map
             const int mapIndex = (mapY * BACKGROUND_WIDTH) + mapX;
-            const int tileIndex = vRam.Read(bgMapStart + mapIndex);
+            const int tileIndex = bus.Read(bgMapStart + mapIndex);
             
             // Render the tile with palette
-            RenderTile(tileIndex, tileX * TILE_SIZE, tileY * TILE_SIZE, vRam, bgp);
+            RenderTile(tileIndex, tileX * TILE_SIZE, tileY * TILE_SIZE, bus, bgp);
         }
     }
 }
 
-void Screen::RenderTile(int tileIndex, int x, int y, const VRam& vRam, byte palette)
+void Screen::RenderTile(int tileIndex, int x, int y, const Bus& bus, byte palette)
 {
     // Tile data starts at 0x8000
     constexpr int TILE_DATA_START = 0x8000;
@@ -139,8 +187,8 @@ void Screen::RenderTile(int tileIndex, int x, int y, const VRam& vRam, byte pale
     for (int row = 0; row < TILE_SIZE; ++row)
     {
         // Each row is 2 bytes (low and high bits)
-        const byte lowByte = vRam.Read(tileDataAddress + (row * 2));
-        const byte highByte = vRam.Read(tileDataAddress + (row * 2) + 1);
+        const byte lowByte = bus.Read(tileDataAddress + (row * 2));
+        const byte highByte = bus.Read(tileDataAddress + (row * 2) + 1);
         
         for (int col = 0; col < TILE_SIZE; ++col)
         {
@@ -163,6 +211,104 @@ void Screen::RenderTile(int tileIndex, int x, int y, const VRam& vRam, byte pale
                 static_cast<float>(WINDOW_SCALE)
             };
             SDL_RenderFillRect(_renderer, &rect);
+        }
+    }
+}
+
+void Screen::DisplayFrameBuffer(const byte* frameBuffer, int width, int height)
+{
+    if (!frameBuffer || !_renderer)
+        return;
+        
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            // Get color index from frame buffer
+            byte colorIndex = frameBuffer[y * width + x];
+            
+            // Map to palette color
+            const SDL_Color& color = PALETTE[colorIndex & 0x03];
+            SDL_SetRenderDrawColor(_renderer, color.r, color.g, color.b, color.a);
+            
+            // Draw pixel (scaled up by WINDOW_SCALE)
+            SDL_FRect rect = {
+                static_cast<float>(x * WINDOW_SCALE),
+                static_cast<float>(y * WINDOW_SCALE),
+                static_cast<float>(WINDOW_SCALE),
+                static_cast<float>(WINDOW_SCALE)
+            };
+            SDL_RenderFillRect(_renderer, &rect);
+        }
+    }
+}bool Screen::InitializeAudio()
+{
+    // Set up audio specification
+    SDL_AudioSpec desired;
+    SDL_zero(desired);
+    desired.freq = 48000;        // 48kHz sample rate
+    desired.format = SDL_AUDIO_F32; // 32-bit float samples
+    desired.channels = 2;        // Stereo
+    
+    // Open audio device
+    _audioDevice = SDL_OpenAudioDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &desired);
+    
+    if (_audioDevice == 0)
+    {
+        ERROR("Failed to open audio device: " << SDL_GetError());
+        return false;
+    }
+    
+    // Create audio stream
+    _audioStream = SDL_CreateAudioStream(&desired, &desired);
+    if (!_audioStream)
+    {
+        ERROR("Failed to create audio stream: " << SDL_GetError());
+        SDL_CloseAudioDevice(_audioDevice);
+        _audioDevice = 0;
+        return false;
+    }
+    
+    // Bind stream to device
+    if (!SDL_BindAudioStream(_audioDevice, _audioStream))
+    {
+        ERROR("Failed to bind audio stream: " << SDL_GetError());
+        SDL_DestroyAudioStream(_audioStream);
+        SDL_CloseAudioDevice(_audioDevice);
+        _audioDevice = 0;
+        return false;
+    }
+    
+    _audioInitialized = true;
+    LOG("Audio initialized successfully: " << desired.freq << "Hz, " << (int)desired.channels << " channels");
+    return true;
+}
+
+void Screen::ShutdownAudio()
+{
+    if (_audioInitialized)
+    {
+        SDL_CloseAudioDevice(_audioDevice);
+        _audioDevice = 0;
+        _audioInitialized = false;
+        LOG("Audio shutdown completed");
+    }
+}
+
+void Screen::PlayAudio(const float* audioBuffer, int bufferSize)
+{
+    if (!_audioInitialized || !_audioStream || !audioBuffer || bufferSize <= 0)
+        return;
+        
+    // Put audio data into stream
+    if (!SDL_PutAudioStreamData(_audioStream, audioBuffer, bufferSize * sizeof(float)))
+    {
+        // Optionally log errors, but don't spam the log
+        static int errorCount = 0;
+        if (errorCount < 5)
+        {
+            ERROR("Failed to queue audio: " << SDL_GetError());
+            errorCount++;
         }
     }
 }

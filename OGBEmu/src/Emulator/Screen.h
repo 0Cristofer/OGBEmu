@@ -4,6 +4,8 @@
 #include "Core/Definitions.h"
 #include "IScreen.h"
 
+class Bus;
+
 class Screen : public IScreen
 {
 public:
@@ -16,12 +18,26 @@ public:
     void Present() override;
     bool ShouldClose() const override;
 
-    void RenderBackground(const VRam& vRam, const IoRegisters& ioRegisters) override;
+    void RenderBackground(const Bus& bus) override;
+    void DisplayFrameBuffer(const byte* frameBuffer, int width, int height) override;
+    
+    // Input handling
+    void ProcessEvents(Joypad* joypad) override;
+    
+    // Audio functions
+    bool InitializeAudio();
+    void ShutdownAudio();
+    void PlayAudio(const float* audioBuffer, int bufferSize) override;
 
 private:
     SDL_Window* _window;
     SDL_Renderer* _renderer;
     bool _shouldClose;
+    
+    // Audio members
+    SDL_AudioDeviceID _audioDevice;
+    SDL_AudioStream* _audioStream;
+    bool _audioInitialized;
 
     static constexpr int SCREEN_WIDTH = 160;
     static constexpr int SCREEN_HEIGHT = 144;
@@ -40,5 +56,5 @@ private:
         {8, 24, 32, 255}      // Darkest
     };
     
-    void RenderTile(int tileIndex, int x, int y, const VRam& vRam, byte palette);
+    void RenderTile(int tileIndex, int x, int y, const Bus& bus, byte palette);
 };

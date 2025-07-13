@@ -143,10 +143,13 @@
     <ClInclude Include="src\Core\Definitions.h" />
     <ClInclude Include="src\Core\Logger.h" />
     <ClInclude Include="src\Core\Utils.h" />
+    <ClInclude Include="src\Emulator\Apu.h" />
     <ClInclude Include="src\Emulator\Cpu.h" />
     <ClInclude Include="src\Emulator\Device.h" />
+    <ClInclude Include="src\Emulator\Dma.h" />
     <ClInclude Include="src\Emulator\GbConstants.h" />
     <ClInclude Include="src\Emulator\IScreen.h" />
+    <ClInclude Include="src\Emulator\Joypad.h" />
     <ClInclude Include="src\Emulator\Memory\AddressConstants.h" />
     <ClInclude Include="src\Emulator\Memory\BootRom.h" />
     <ClInclude Include="src\Emulator\Memory\Bus.h" />
@@ -156,6 +159,8 @@
     <ClInclude Include="src\Emulator\Memory\IoRegisters.h" />
     <ClInclude Include="src\Emulator\Memory\MBC\BaseMbc.h" />
     <ClInclude Include="src\Emulator\Memory\MBC\Mbc1.h" />
+    <ClInclude Include="src\Emulator\Memory\MBC\Mbc3.h" />
+    <ClInclude Include="src\Emulator\Memory\MBC\Mbc5.h" />
     <ClInclude Include="src\Emulator\Memory\MBC\NoMbc.h" />
     <ClInclude Include="src\Emulator\Memory\Oam.h" />
     <ClInclude Include="src\Emulator\Memory\VRam.h" />
@@ -164,12 +169,16 @@
     <ClInclude Include="src\Emulator\Opcode.h" />
     <ClInclude Include="src\Emulator\Ppu.h" />
     <ClInclude Include="src\Emulator\Screen.h" />
+    <ClInclude Include="src\Emulator\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Logger.cpp" />
     <ClCompile Include="src\Core\Utils.cpp" />
+    <ClCompile Include="src\Emulator\Apu.cpp" />
     <ClCompile Include="src\Emulator\Cpu.cpp" />
     <ClCompile Include="src\Emulator\Device.cpp" />
+    <ClCompile Include="src\Emulator\Dma.cpp" />
+    <ClCompile Include="src\Emulator\Joypad.cpp" />
     <ClCompile Include="src\Emulator\Memory\BootRom.cpp" />
     <ClCompile Include="src\Emulator\Memory\Bus.cpp" />
     <ClCompile Include="src\Emulator\Memory\Cartridge.cpp" />
@@ -177,6 +186,8 @@
     <ClCompile Include="src\Emulator\Memory\HRam.cpp" />
     <ClCompile Include="src\Emulator\Memory\IoRegisters.cpp" />
     <ClCompile Include="src\Emulator\Memory\MBC\Mbc1.cpp" />
+    <ClCompile Include="src\Emulator\Memory\MBC\Mbc3.cpp" />
+    <ClCompile Include="src\Emulator\Memory\MBC\Mbc5.cpp" />
     <ClCompile Include="src\Emulator\Memory\MBC\NoMbc.cpp" />
     <ClCompile Include="src\Emulator\Memory\Oam.cpp" />
     <ClCompile Include="src\Emulator\Memory\VRam.cpp" />
@@ -184,6 +195,7 @@
     <ClCompile Include="src\Emulator\Memory\WRamCgb.cpp" />
     <ClCompile Include="src\Emulator\Ppu.cpp" />
     <ClCompile Include="src\Emulator\Screen.cpp" />
+    <ClCompile Include="src\Emulator\Timer.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

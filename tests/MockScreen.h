@@ -16,7 +16,8 @@ public:
     void Present() override {}
     bool ShouldClose() const override { return _shouldClose; }
 
-    void RenderBackground(const VRam& vRam, const IoRegisters& ioRegisters) override {}
+    void RenderBackground(const Bus& bus) override {}
+    void DisplayFrameBuffer(const byte* frameBuffer, int width, int height) override {}
 
 private:
     bool _shouldClose;

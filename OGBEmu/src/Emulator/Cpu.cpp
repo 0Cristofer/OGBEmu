@@ -13,10 +13,7 @@ Cpu::Cpu(Bus* bus) : _registers(), _registerSp(), _bus(bus), _eiRequested(false)
     _ime = 0;
     _halted = 0;
     _registerPc.reg = 0;
-    _registerSp.reg = 0xFFFE; // Initialize stack pointer to Game Boy default value
     _bus->Write(AddressConstants::BootRomBank, 0);
-    
-    _bus->Write(0xff44, 0x90); // Hack to force boot with no screen
 }
 
 byte Cpu::Update()
@@ -26,9 +23,6 @@ byte Cpu::Update()
     if (_registerPc.reg == 0x100)
     {
         LOG("Finished boot");
-        // Hack to run tests with no screen
-        _bus->Write(0xff44, 0xff);
-        _bus->Write(0xff02, 0xff);
     }
 
     if (!_halted)
@@ -150,22 +144,6 @@ void Cpu::WriteBus(const word address, const byte data)
 
 void Cpu::WriteAtSp(const byte data) const
 {
-    // Log suspicious stack writes to debug the 0x39 pattern
-    if (_registerSp.reg >= 0xFEA0 && _registerSp.reg <= 0xFEFF)
-    {
-        ERROR("CRITICAL: Stack pointer corrupted! PC: " << std::format("{:x}", _registerPc.reg) << 
-                      " SP: " << std::format("{:x}", _registerSp.reg) << 
-                      " data: " << std::format("{:x}", data));
-    }
-    
-    // Add additional logging for all stack operations to find corruption source
-    if (_registerSp.reg < 0xFF80 || _registerSp.reg > 0xFFFE)
-    {
-        ERROR("STACK OUT OF BOUNDS: PC: " << std::format("{:x}", _registerPc.reg) << 
-                      " SP: " << std::format("{:x}", _registerSp.reg) << 
-                      " data: " << std::format("{:x}", data));
-    }
-    
     _bus->Write(_registerSp.reg, data);
 }
 
@@ -606,14 +584,12 @@ void Cpu::Ld16Imm(const byte targetIndex)
 void Cpu::LdSpTImm()
 {
     const word newSp = ReadImm16AtPc();
-    // DEBUGBREAKLOG("LD SP,nn: Setting SP from " << std::format("{:x}", _registerSp.reg) << " to " << std::format("{:x}", newSp) << " at PC: " << std::format("{:x}", _registerPc.reg));
     _registerSp.reg = newSp;
 }
 
 void Cpu::LdSpS(const word val)
 {
     _cyclesThisInstruction += 4;
-    // DEBUGBREAKLOG("LD SP,HL: Setting SP from " << std::format("{:x}", _registerSp.reg) << " to " << std::format("{:x}", val) << " at PC: " << std::format("{:x}", _registerPc.reg));
     _registerSp.reg = val;
 }
 

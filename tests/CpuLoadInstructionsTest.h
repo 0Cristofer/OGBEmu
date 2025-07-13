@@ -12,7 +12,7 @@
 #include "Emulator/Memory/VRam.h"
 #include "Emulator/Memory/WRam.h"
 #include "Emulator/Memory/WRamCgb.h"
-#include "Emulator/Cpu.h"
+#include "TestCpu.h"
 #include <memory>
 
 class CpuLoadInstructionsTest : public BaseTest
@@ -54,5 +54,5 @@ private:
     std::unique_ptr<IoRegisters> _ioRegisters;
     std::unique_ptr<HRam> _hRam;
     std::unique_ptr<Bus> _bus;
-    std::unique_ptr<Cpu> _cpu;
+    std::unique_ptr<TestCpu> _cpu;
 };

@@ -14,6 +14,10 @@
 #include "Emulator/Memory/WRamCgb.h"
 #include "Emulator/IScreen.h"
 #include "Emulator/Ppu.h"
+#include "Emulator/Timer.h"
+#include "Emulator/Joypad.h"
+#include "Emulator/Dma.h"
+#include "Emulator/Apu.h"
 
 class Device
 {
@@ -24,7 +28,7 @@ public:
     void Run();
 
 private:
-    unsigned int DoFrame();
+    unsigned long DoFrame();
     void WaitForNextFrame(double frameTimeSeconds) const;
 
     BootRom _bootRom;
@@ -40,6 +44,10 @@ private:
     Cpu _cpu;
     IScreen* _screen;
     Ppu _ppu;
+    Timer _timer;
+    Joypad _joypad;
+    Dma _dma;
+    Apu _apu;
 
     unsigned int _framesPerSecond;
     double _frameTimeSeconds;

@@ -24,16 +24,25 @@
     <ClInclude Include="src\Core\Utils.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Emulator\Apu.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
     <ClInclude Include="src\Emulator\Cpu.h">
       <Filter>Emulator</Filter>
     </ClInclude>
     <ClInclude Include="src\Emulator\Device.h">
       <Filter>Emulator</Filter>
     </ClInclude>
+    <ClInclude Include="src\Emulator\Dma.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
     <ClInclude Include="src\Emulator\GbConstants.h">
       <Filter>Emulator</Filter>
     </ClInclude>
     <ClInclude Include="src\Emulator\IScreen.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Joypad.h">
       <Filter>Emulator</Filter>
     </ClInclude>
     <ClInclude Include="src\Emulator\Memory\AddressConstants.h">
@@ -63,6 +72,12 @@
     <ClInclude Include="src\Emulator\Memory\MBC\Mbc1.h">
       <Filter>Emulator\Memory\MBC</Filter>
     </ClInclude>
+    <ClInclude Include="src\Emulator\Memory\MBC\Mbc3.h">
+      <Filter>Emulator\Memory\MBC</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Emulator\Memory\MBC\Mbc5.h">
+      <Filter>Emulator\Memory\MBC</Filter>
+    </ClInclude>
     <ClInclude Include="src\Emulator\Memory\MBC\NoMbc.h">
       <Filter>Emulator\Memory\MBC</Filter>
     </ClInclude>
@@ -87,6 +102,9 @@
     <ClInclude Include="src\Emulator\Screen.h">
       <Filter>Emulator</Filter>
     </ClInclude>
+    <ClInclude Include="src\Emulator\Timer.h">
+      <Filter>Emulator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Logger.cpp">
@@ -95,10 +113,19 @@
     <ClCompile Include="src\Core\Utils.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Emulator\Apu.cpp">
+      <Filter>Emulator</Filter>
+    </ClCompile>
     <ClCompile Include="src\Emulator\Cpu.cpp">
       <Filter>Emulator</Filter>
     </ClCompile>
     <ClCompile Include="src\Emulator\Device.cpp">
+      <Filter>Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Dma.cpp">
+      <Filter>Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Joypad.cpp">
       <Filter>Emulator</Filter>
     </ClCompile>
     <ClCompile Include="src\Emulator\Memory\BootRom.cpp">
@@ -122,6 +149,12 @@
     <ClCompile Include="src\Emulator\Memory\MBC\Mbc1.cpp">
       <Filter>Emulator\Memory\MBC</Filter>
     </ClCompile>
+    <ClCompile Include="src\Emulator\Memory\MBC\Mbc3.cpp">
+      <Filter>Emulator\Memory\MBC</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Memory\MBC\Mbc5.cpp">
+      <Filter>Emulator\Memory\MBC</Filter>
+    </ClCompile>
     <ClCompile Include="src\Emulator\Memory\MBC\NoMbc.cpp">
       <Filter>Emulator\Memory\MBC</Filter>
     </ClCompile>
@@ -141,6 +174,9 @@
       <Filter>Emulator</Filter>
     </ClCompile>
     <ClCompile Include="src\Emulator\Screen.cpp">
+      <Filter>Emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Emulator\Timer.cpp">
       <Filter>Emulator</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp" />

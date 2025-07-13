@@ -21,6 +21,7 @@
 #include "InterruptTest.h"
 #include "IoRegistersTest.h"
 #include "Mbc1Test.h"
+#include "Mbc3Test.h"
 #include "SimpleCpuTest.h"
 #include "PpuTest.h"
 #include "VRamTest.h"
@@ -28,9 +29,14 @@
 #include "HRamTest.h"
 #include "CartridgeTest.h"
 #include "OamTest.h"
-#include "DeviceTest.h"
 #include "NoMbcTest.h"
 #include "WRamCgbTest.h"
+#include "Mbc5Test.h"
+#include "TimerTest.h"
+#include "JoypadTest.h"
+#include "DmaTest.h"
+#include "ApuTest.h"
+#include "PpuInterruptTest.h"
 #include "Core/Logger.h"
 
 int main()
@@ -62,6 +68,7 @@ int main()
     tests.push_back(std::make_unique<InterruptTest>());
     tests.push_back(std::make_unique<IoRegistersTest>());
     tests.push_back(std::make_unique<Mbc1Test>());
+    tests.push_back(std::make_unique<Mbc3Test>());
     tests.push_back(std::make_unique<PpuTest>());
     tests.push_back(std::make_unique<VRamTest>());
     tests.push_back(std::make_unique<WRamTest>());
@@ -70,12 +77,18 @@ int main()
     tests.push_back(std::make_unique<OamTest>());
     tests.push_back(std::make_unique<NoMbcTest>());
     tests.push_back(std::make_unique<WRamCgbTest>());
-    // DeviceTest disabled due to crashes - requires further investigation
+    tests.push_back(std::make_unique<Mbc5Test>());
+    tests.push_back(std::make_unique<TimerTest>());
+    tests.push_back(std::make_unique<JoypadTest>());
+    tests.push_back(std::make_unique<DmaTest>());
+    tests.push_back(std::make_unique<ApuTest>());
+    tests.push_back(std::make_unique<PpuInterruptTest>());
+    // DeviceTest disabled - crashes during or after TestFrameTimingCalculation()
+    // Crash appears to be memory/stack corruption related
     // tests.push_back(std::make_unique<DeviceTest>());
     
     // Add more tests here as they are created
-    // tests.push_back(std::make_unique<CpuLoadInstructionsTest>());
-    // tests.push_back(std::make_unique<PpuRenderingTest>());
+    tests.push_back(std::make_unique<CpuLoadInstructionsTest>());
     
     int totalTests = static_cast<int>(tests.size());
     int passedTests = 0;

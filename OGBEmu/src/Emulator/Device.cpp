@@ -15,7 +15,11 @@ Device::Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& c
                                                                                                                             _bus(Bus(&_bootRom, &_cartridge, &_vRam, &_wRam, &_wRamCgb, &_echoRam, &_oam, &_ioRegisters, &_hRam)),
                                                                                                                             _cpu(&_bus),
                                                                                                                             _screen(screen),
-                                                                                                                            _ppu(&_vRam, &_oam, &_ioRegisters, _screen),
+                                                                                                                            _ppu(&_bus, _screen),
+                                                                                                                            _timer(&_ioRegisters),
+                                                                                                                            _joypad(&_ioRegisters),
+                                                                                                                            _dma(&_bus),
+                                                                                                                            _apu(&_ioRegisters),
                                                                                                                             _framesPerSecond(framesPerSecond),
                                                                                                                             _timeoutSeconds(timeoutSeconds)
 {
@@ -33,6 +37,15 @@ Device::Device(const std::vector<byte>& bootRomBytes, const std::vector<byte>& c
     {
         ERROR("Failed to initialize screen");
     }
+    
+    // Set DMA pointer in Bus
+    _bus.SetDma(&_dma);
+    
+    // Connect APU to IoRegisters for audio register callbacks
+    _ioRegisters.SetApu(&_apu);
+    
+    // Enable APU by default
+    _apu.SetEnabled(true);
 }
 
 bool Device::IsValid() const
@@ -54,15 +67,15 @@ void Device::Run()
         LOG("Running indefinitely (no timeout)");
     }
 
-    unsigned int totalCycles = 0;
-    unsigned int totalFrames = 0;
+    unsigned long totalCycles = 0;
+    unsigned long totalFrames = 0;
 
     double runSeconds = 0;
 
     const auto runStartTime = std::chrono::steady_clock::now();
     while ((_timeoutSeconds == 0.0 || runSeconds < _timeoutSeconds) && !_screen->ShouldClose())
     {
-        const unsigned int cyclesDone = DoFrame();
+        const unsigned long cyclesDone = DoFrame();
 
         if (cyclesDone == 0)
         {
@@ -80,11 +93,14 @@ void Device::Run()
         << " times");
 }
 
-unsigned Device::DoFrame()
+unsigned long Device::DoFrame()
 {
-    unsigned int cycleCount = 0;
+    unsigned long cycleCount = 0;
 
     const auto frameStartTime = std::chrono::steady_clock::now();
+    
+    // Process input events once per frame
+    _screen->ProcessEvents(&_joypad);
     
     while (cycleCount < _maxCyclesPerFrame)
     {
@@ -97,12 +113,32 @@ unsigned Device::DoFrame()
 
         cycleCount += cyclesExecuted;
         
-        // Update PPU with CPU cycles
+        // DMA needs special handling as it consumes cycles
+        int dmaCycles = _dma.Update();
+        if (dmaCycles > 0)
+        {
+            cycleCount += dmaCycles;
+        }
+
+        // Update all components with CPU cycles
+        _timer.Update(cyclesExecuted);
         _ppu.Update(cyclesExecuted);
+        
+        // Update APU
+        _apu.Update(cyclesExecuted);
+
+        // Update joypad (doesn't need cycles)
+        _joypad.Update();
     }
-    
+     
     // PPU handles screen rendering now
-    // _screen.Clear() and Present() are called by PPU.RenderFrame()
+    // Handle audio output
+    const auto& audioBuffer = _apu.GetAudioBuffer();
+    if (!audioBuffer.empty())
+    {
+        _screen->PlayAudio(audioBuffer.data(), audioBuffer.size());
+        _apu.ClearAudioBuffer();
+    }
     
     const auto frameEndTime = std::chrono::steady_clock::now();
     const std::chrono::duration<double> frameTime = frameEndTime - frameStartTime;
@@ -120,7 +156,7 @@ void Device::WaitForNextFrame(const double frameTimeSeconds) const
 
     if (remainingFrameTime < 0)
     {
-        LOG("Running behind, last frame took: " << frameTimeSeconds << "s, but should take " << _frameTimeSeconds << "s");
+        //LOG("Running behind, last frame took: " << frameTimeSeconds << "s, but should take " << _frameTimeSeconds << "s");
     }
 
     double remainingWaitTime = remainingFrameTime;

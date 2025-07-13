@@ -33,10 +33,11 @@ void CpuLoadInstructionsTest::Setup()
     _bus = std::make_unique<Bus>(_bootRom.get(), _cartridge.get(), _vRam.get(), 
                                 _wRam.get(), _wRamCgb.get(), _echoRam.get(), 
                                 _oam.get(), _ioRegisters.get(), _hRam.get());
-    _cpu = std::make_unique<Cpu>(_bus.get());
+    _cpu = std::make_unique<TestCpu>(_bus.get());
     
-    // Disable boot ROM for testing
-    _bus->Write(AddressConstants::BootRomBank, 0x01);
+    // Initialize to proper post-boot state
+    InitializePostBootHardwareState(_bus.get());
+    _cpu->InitializePostBootState();
 }
 
 void CpuLoadInstructionsTest::Run()
@@ -140,15 +141,18 @@ void CpuLoadInstructionsTest::TestLoadHlSpPlusE8()
 void CpuLoadInstructionsTest::TestLoadSpToMemory()
 {
     // Test LD (nn),SP (0x08)
-    // Write the instruction at PC start location (0x100)
-    WriteInstructionWithWord(0x100, 0x08, 0xC002);  // LD (0xC002),SP
+    // Write the instruction to Work RAM area (0xC000-0xDFFF) which is writable
+    WriteInstructionWithWord(0xC000, 0x08, 0xC010);  // LD (0xC010),SP
     
-    // Execute instruction from boot completion
+    // Set PC to the instruction location
+    SetProgramCounter(0xC000);
+    
+    // Execute instruction
     ExecuteInstruction();
     
     // Verify SP was written to memory (should be 0xFFFE initially)
-    byte spLow = _bus->Read(0xC002);
-    byte spHigh = _bus->Read(0xC003);
+    byte spLow = _bus->Read(0xC010);
+    byte spHigh = _bus->Read(0xC011);
     word spValue = static_cast<word>(spLow) | (static_cast<word>(spHigh) << 8);
     
     if (spValue == 0xFFFE) {
@@ -180,9 +184,7 @@ void CpuLoadInstructionsTest::WriteInstructionWithWord(word address, byte opcode
 
 void CpuLoadInstructionsTest::SetProgramCounter(word pc)
 {
-    // For testing purposes, we'll write the instruction directly at the current PC
-    // and let the CPU execute it naturally
-    // This is a simplified approach for unit testing
+    _cpu->SetPC(pc);
 }
 
 void CpuLoadInstructionsTest::ExecuteInstruction()

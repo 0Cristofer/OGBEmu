@@ -45,7 +45,7 @@ void PpuTest::Setup()
     );
     _cpu = std::make_unique<TestCpu>(_bus.get());
     _screen = std::make_unique<MockScreen>();
-    _ppu = std::make_unique<Ppu>(_vRam.get(), _oam.get(), _ioRegisters.get(), _screen.get());
+    _ppu = std::make_unique<Ppu>(_bus.get(), _screen.get());
     
     // Initialize hardware to post-boot state
     InitializePostBootHardwareState(_bus.get());

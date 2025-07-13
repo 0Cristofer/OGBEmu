@@ -38,10 +38,10 @@ namespace AddressConstants
     constexpr word StartWRamAddress = 0xC000;
     constexpr word EndWRamAddress = 0xCFFF;
     constexpr word StartWRamCgbAddress = 0xD000;
+    constexpr word EndEchoRamMirrorAddress = 0xDDFF; // Last WRAM address that mirrors to EchoRam
     constexpr word EndWRamCgbAddress = 0xDFFF;
     constexpr word StartEchoRamAddress = 0xE000;
     constexpr word EndEchoRamAddress = 0xFDFF;
-    constexpr word EndEchoRamMirrorAddress = 0xDDFF; // Last WRAM address that mirrors to EchoRam
     constexpr word StartOamAddress = 0xFE00;
     constexpr word EndOamAddress = 0xFE9F;
     constexpr word StartNotUsedAddress = 0xFEA0;
@@ -54,6 +54,11 @@ namespace AddressConstants
     constexpr word EndIeAddress = 0xFFFF;
 
     // IO addresses
+    constexpr word Joypad = 0xFF00;         // P1 - Joypad
+    constexpr word TimerDivider = 0xFF04;   // DIV - Timer Divider
+    constexpr word TimerCounter = 0xFF05;   // TIMA - Timer Counter
+    constexpr word TimerModulo = 0xFF06;    // TMA - Timer Modulo
+    constexpr word TimerControl = 0xFF07;   // TAC - Timer Control
     constexpr word InterruptFlag = 0xFF0F;
     constexpr word DmaStart = 0xFF46;
     constexpr word BootRomBank = 0xFF50;

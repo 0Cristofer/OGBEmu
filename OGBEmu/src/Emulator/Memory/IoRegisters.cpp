@@ -5,8 +5,9 @@
 #include "Core/Logger.h"
 
 #include "Emulator/Memory/AddressConstants.h"
+#include "Emulator/Apu.h"
 
-IoRegisters::IoRegisters() : _registers(AddressConstants::EndIoRegistersAddress - AddressConstants::StartIoRegistersAddress + 1)
+IoRegisters::IoRegisters() : _registers(AddressConstants::EndIoRegistersAddress - AddressConstants::StartIoRegistersAddress + 1), _apu(nullptr)
 {
 }
 
@@ -34,6 +35,12 @@ void IoRegisters::Write(const word busAddress, const byte data)
     }
 
     _registers[internalAddress] = data;
+    
+    // Notify APU of audio register writes
+    if (_apu && busAddress >= 0xFF10 && busAddress <= 0xFF3F)
+    {
+        _apu->WriteRegister(busAddress, data);
+    }
 }
 
 word IoRegisters::TranslateAddress(const word busAddress)

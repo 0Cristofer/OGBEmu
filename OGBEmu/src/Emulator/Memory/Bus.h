@@ -11,12 +11,16 @@ class IoRegisters;
 class BootRom;
 class Cartridge;
 class WRam;
+class Dma;
 
 class Bus
 {
 public:
     Bus(BootRom* bootRom, Cartridge* cartridge, VRam* vRam, WRam* wRam, WRamCgb* wRamCgb, EchoRam* echoRam, Oam* oam,
         IoRegisters* ioRegisters, HRam* hRam);
+    
+    void SetDma(Dma* dma) { _dma = dma; }
+    bool IsDmaActive() const;
     
     [[nodiscard]] byte Read(word address) const;
     void Write(word address, byte data);
@@ -62,4 +66,5 @@ private:
     IoRegisters* _ioRegisters;
     HRam* _hRam;
     byte _ie;
+    Dma* _dma;
 };

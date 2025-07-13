@@ -7,9 +7,11 @@
 #include "Emulator/Memory/AddressConstants.h"
 #include "Emulator/Memory/MBC/BaseMbc.h"
 #include "Emulator/Memory/MBC/Mbc1.h"
+#include "Emulator/Memory/MBC/Mbc3.h"
+#include "Emulator/Memory/MBC/Mbc5.h"
 #include "Emulator/Memory/MBC/NoMbc.h"
 
-Cartridge::Cartridge(const std::vector<byte>& romBytes) : _rom(romBytes)
+Cartridge::Cartridge(const std::vector<byte>& romBytes) : _rom(romBytes), _mbc(nullptr)
 {
     if (!IsValid())
     {
@@ -65,19 +67,28 @@ Cartridge::Cartridge(const std::vector<byte>& romBytes) : _rom(romBytes)
     case CartridgeType::MBC3:
     case CartridgeType::MBC3Ram:
     case CartridgeType::MBC3RamBattery:
+        _mbc = new Mbc3(&_rom);
+        return;
     case CartridgeType::MBC5:
     case CartridgeType::MBC5Ram:
     case CartridgeType::MBC5RamBattery:
     case CartridgeType::MBC5Rumble:
     case CartridgeType::MBC5RumbleRam:
     case CartridgeType::MBC5RumbleRamBattery:
+        _mbc = new Mbc5(&_rom);
+        return;
     case CartridgeType::MBC6:
     case CartridgeType::MBC7SensorRumbleRamBattery:
     case CartridgeType::PocketCamera:
     case CartridgeType::BandaiTama5:
     case CartridgeType::HuC3:
     case CartridgeType::HuC1RamBattery:
-        ERROR("Read Cartridge type not implemented, cartridge type: " << std::format("{:x}", static_cast<int>(_cartridgeType)));
+        ERROR("Cartridge type not implemented, cartridge type: " << std::format("{:x}", static_cast<int>(_cartridgeType)));
+        ERROR("MBC will be null - this will cause crashes on cartridge access");
+        break;
+    default:
+        ERROR("Unknown cartridge type: " << std::format("{:x}", static_cast<int>(_cartridgeType)));
+        ERROR("MBC will be null - this will cause crashes on cartridge access");
         break;
     }
 }
@@ -89,16 +100,27 @@ Cartridge::~Cartridge()
 
 bool Cartridge::IsValid() const
 {
-    return !_rom.empty() && static_cast<int>(_rom.size()) == GbConstants::MinCartridgeRomSize * (1 << _rom[AddressConstants::CartridgeRomSizeAddress]);
+    if (_rom.empty() || _rom.size() <= AddressConstants::CartridgeRamSizeAddress) {
+        return false;
+    }
+    return static_cast<int>(_rom.size()) == GbConstants::MinCartridgeRomSize * (1 << _rom[AddressConstants::CartridgeRomSizeAddress]);
 }
 
 byte Cartridge::Read(const word address) const
 {
+    if (_mbc == nullptr) {
+        ERROR("Cartridge MBC is null during read at address " << std::format("{:x}", address));
+        return 0x00;
+    }
     return _mbc->Read(address);
 }
 
 void Cartridge::Write(const word address, const byte data) const
 {
+    if (_mbc == nullptr) {
+        ERROR("Cartridge MBC is null during write at address " << std::format("{:x}", address) << " with data " << std::format("{:x}", data));
+        return;
+    }
     _mbc->Write(address, data);
 }
 

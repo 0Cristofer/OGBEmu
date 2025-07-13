@@ -1,10 +1,11 @@
 #pragma once
 
-#include "Core/Definitions.h"
 
 // Forward declarations
 class VRam;
 class IoRegisters;
+class Bus;
+class Joypad;
 
 // Interface for Screen to allow testing with mocks
 class IScreen
@@ -18,5 +19,12 @@ public:
     virtual void Present() = 0;
     virtual bool ShouldClose() const = 0;
     
-    virtual void RenderBackground(const VRam& vRam, const IoRegisters& ioRegisters) = 0;
+    virtual void RenderBackground(const Bus& bus) = 0;
+    virtual void DisplayFrameBuffer(const byte* frameBuffer, int width, int height) = 0;
+    
+    // Audio output (optional for implementations)
+    virtual void PlayAudio(const float* audioBuffer, int bufferSize) {}
+    
+    // Input handling
+    virtual void ProcessEvents(Joypad* joypad) {}
 };

@@ -2,15 +2,13 @@
 
 #include "Core/Definitions.h"
 
-class VRam;
-class Oam;
-class IoRegisters;
+class Bus;
 class IScreen;
 
 class Ppu
 {
 public:
-    Ppu(VRam* vRam, Oam* oam, IoRegisters* ioRegisters, IScreen* screen);
+    Ppu(Bus* bus, IScreen* screen);
 
     void Update(int cycles);
     void RenderFrame();
@@ -20,17 +18,37 @@ public:
     static constexpr int VISIBLE_SCANLINES = 144;
     static constexpr int VBLANK_SCANLINES = 10;
     static constexpr int TOTAL_SCANLINES = VISIBLE_SCANLINES + VBLANK_SCANLINES;
+    
+    // PPU mode timing constants (cycles within a scanline)
+    static constexpr int OAM_SEARCH_CYCLES = 80;   // Mode 2
+    static constexpr int DRAWING_CYCLES = 172;     // Mode 3
+    static constexpr int HBLANK_CYCLES = 204;      // Mode 0
+    
+    // PPU modes
+    enum class PpuMode : byte
+    {
+        HBlank = 0,     // Mode 0: H-Blank
+        VBlank = 1,     // Mode 1: V-Blank  
+        OamSearch = 2,  // Mode 2: OAM Search
+        Drawing = 3     // Mode 3: Drawing pixels
+    };
 
 private:
     void RenderBackground();
     void RenderSprites();
+    void RenderWindow();
     [[nodiscard]] byte GetTilePixel(word tileIndex, byte pixelX, byte pixelY) const;
+    [[nodiscard]] byte GetSpritePixel(word tileIndex, byte pixelX, byte pixelY) const;
     [[nodiscard]] word GetBackgroundPalette() const;
     void SetPixel(int x, int y, byte colorIndex);
+    
+    // PPU mode and STAT register management
+    void UpdatePpuMode();
+    void UpdateStatRegister();
+    void CheckStatInterrupts();
+    [[nodiscard]] bool IsLyLycMatch() const;
 
-    VRam* _vRam;
-    Oam* _oam;
-    IoRegisters* _ioRegisters;
+    Bus* _bus;
     IScreen* _screen;
 
     // Game Boy screen dimensions
@@ -52,4 +70,5 @@ private:
     // PPU timing state
     int _currentCycles;
     byte _currentScanline;
+    PpuMode _currentMode;
 };
